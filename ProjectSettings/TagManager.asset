@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Bird
+  - Rope
+  - Killbox
+  - Rope Spawn
+  - Bird Spot
+  - Rope Tip
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Triggers
+  - OneWayPlatforms
+  - Player
+  - Platforms
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 37508923
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Birds
+    uniqueID: 3292515175
+    locked: 0
