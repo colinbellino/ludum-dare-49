@@ -1,11 +1,12 @@
-# Ludum Dare 39
+# Ludum Dare 49
 
 TODO
 
 ## Credits:
 
-- **Art:** TODO
-- **Audio:** TODO
+- **Art:** [Thomas "cyangmou" Feichtmeir](https://twitter.com/cyangmou)
+- **Audio:** [Andrew LiVecchi](https://twitter.com/AndrewLivecchi)
+- **Code:** [Colin Bellino](https://twitter.com/colinbellino)
 - **Paid assets:** No
 
 ## Controls:
