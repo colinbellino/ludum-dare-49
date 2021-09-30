@@ -50,6 +50,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Birds
-    uniqueID: 3292515175
+  - name: Foreground
+    uniqueID: 1830853479
     locked: 0

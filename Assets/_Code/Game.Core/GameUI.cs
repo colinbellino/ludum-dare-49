@@ -169,12 +169,13 @@ namespace Game.Core
 
 				counter += 1;
 
-				await UniTask.Delay(12);
+				await UniTask.Delay(10);
 			}
 
-			foreach (var button in panel.GetComponentsInChildren<Button>())
+			var buttons = panel.GetComponentsInChildren<Button>();
+			for (int i = 0; i < buttons.Length; i++)
 			{
-				_ = button.image.DOFade(1f, duration);
+				_ = buttons[i].image.DOFade(1f, duration);
 			}
 		}
 
