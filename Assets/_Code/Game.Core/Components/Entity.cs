@@ -10,5 +10,9 @@ namespace Game.Core
 		[SerializeField] public Animator Animator;
 		[SerializeField] public SpriteRenderer SpriteRenderer;
 		[SerializeField] public AudioSource AudioSource;
+
+		[SerializeField] public bool ControlledByPlayer;
+
+		[HideInInspector] public Vector3Int GridPosition;
 	}
 }

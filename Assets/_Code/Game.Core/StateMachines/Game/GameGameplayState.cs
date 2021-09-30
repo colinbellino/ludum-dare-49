@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 namespace Game.Core.StateMachines.Game
 {
@@ -17,8 +21,37 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			var playerPrefab = Resources.Load<Entity>("Player");
-			_state.Player = GameObject.Instantiate(playerPrefab, GameObject.Find("Player Spawn").transform.position, Quaternion.identity);
+			// Load current level
+			{
+				// TODO(colin): Get the current level from GameConfig
+				_state.Level = GameObject.Instantiate(Resources.Load<Level>("Levels/LevelTemplate"));
+				var bounds = _state.Level.Entities.cellBounds;
+				var tiles = _state.Level.Entities.GetTilesBlock(bounds);
+				for (int x = 0; x < bounds.size.x; x++)
+				{
+					for (int y = 0; y < bounds.size.y; y++)
+					{
+						var tile = tiles[x + y * bounds.size.x];
+						var gridPosition = new Vector3Int(x, y, 0);
+
+						if (tile == null)
+						{
+							continue;
+						}
+
+						if (_config.TileToEntity.ContainsKey(tile))
+						{
+							var entity = GameObject.Instantiate(
+								_config.TileToEntity[tile],
+								_state.Level.Entities.transform
+							);
+							entity.GridPosition = gridPosition;
+							_state.Entities.Add(entity);
+							_state.Level.Entities.DeleteCells(gridPosition, new Vector3Int(1, 1, 1));
+						}
+					}
+				}
+			}
 
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
@@ -28,7 +61,7 @@ namespace Game.Core.StateMachines.Game
 				_ = _audioPlayer.PlayMusic(_config.Music1Clip, true, 0.5f);
 			}
 
-			await _ui.FadeOut();
+			_ = _ui.FadeOut();
 
 			_state.Running = true;
 
@@ -38,11 +71,55 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Confirm.started += ConfirmStarted;
 			_controls.Gameplay.Cancel.started += CancelStarted;
 			_controls.Global.Enable();
+
+			while (true)
+			{
+				await UniTask.NextFrame();
+
+				if (_state.Running == false)
+				{
+					continue;
+				}
+
+				if (_state.PlayerDidAct)
+				{
+					continue;
+				}
+
+				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
+				if (moveInput.magnitude > 0f)
+				{
+					var entity = _state.Entities[0];
+
+					var destination = entity.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+					var destinationTile = _state.Level.Ground.GetTile(destination);
+					if (destinationTile == null)
+					{
+						UnityEngine.Debug.Log($"Can't move there ({destination}).");
+						continue;
+					}
+
+					UnityEngine.Debug.Log("Player moved.");
+					entity.GridPosition = destination;
+					_state.PlayerDidAct = true;
+
+					await UniTask.Delay(200);
+
+					_state.PlayerDidAct = false;
+				}
+			}
 		}
 
 		public override void Tick()
 		{
 			base.Tick();
+
+			var cellOffset = new Vector3(0.5f, 0.5f);
+			foreach (var entity in _state.Entities)
+			{
+				// TODO: LERP this, probably
+				entity.transform.position = entity.GridPosition + cellOffset;
+			}
 
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
@@ -69,10 +146,7 @@ namespace Game.Core.StateMachines.Game
 				return;
 			}
 
-			if (_state.Player != null)
-			{
-				HandleInput(_state.Player);
-			}
+			// var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
 
 			_confirmWasPressedThisFrame = false;
 			_cancelWasPressedThisFrame = false;
@@ -106,7 +180,11 @@ namespace Game.Core.StateMachines.Game
 
 			_ui.HideGameplay();
 
-			GameObject.Destroy(_state.Player.gameObject);
+			foreach (var entity in _state.Entities)
+			{
+				GameObject.Destroy(entity.gameObject);
+			}
+			_state.Entities.Clear();
 		}
 
 		private void ConfirmStarted(InputAction.CallbackContext context) => _confirmWasPressedThisFrame = true;
@@ -121,8 +199,6 @@ namespace Game.Core.StateMachines.Game
 
 		private async void Defeat()
 		{
-			var position = _state.Player.transform.position;
-
 			if (_config.PlayerDeathClip)
 			{
 				_ = _audioPlayer.PlaySoundEffect(_config.PlayerDeathClip);
@@ -130,23 +206,11 @@ namespace Game.Core.StateMachines.Game
 
 			_state.Running = false;
 
-			var playerDeathPrefab = Resources.Load("Player Death");
-			if (playerDeathPrefab)
-			{
-				GameObject.Instantiate(playerDeathPrefab, position, Quaternion.identity);
-			}
-
 			await UniTask.Delay(1000);
 
-			_state.Player.transform.position = GameObject.Find("Player Spawn").transform.position;
 			_state.Running = true;
 
 			_fsm.Fire(GameFSM.Triggers.Lost);
-		}
-
-		private void HandleInput(Entity entity)
-		{
-			var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
 		}
 	}
 }

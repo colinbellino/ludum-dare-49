@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Tilemaps;
 
 namespace Game.Core
 {
@@ -9,6 +12,9 @@ namespace Game.Core
 		[Header("Debug")]
 		public bool DebugFSM;
 		public int LockFPS = 60;
+
+		[Header("Grid")]
+		public TileToEntity TileToEntity;
 
 		[Header("Audio")]
 		public AudioMixer AudioMixer;
@@ -23,4 +29,7 @@ namespace Game.Core
 		public AudioClip MenuConfirmClip;
 		public AudioClip PlayerDeathClip;
 	}
+
+	[Serializable]
+	public class TileToEntity : SerializableDictionary<TileBase, Entity> { }
 }
