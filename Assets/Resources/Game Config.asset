@@ -17,8 +17,15 @@ MonoBehaviour:
   TileToEntity:
     m_keys:
     - {fileID: 11400000, guid: ff80212d9e3db4c748172b1107184293, type: 2}
+    - {fileID: 11400000, guid: 7ba1fe20905ef4758b8810baff19a4c2, type: 2}
     m_values:
     - {fileID: 3510502540373367279, guid: 59510419692fd415dbc2e3cab5c9b79e, type: 3}
+    - {fileID: 3510502540373367279, guid: c4564851f74ab4bd689d7d7a34e2ae06, type: 3}
+  TileToInfo:
+    m_keys:
+    - {fileID: 11400000, guid: a7d431761a9b4440fb9a9bd502f50d0c, type: 2}
+    m_values:
+    - CanWalk: 1
   AudioMixer: {fileID: 24100000, guid: c00711887b3714031932c58a1ac16396, type: 2}
   MusicAudioMixerGroup: {fileID: -1804572004088458924, guid: c00711887b3714031932c58a1ac16396, type: 2}
   SoundsAudioMixerGroup: {fileID: 3053297684183750015, guid: c00711887b3714031932c58a1ac16396, type: 2}

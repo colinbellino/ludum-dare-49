@@ -45,7 +45,7 @@ namespace Game.Core.StateMachines.Game
 								_config.TileToEntity[tile],
 								_state.Level.Entities.transform
 							);
-							entity.GridPosition = gridPosition;
+							entity.GridPosition = bounds.min + gridPosition;
 							_state.Entities.Add(entity);
 							_state.Level.Entities.DeleteCells(gridPosition, new Vector3Int(1, 1, 1));
 						}
@@ -81,31 +81,51 @@ namespace Game.Core.StateMachines.Game
 					continue;
 				}
 
-				if (_state.PlayerDidAct)
+				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
+				if (moveInput.magnitude == 0f)
 				{
 					continue;
 				}
 
-				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
-				if (moveInput.magnitude > 0f)
+				foreach (var entity in _state.Entities)
 				{
-					var entity = _state.Entities[0];
-
-					var destination = entity.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-					var destinationTile = _state.Level.Ground.GetTile(destination);
-					if (destinationTile == null)
+					if (entity.ControlledByPlayer)
 					{
-						UnityEngine.Debug.Log($"Can't move there ({destination}).");
-						continue;
+						if (_state.PlayerDidAct)
+						{
+							continue;
+						}
+
+						var destination = entity.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+						if (MoveTo(entity, destination))
+						{
+							_state.PlayerDidAct = true;
+							await UniTask.Delay(200);
+							_state.PlayerDidAct = false;
+						}
 					}
+					else
+					{
+						// TODO: AI Stuff here
 
-					UnityEngine.Debug.Log("Player moved.");
-					entity.GridPosition = destination;
-					_state.PlayerDidAct = true;
+						var randomDirection = new Vector3Int(0, 0, 0);
+						if (_state.Random.NextBool())
+						{
+							randomDirection.x = _state.Random.NextBool() ? -1 : 1;
+						}
+						else
+						{
+							randomDirection.y = _state.Random.NextBool() ? -1 : 1;
+						}
 
-					await UniTask.Delay(200);
-
-					_state.PlayerDidAct = false;
+						var destination = entity.GridPosition + randomDirection;
+						if (MoveTo(entity, destination))
+						{
+							// _state.PlayerDidAct = true;
+							// await UniTask.Delay(200);
+							// _state.PlayerDidAct = false;
+						}
+					}
 				}
 			}
 		}
@@ -211,6 +231,29 @@ namespace Game.Core.StateMachines.Game
 			_state.Running = true;
 
 			_fsm.Fire(GameFSM.Triggers.Lost);
+		}
+
+		private bool MoveTo(Entity entity, Vector3Int destination)
+		{
+			var destinationTile = _state.Level.Ground.GetTile(destination);
+			if (destinationTile == null)
+			{
+				UnityEngine.Debug.Log($"Can't move there ({destination}).");
+				return false;
+			}
+
+			if (_config.TileToInfo.TryGetValue(destinationTile, out var destinationTileInfo))
+			{
+				if (destinationTileInfo.CanWalk == false)
+				{
+					UnityEngine.Debug.Log($"Can't move there ({destination}).");
+					return false;
+				}
+			}
+
+			// UnityEngine.Debug.Log("Entity moved.");
+			entity.GridPosition = destination;
+			return true;
 		}
 	}
 }
