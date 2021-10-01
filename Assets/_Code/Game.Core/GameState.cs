@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+using NesScripts.Controls.PathFind;
 
 namespace Game.Core
 {
@@ -17,5 +17,7 @@ namespace Game.Core
 		public Level Level;
 		public bool PlayerDidAct;
 		public List<Entity> Entities = new List<Entity>(30);
+
+		public GridData WalkableGrid;
 	}
 }

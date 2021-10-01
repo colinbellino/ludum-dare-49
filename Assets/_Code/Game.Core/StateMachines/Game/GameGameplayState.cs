@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
+﻿using Cysharp.Threading.Tasks;
+using NesScripts.Controls.PathFind;
+using NesScripts.Controls.PathFind;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
@@ -23,31 +21,51 @@ namespace Game.Core.StateMachines.Game
 
 			// Load current level
 			{
-				// TODO(colin): Get the current level from GameConfig
-				_state.Level = GameObject.Instantiate(Resources.Load<Level>("Levels/LevelTemplate"));
-				var bounds = _state.Level.Entities.cellBounds;
-				var tiles = _state.Level.Entities.GetTilesBlock(bounds);
-				for (int x = 0; x < bounds.size.x; x++)
+				// TODO(colin): Get the current level from the game state
+				_state.Level = Object.Instantiate(Resources.Load<Level>("Levels/LevelTemplate"));
+
+				Assert.AreNotEqual(_state.Level.Ground.origin, Vector3Int.zero,
+					"Make sure the tilemap's origin is at (0,0,0).");
+
+				// Generate grid for walkable tiles
+				var tilemap = _state.Level.Ground;
+				var walkableTiles = new bool[tilemap.size.x, tilemap.size.y];
+				for (var x = 0; x < tilemap.size.x - 0; x++)
 				{
-					for (int y = 0; y < bounds.size.y; y++)
+					for (var y = 0; y < tilemap.size.y - 0; y++)
 					{
-						var tile = tiles[x + y * bounds.size.x];
-						var gridPosition = new Vector3Int(x, y, 0);
+						var position = new Vector3Int(x, y, 0);
+						walkableTiles[x, y] = IsTileWalkable(tilemap.GetTile(position));
+					}
+				}
+				_state.WalkableGrid = new GridData(walkableTiles);
 
-						if (tile == null)
+				// Spawn entities
+				{
+					var bounds = _state.Level.Entities.cellBounds;
+					var tiles = _state.Level.Entities.GetTilesBlock(bounds);
+					for (int x = 0; x < bounds.size.x; x++)
+					{
+						for (int y = 0; y < bounds.size.y; y++)
 						{
-							continue;
-						}
+							var tile = tiles[x + y * bounds.size.x];
+							var gridPosition = new Vector3Int(x, y, 0);
 
-						if (_config.TileToEntity.ContainsKey(tile))
-						{
-							var entity = GameObject.Instantiate(
-								_config.TileToEntity[tile],
-								_state.Level.Entities.transform
-							);
-							entity.GridPosition = bounds.min + gridPosition;
-							_state.Entities.Add(entity);
-							_state.Level.Entities.DeleteCells(gridPosition, new Vector3Int(1, 1, 1));
+							if (tile == null)
+							{
+								continue;
+							}
+
+							if (_config.TileToEntity.ContainsKey(tile))
+							{
+								var entity = Object.Instantiate(
+									_config.TileToEntity[tile],
+									_state.Level.Entities.transform
+								);
+								entity.GridPosition = bounds.min + gridPosition;
+								_state.Entities.Add(entity);
+								_state.Level.Entities.DeleteCells(gridPosition, new Vector3Int(1, 1, 1));
+							}
 						}
 					}
 				}
@@ -106,19 +124,10 @@ namespace Game.Core.StateMachines.Game
 					}
 					else
 					{
-						// TODO: AI Stuff here
+						var target = _state.Entities[0];
+						var path = Pathfinding.FindPath(_state.WalkableGrid, entity.GridPosition, target.GridPosition, Pathfinding.DistanceType.Manhattan);
 
-						var randomDirection = new Vector3Int(0, 0, 0);
-						if (_state.Random.NextBool())
-						{
-							randomDirection.x = _state.Random.NextBool() ? -1 : 1;
-						}
-						else
-						{
-							randomDirection.y = _state.Random.NextBool() ? -1 : 1;
-						}
-
-						var destination = entity.GridPosition + randomDirection;
+						var destination = path[0];
 						if (MoveTo(entity, destination))
 						{
 							// _state.PlayerDidAct = true;
@@ -254,6 +263,22 @@ namespace Game.Core.StateMachines.Game
 			// UnityEngine.Debug.Log("Entity moved.");
 			entity.GridPosition = destination;
 			return true;
+		}
+
+		private bool IsTileWalkable(TileBase tile)
+		{
+			if (tile == null)
+			{
+				return false;
+			}
+
+			var hasInfo = _config.TileToInfo.TryGetValue(tile, out var destinationTileInfo);
+			if (hasInfo && destinationTileInfo.CanWalk == true)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }
