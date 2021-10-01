@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
@@ -15,6 +14,7 @@ namespace Game.Core
 
 		[Header("Grid")]
 		public TileToEntity TileToEntity;
+		public TileToInfo TileToInfo;
 
 		[Header("Audio")]
 		public AudioMixer AudioMixer;
@@ -32,4 +32,13 @@ namespace Game.Core
 
 	[Serializable]
 	public class TileToEntity : SerializableDictionary<TileBase, Entity> { }
+
+	[Serializable]
+	public class TileToInfo : SerializableDictionary<TileBase, TileInfo> { }
+
+	[Serializable]
+	public class TileInfo
+	{
+		public bool CanWalk;
+	}
 }
