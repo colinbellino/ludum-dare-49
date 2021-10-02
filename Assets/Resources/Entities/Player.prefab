@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1707755975674792047, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
+  m_Sprite: {fileID: -5808595207856661743, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -274,10 +274,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6caa34a526c050243b29f21524fc2ec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 0}
-  Controller: {fileID: 0}
   Animator: {fileID: 3510502541799688830}
-  SpriteRenderer: {fileID: 0}
+  SpriteRenderer: {fileID: 6662242043406632514}
   AudioSource: {fileID: 3510502540486019954}
   ControlledByPlayer: 1
   GridPosition: {x: 0, y: 0, z: 0}
+  AffectedByAnger: 1
+  AngerProgress: 0
+  AngerState: 0

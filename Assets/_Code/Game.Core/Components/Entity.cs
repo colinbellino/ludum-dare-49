@@ -5,8 +5,6 @@ namespace Game.Core
 {
 	public class Entity : MonoBehaviour
 	{
-		[SerializeField] public Rigidbody2D Rigidbody;
-		[SerializeField] public CharacterController2D Controller;
 		[SerializeField] public Animator Animator;
 		[SerializeField] public SpriteRenderer SpriteRenderer;
 		[SerializeField] public AudioSource AudioSource;
@@ -14,5 +12,11 @@ namespace Game.Core
 		[SerializeField] public bool ControlledByPlayer;
 
 		[HideInInspector] public Vector3Int GridPosition;
+
+		[SerializeField] public bool AffectedByAnger;
+		[HideInInspector] public int AngerProgress;
+		[HideInInspector] public AngerStates AngerState;
 	}
+
+	public enum AngerStates { Calm, Angry }
 }

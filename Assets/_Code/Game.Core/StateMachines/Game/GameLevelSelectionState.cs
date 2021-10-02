@@ -13,8 +13,13 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+#if UNITY_EDITOR
 			_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
+
+			await UniTask.Delay(500);
+			_fsm.Fire(GameFSM.Triggers.LevelSelected);
+#endif
 		}
 
 		public override void Tick()
