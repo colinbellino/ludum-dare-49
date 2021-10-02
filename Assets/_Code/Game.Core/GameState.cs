@@ -13,11 +13,10 @@ namespace Game.Core
 		public bool Running;
 		public bool AssistMode;
 		public float StepSoundTimestamp;
-
+		public int CurrentLevelIndex;
 		public Level Level;
 		public bool PlayerDidAct;
 		public List<Entity> Entities = new List<Entity>(30);
-
 		public GridData WalkableGrid;
 	}
 }
