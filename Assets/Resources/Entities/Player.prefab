@@ -278,11 +278,16 @@ MonoBehaviour:
   SpriteRenderer: {fileID: 6662242043406632514}
   AudioSource: {fileID: 3510502540486019954}
   ControlledByPlayer: 1
+  MoveTowardsPlayer: 0
+  Placed: 0
   GridPosition: {x: 0, y: 0, z: 0}
+  Moving: 0
+  MoveSpeed: 4
+  MoveT: 0
+  MoveStartTimestamp: 0
   AffectedByAnger: 1
   AngerProgress: 0
   AngerState: 1
   Trigger: 0
   TriggerState: 0
   TriggerAction: 0
-  MoveTowardsPlayer: 0
