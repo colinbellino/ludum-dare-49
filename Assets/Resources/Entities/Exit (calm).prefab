@@ -289,8 +289,9 @@ MonoBehaviour:
   AngerProgress: 0
   AngerState: 0
   Trigger: 1
-  TriggerState: 2
+  TriggerState: 1
   TriggerAction: 1
+  ExitAudioClip: {fileID: 8300000, guid: e405fb94bae2db141aa4e0ae4016c367, type: 3}
   BreaksAt: 1
   BreakableProgress: 0
   Breaking: 0

@@ -239,7 +239,6 @@ namespace Game.Core.StateMachines.Game
 
 			if (_resetWasPressedThisFrame)
 			{
-				UnityEngine.Debug.Log("_resetWasPressedThisFrame");
 				_state.TriggerRetryAt = Time.time;
 			}
 
@@ -377,8 +376,12 @@ namespace Game.Core.StateMachines.Game
 						{
 							if (entity.ControlledByPlayer)
 							{
-								UnityEngine.Debug.Log("Exit reached!");
-								_state.TriggerExitAt = Time.time + 0.5f;
+								if (entityAtDestination.ExitAudioClip)
+								{
+									_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
+								}
+
+								_state.TriggerExitAt = Time.time + 1f;
 							}
 						}
 						break;

@@ -32,6 +32,9 @@ namespace Game.Core
 		[SerializeField] public AngerStates TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
 
+		[Header("Triggers")]
+		[SerializeField] public AudioClip ExitAudioClip;
+
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;
 		[HideInInspector] public int BreakableProgress;
