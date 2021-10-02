@@ -12,7 +12,7 @@ namespace Game.Core
 	{
 		[Header("Debug")]
 		[SerializeField] private GameObject _debugRoot;
-		[SerializeField] private Text _debugText;
+		[SerializeField] private TMP_Text _debugText;
 		[Header("Gameplay")]
 		[SerializeField] private GameObject _gameplayRoot;
 		[SerializeField] public TMP_Text TimerText;
