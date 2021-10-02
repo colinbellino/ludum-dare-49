@@ -11,6 +11,7 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _confirmWasPressedThisFrame;
 		private bool _cancelWasPressedThisFrame;
+		private bool _resetWasPressedThisFrame;
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -52,36 +53,8 @@ namespace Game.Core.StateMachines.Game
 				_state.WalkableGrid = new GridData(walkableTiles);
 
 				// Spawn entities
-				{
-					var bounds = _state.Level.Entities.cellBounds;
-					var tiles = _state.Level.Entities.GetTilesBlock(bounds);
-					for (int x = 0; x < bounds.size.x; x++)
-					{
-						for (int y = 0; y < bounds.size.y; y++)
-						{
-							var tile = tiles[x + y * bounds.size.x];
-							var gridPosition = new Vector3Int(x, y, 0);
-
-							if (tile == null)
-							{
-								continue;
-							}
-
-							if (_config.TileToEntity.ContainsKey(tile))
-							{
-								// UnityEngine.Debug.Log("_config.TileToEntity[tile] " + _config.TileToEntity[tile]);
-								// UnityEngine.Debug.Log("_state.Level.Entities.transform " + _state.Level.Entities.transform);
-								var entity = Object.Instantiate(
-									_config.TileToEntity[tile],
-									_state.Level.Entities.transform
-								);
-								entity.GridPosition = bounds.min + gridPosition;
-								_state.Entities.Add(entity);
-								_state.Level.Entities.DeleteCells(gridPosition, new Vector3Int(1, 1, 1));
-							}
-						}
-					}
-				}
+				SpawnEntitiesFromTilemap(_state.Level.Ground);
+				SpawnEntitiesFromTilemap(_state.Level.Entities);
 			}
 
 			_state.Random = new Unity.Mathematics.Random();
@@ -101,6 +74,7 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Confirm.started += ConfirmStarted;
 			_controls.Gameplay.Cancel.started += CancelStarted;
+			_controls.Gameplay.Reset.started += ResetStarted;
 			_controls.Global.Enable();
 
 			while (true)
@@ -144,9 +118,60 @@ namespace Game.Core.StateMachines.Game
 							);
 							MoveTo(entity, path[0]);
 						}
+
+						if (entity.Breaking)
+						{
+							entity.Animator.Play("Breaking");
+							entity.Trigger = false;
+							entity.Breaking = false;
+							entity.BreakableProgress = 0;
+
+
+							var entityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
+							if (entityAtPosition)
+							{
+								entityAtPosition.Animator.Play("Fall");
+								await UniTask.Delay(500);
+
+								if (entityAtPosition.ControlledByPlayer)
+								{
+									_state.TriggerRetryAt = Time.time + 0.5f;
+								}
+							}
+						}
 					}
 
 					_state.PlayerDidAct = false;
+				}
+			}
+		}
+
+		private void SpawnEntitiesFromTilemap(Tilemap tilemap)
+		{
+			var bounds = tilemap.cellBounds;
+			var tiles = tilemap.GetTilesBlock(bounds);
+			for (int x = 0; x < bounds.size.x; x++)
+			{
+				for (int y = 0; y < bounds.size.y; y++)
+				{
+					var tile = tiles[x + y * bounds.size.x];
+					var gridPosition = new Vector3Int(x, y, 0);
+
+					if (tile == null)
+					{
+						continue;
+					}
+
+					if (_config.TileToEntity.ContainsKey(tile))
+					{
+						var entity = Object.Instantiate(
+							_config.TileToEntity[tile],
+							tilemap.transform
+						);
+						entity.GridPosition = bounds.min + gridPosition;
+						_state.Entities.Add(entity);
+						tilemap.SetTile(gridPosition, null);
+					}
 				}
 			}
 		}
@@ -205,22 +230,37 @@ namespace Game.Core.StateMachines.Game
 				{
 					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.red;
 				}
+
+				if (entity.BreakableProgress > 0)
+				{
+					entity.Animator.Play("Damaged");
+				}
 			}
 
-			if (_state.ExitReached)
+			if (_resetWasPressedThisFrame)
 			{
-				_state.ExitReached = false;
+				UnityEngine.Debug.Log("_resetWasPressedThisFrame");
+				_state.TriggerRetryAt = Time.time;
+			}
+
+			if (_state.TriggerExitAt > 0 && Time.time >= _state.TriggerExitAt)
+			{
+				_state.TriggerExitAt = 0;
 				_state.CurrentLevelIndex += 1;
 
-				await UniTask.Delay(500);
+				_state.Running = false;
 				_fsm.Fire(GameFSM.Triggers.NextLevel);
+			}
+
+			if (_state.TriggerRetryAt > 0 && Time.time >= _state.TriggerRetryAt)
+			{
+				_state.TriggerRetryAt = 0;
+				_state.Running = false;
+				_fsm.Fire(GameFSM.Triggers.Retry);
 			}
 
 			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 			_ui.GameplayText.text = $"Progress: {player.AngerProgress}\nState: {player.AngerState}";
-
-			_confirmWasPressedThisFrame = false;
-			_cancelWasPressedThisFrame = false;
 
 			if (Utils.IsDevBuild())
 			{
@@ -234,6 +274,10 @@ namespace Game.Core.StateMachines.Game
 					Defeat();
 				}
 			}
+
+			_confirmWasPressedThisFrame = false;
+			_cancelWasPressedThisFrame = false;
+			_resetWasPressedThisFrame = false;
 		}
 
 		public override async UniTask Exit()
@@ -245,12 +289,12 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Disable();
 			_controls.Gameplay.Confirm.started -= ConfirmStarted;
 			_controls.Gameplay.Cancel.started -= CancelStarted;
+			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
 
 			await _ui.FadeIn(Color.white);
 
 			_ui.HideGameplay();
-
 
 			foreach (var entity in _state.Entities)
 			{
@@ -258,7 +302,8 @@ namespace Game.Core.StateMachines.Game
 			}
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
-			_state.ExitReached = false;
+			_state.TriggerExitAt = 0;
+			_state.TriggerRetryAt = 0;
 			_state.PlayerDidAct = false;
 			Object.Destroy(_state.Level.gameObject);
 			_state.Level = null;
@@ -267,6 +312,8 @@ namespace Game.Core.StateMachines.Game
 		private void ConfirmStarted(InputAction.CallbackContext context) => _confirmWasPressedThisFrame = true;
 
 		private void CancelStarted(InputAction.CallbackContext context) => _cancelWasPressedThisFrame = true;
+
+		private void ResetStarted(InputAction.CallbackContext context) => _resetWasPressedThisFrame = true;
 
 		private void Victory()
 		{
@@ -293,13 +340,15 @@ namespace Game.Core.StateMachines.Game
 		private bool MoveTo(Entity entity, Vector3Int destination)
 		{
 			var destinationTile = _state.Level.Ground.GetTile(destination);
-			if (destinationTile == null)
+			var entityAtDestination = _state.Entities.Find(entity => entity.GridPosition == destination);
+
+			if (destinationTile == null && entityAtDestination == null)
 			{
 				UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
 				return false;
 			}
 
-			if (_config.TileToInfo.TryGetValue(destinationTile, out var destinationTileInfo))
+			if (destinationTile && _config.TileToInfo.TryGetValue(destinationTile, out var destinationTileInfo))
 			{
 				if (destinationTileInfo.Walkable == false)
 				{
@@ -308,7 +357,6 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			var entityAtDestination = _state.Entities.Find(entity => entity.GridPosition == destination);
 			if (entityAtDestination)
 			{
 				if (entityAtDestination.Trigger == false)
@@ -317,7 +365,7 @@ namespace Game.Core.StateMachines.Game
 					return false;
 				}
 
-				if (entity.AngerState != entityAtDestination.TriggerState)
+				if (entityAtDestination.TriggerState != AngerStates.None && entity.AngerState.HasFlag(entityAtDestination.TriggerState) == false)
 				{
 					UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
 					return false;
@@ -330,7 +378,17 @@ namespace Game.Core.StateMachines.Game
 							if (entity.ControlledByPlayer)
 							{
 								UnityEngine.Debug.Log("Exit reached!");
-								_state.ExitReached = true;
+								_state.TriggerExitAt = Time.time + 0.5f;
+							}
+						}
+						break;
+					case TriggerActions.Break:
+						{
+							entityAtDestination.BreakableProgress += 1;
+
+							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
+							{
+								entityAtDestination.Breaking = true;
 							}
 						}
 						break;
@@ -345,7 +403,7 @@ namespace Game.Core.StateMachines.Game
 			entity.MoveT = 0;
 			entity.Moving = true;
 
-			if (_state.ExitReached == false)
+			if (_state.TriggerExitAt == 0)
 			{
 				if (entity.AffectedByAnger)
 				{

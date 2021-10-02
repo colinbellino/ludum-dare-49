@@ -31,9 +31,14 @@ namespace Game.Core
 		[SerializeField] public bool Trigger;
 		[SerializeField] public AngerStates TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
+
+		[Header("Break")]
+		[SerializeField] public int BreaksAt = 1;
+		[HideInInspector] public int BreakableProgress;
+		[HideInInspector] public bool Breaking;
 	}
 
 	[Flags] public enum AngerStates { None, Calm, Angry }
 
-	public enum TriggerActions { None, Exit }
+	public enum TriggerActions { None, Exit, Break }
 }

@@ -18,6 +18,7 @@ namespace Game.Core
 		public bool PlayerDidAct;
 		public List<Entity> Entities = new List<Entity>(30);
 		public GridData WalkableGrid;
-		public bool ExitReached;
+		public float TriggerExitAt;
+		public float TriggerRetryAt;
 	}
 }

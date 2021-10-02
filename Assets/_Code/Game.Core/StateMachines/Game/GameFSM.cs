@@ -42,7 +42,8 @@ namespace Game.Core.StateMachines.Game
 			_machine.Configure(States.Gameplay)
 				.Permit(Triggers.Won, States.Victory)
 				.Permit(Triggers.Quit, States.Quit)
-				.PermitReentry(Triggers.NextLevel);
+				.PermitReentry(Triggers.NextLevel)
+				.PermitReentry(Triggers.Retry);
 
 			_machine.Configure(States.Victory)
 				.Permit(Triggers.Retry, States.Gameplay)
