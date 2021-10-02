@@ -17,6 +17,7 @@ MonoBehaviour:
   AllLevels:
   - {fileID: 7894139527700584289, guid: 61058a669b07bc6468ead2677049a936, type: 3}
   - {fileID: 7894139527700584289, guid: 7fb5ba1fd593b9841b3ad8109b8a9dc3, type: 3}
+  - {fileID: 7894139527700584289, guid: 44c318d5ea52248358e49c9a68fd3874, type: 3}
   TileToEntity:
     m_keys:
     - {fileID: 11400000, guid: ff80212d9e3db4c748172b1107184293, type: 2}
@@ -31,10 +32,10 @@ MonoBehaviour:
   TileToInfo:
     m_keys:
     - {fileID: 11400000, guid: a7d431761a9b4440fb9a9bd502f50d0c, type: 2}
-    - {fileID: 11400000, guid: 13a5888ff1d2c4eb5bd39575c3ece25e, type: 2}
+    - {fileID: 11400000, guid: a00e2a9d22c32f947aa0fa04029caa7a, type: 2}
     m_values:
     - Walkable: 1
-    - Walkable: 0
+    - Walkable: 1
   AudioMixer: {fileID: 24100000, guid: c00711887b3714031932c58a1ac16396, type: 2}
   MusicAudioMixerGroup: {fileID: -1804572004088458924, guid: c00711887b3714031932c58a1ac16396, type: 2}
   SoundsAudioMixerGroup: {fileID: 3053297684183750015, guid: c00711887b3714031932c58a1ac16396, type: 2}

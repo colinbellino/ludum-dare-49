@@ -11,7 +11,6 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _confirmWasPressedThisFrame;
 		private bool _cancelWasPressedThisFrame;
-		private bool _exitReached;
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -252,6 +251,7 @@ namespace Game.Core.StateMachines.Game
 
 			_ui.HideGameplay();
 
+
 			foreach (var entity in _state.Entities)
 			{
 				Object.Destroy(entity.gameObject);
@@ -260,6 +260,7 @@ namespace Game.Core.StateMachines.Game
 			_state.WalkableGrid = null;
 			_state.ExitReached = false;
 			_state.PlayerDidAct = false;
+			Object.Destroy(_state.Level.gameObject);
 			_state.Level = null;
 		}
 
@@ -294,7 +295,7 @@ namespace Game.Core.StateMachines.Game
 			var destinationTile = _state.Level.Ground.GetTile(destination);
 			if (destinationTile == null)
 			{
-				UnityEngine.Debug.Log($"Can't move to {destination} (invalid tile).");
+				UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
 				return false;
 			}
 
@@ -337,21 +338,25 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
+
 			// UnityEngine.Debug.Log("Entity moved.");
 			entity.GridPosition = destination;
 			entity.MoveStartTimestamp = Time.time;
 			entity.MoveT = 0;
 			entity.Moving = true;
 
-			if (entity.AffectedByAnger)
+			if (_state.ExitReached == false)
 			{
-				entity.AngerProgress += 1;
-				if (entity.AngerProgress >= 3)
+				if (entity.AffectedByAnger)
 				{
-					entity.AngerProgress = 0;
-					entity.AngerState = (entity.AngerState == AngerStates.Calm)
-						? AngerStates.Angry
-						: AngerStates.Calm;
+					entity.AngerProgress += 1;
+					if (entity.AngerProgress >= 3)
+					{
+						entity.AngerProgress = 0;
+						entity.AngerState = (entity.AngerState == AngerStates.Calm)
+							? AngerStates.Angry
+							: AngerStates.Calm;
+					}
 				}
 			}
 
