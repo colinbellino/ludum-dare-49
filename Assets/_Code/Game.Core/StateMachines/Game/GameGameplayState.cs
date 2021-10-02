@@ -11,6 +11,7 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _confirmWasPressedThisFrame;
 		private bool _cancelWasPressedThisFrame;
+		private bool _exitReached;
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -25,9 +26,17 @@ namespace Game.Core.StateMachines.Game
 
 			// Load current level
 			{
-				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
+				if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
+				{
+					UnityEngine.Debug.Log("Last level reached!");
+					_fsm.Fire(GameFSM.Triggers.Won);
+					return;
+				}
 
-				Assert.AreNotEqual(_state.Level.Ground.origin, Vector3Int.zero,
+				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
+				UnityEngine.Debug.Log("Loaded level: " + _state.Level.name);
+
+				Assert.AreEqual(_state.Level.Ground.origin, Vector3Int.zero,
 					"Make sure the tilemap's origin is at (0,0,0).");
 
 				// Generate grid for walkable tiles
@@ -102,58 +111,48 @@ namespace Game.Core.StateMachines.Game
 					continue;
 				}
 
+				if (_state.PlayerDidAct)
+				{
+					continue;
+				}
+
 				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
 				if (moveInput.magnitude == 0f)
 				{
 					continue;
 				}
 
-				foreach (var entity in _state.Entities)
-				{
-					if (entity.ControlledByPlayer)
-					{
-						if (_state.PlayerDidAct)
-						{
-							continue;
-						}
+				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
-						var destination = entity.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-						if (MoveTo(entity, destination))
+				var destination = player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+				var playerDidMove = MoveTo(player, destination);
+				if (playerDidMove)
+				{
+					_state.PlayerDidAct = true;
+
+					await UniTask.Delay(200);
+
+					foreach (var entity in _state.Entities)
+					{
+						if (entity.MoveTowardsPlayer)
 						{
-							_state.PlayerDidAct = true;
-							await UniTask.Delay(200);
-							_state.PlayerDidAct = false;
+							var path = Pathfinding.FindPath(
+								_state.WalkableGrid,
+								entity.GridPosition, player.GridPosition,
+								Pathfinding.DistanceType.Manhattan
+							);
+							MoveTo(entity, path[0]);
 						}
 					}
-					else
-					{
-						var target = _state.Entities[0];
-						var path = Pathfinding.FindPath(_state.WalkableGrid, entity.GridPosition, target.GridPosition, Pathfinding.DistanceType.Manhattan);
-						var destination = path[0];
-						MoveTo(entity, path[0]);
-					}
+
+					_state.PlayerDidAct = false;
 				}
 			}
 		}
 
-		public override void Tick()
+		public override async void Tick()
 		{
 			base.Tick();
-
-			var cellOffset = new Vector3(0.5f, 0.5f);
-			foreach (var entity in _state.Entities)
-			{
-				// TODO: LERP this, probably
-				entity.transform.position = entity.GridPosition + cellOffset;
-
-				if (entity.AffectedByAnger)
-				{
-					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.red;
-				}
-			}
-
-			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
-			_ui.GameplayText.text = $"Progress: {player.AngerProgress}\nState: {player.AngerState}";
 
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
@@ -180,7 +179,29 @@ namespace Game.Core.StateMachines.Game
 				return;
 			}
 
-			// var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
+			var cellOffset = new Vector3(0.5f, 0.5f);
+			foreach (var entity in _state.Entities)
+			{
+				// TODO: LERP this, probably
+				entity.transform.position = entity.GridPosition + cellOffset;
+
+				if (entity.AffectedByAnger)
+				{
+					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.red;
+				}
+			}
+
+			if (_state.ExitReached)
+			{
+				_state.ExitReached = false;
+				_state.CurrentLevelIndex += 1;
+
+				await UniTask.Delay(500);
+				_fsm.Fire(GameFSM.Triggers.NextLevel);
+			}
+
+			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+			_ui.GameplayText.text = $"Progress: {player.AngerProgress}\nState: {player.AngerState}";
 
 			_confirmWasPressedThisFrame = false;
 			_cancelWasPressedThisFrame = false;
@@ -216,9 +237,13 @@ namespace Game.Core.StateMachines.Game
 
 			foreach (var entity in _state.Entities)
 			{
-				GameObject.Destroy(entity.gameObject);
+				Object.Destroy(entity.gameObject);
 			}
 			_state.Entities.Clear();
+			_state.WalkableGrid = null;
+			_state.ExitReached = false;
+			_state.PlayerDidAct = false;
+			_state.Level = null;
 		}
 
 		private void ConfirmStarted(InputAction.CallbackContext context) => _confirmWasPressedThisFrame = true;
@@ -252,16 +277,46 @@ namespace Game.Core.StateMachines.Game
 			var destinationTile = _state.Level.Ground.GetTile(destination);
 			if (destinationTile == null)
 			{
-				UnityEngine.Debug.Log($"Can't move there ({destination}).");
+				UnityEngine.Debug.Log($"Can't move to {destination} (invalid tile).");
 				return false;
 			}
 
 			if (_config.TileToInfo.TryGetValue(destinationTile, out var destinationTileInfo))
 			{
-				if (destinationTileInfo.CanWalk == false)
+				if (destinationTileInfo.Walkable == false)
 				{
-					UnityEngine.Debug.Log($"Can't move there ({destination}).");
+					UnityEngine.Debug.Log($"Can't move to {destination} (not walkable).");
 					return false;
+				}
+			}
+
+			var entityAtDestination = _state.Entities.Find(entity => entity.GridPosition == destination);
+			if (entityAtDestination)
+			{
+				if (entityAtDestination.Trigger == false)
+				{
+					UnityEngine.Debug.Log($"Can't move to {destination} (occupied).");
+					return false;
+				}
+
+				if (entity.AngerState != entityAtDestination.TriggerState)
+				{
+					UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
+					return false;
+				}
+
+				switch (entityAtDestination.TriggerAction)
+				{
+					case TriggerActions.Exit:
+						{
+							if (entity.ControlledByPlayer)
+							{
+								UnityEngine.Debug.Log("Exit reached!");
+								_state.ExitReached = true;
+							}
+						}
+						break;
+					default: break;
 				}
 			}
 
@@ -291,7 +346,7 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			var hasInfo = _config.TileToInfo.TryGetValue(tile, out var destinationTileInfo);
-			if (hasInfo && destinationTileInfo.CanWalk == true)
+			if (hasInfo && destinationTileInfo.Walkable == true)
 			{
 				return true;
 			}

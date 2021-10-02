@@ -1,4 +1,4 @@
-using Prime31;
+using System;
 using UnityEngine;
 
 namespace Game.Core
@@ -15,8 +15,16 @@ namespace Game.Core
 
 		[SerializeField] public bool AffectedByAnger;
 		[HideInInspector] public int AngerProgress;
-		[HideInInspector] public AngerStates AngerState;
+		[SerializeField] public AngerStates AngerState;
+
+		[SerializeField] public bool Trigger;
+		[SerializeField] public AngerStates TriggerState;
+		[SerializeField] public TriggerActions TriggerAction;
+
+		[SerializeField] public bool MoveTowardsPlayer;
 	}
 
-	public enum AngerStates { Calm, Angry }
+	[Flags] public enum AngerStates { None, Calm, Angry }
+
+	public enum TriggerActions { None, Exit }
 }
