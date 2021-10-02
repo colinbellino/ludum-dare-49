@@ -70,6 +70,8 @@ namespace Game.Core.StateMachines.Game
 
 							if (_config.TileToEntity.ContainsKey(tile))
 							{
+								// UnityEngine.Debug.Log("_config.TileToEntity[tile] " + _config.TileToEntity[tile]);
+								// UnityEngine.Debug.Log("_state.Level.Entities.transform " + _state.Level.Entities.transform);
 								var entity = Object.Instantiate(
 									_config.TileToEntity[tile],
 									_state.Level.Entities.transform
@@ -182,8 +184,23 @@ namespace Game.Core.StateMachines.Game
 			var cellOffset = new Vector3(0.5f, 0.5f);
 			foreach (var entity in _state.Entities)
 			{
-				// TODO: LERP this, probably
-				entity.transform.position = entity.GridPosition + cellOffset;
+				if (entity.Placed == false)
+				{
+					entity.transform.position = entity.GridPosition + cellOffset;
+					entity.Placed = true;
+				}
+
+				if (entity.Moving)
+				{
+					entity.MoveT += Time.deltaTime * entity.MoveSpeed;
+					entity.transform.position = Vector3.Lerp(entity.transform.position, entity.GridPosition + cellOffset, entity.MoveT);
+
+					if (entity.MoveT >= 1)
+					{
+						entity.MoveT = 0;
+						entity.Moving = false;
+					}
+				}
 
 				if (entity.AffectedByAnger)
 				{
@@ -322,6 +339,9 @@ namespace Game.Core.StateMachines.Game
 
 			// UnityEngine.Debug.Log("Entity moved.");
 			entity.GridPosition = destination;
+			entity.MoveStartTimestamp = Time.time;
+			entity.MoveT = 0;
+			entity.Moving = true;
 
 			if (entity.AffectedByAnger)
 			{
