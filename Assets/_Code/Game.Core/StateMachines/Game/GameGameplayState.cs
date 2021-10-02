@@ -216,11 +216,26 @@ namespace Game.Core.StateMachines.Game
 
 				if (entity.Moving)
 				{
+					if (entity.MoveT == 0)
+					{
+						entity.Animator.Play("Walk");
+					}
+
+					var clips = entity.Animator.runtimeAnimatorController.animationClips;
+					foreach (AnimationClip clip in clips)
+					{
+						if (clip && clip.name.Contains("Walk"))
+						{
+							UnityEngine.Debug.Log(clip.name + " " + clip.length);
+						}
+					}
+
 					entity.MoveT += Time.deltaTime * entity.MoveSpeed;
 					entity.transform.position = Vector3.Lerp(entity.transform.position, entity.GridPosition + cellOffset, entity.MoveT);
 
 					if (entity.MoveT >= 1)
 					{
+						entity.Animator.Play("Idle");
 						entity.MoveT = 0;
 						entity.Moving = false;
 					}
@@ -228,7 +243,7 @@ namespace Game.Core.StateMachines.Game
 
 				if (entity.AffectedByAnger)
 				{
-					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.white;
+					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? new Color(0.5f, 0.5f, 1, 1) : Color.white;
 				}
 
 				if (entity.BreakableProgress > 0)
