@@ -46,6 +46,25 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!243 &-2698888339518973176
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Angry Theme
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 297bcec861a701b4fb4b4e53135d4f9d
+  m_Children: []
+  m_Volume: aa28cfccd4f0efc44ba275a996f829fa
+  m_Pitch: db3b68055226c4647be6a86d4b016c9c
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: 1268401527158697045}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
 --- !u!243 &-1804572004088458924
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -57,6 +76,7 @@ AudioMixerGroupController:
   m_GroupID: e43f834ef8e6643a9a1db92381db59d9
   m_Children:
   - {fileID: 6452800135207822030}
+  - {fileID: -2698888339518973176}
   m_Volume: b512e1548eaf44dcbb631cfd55e5f9e7
   m_Pitch: f7e9164158cb2475caeb3b397cfbbcce
   m_Send: 00000000000000000000000000000000
@@ -93,6 +113,7 @@ AudioMixerController:
     - e43f834ef8e6643a9a1db92381db59d9
     - 54a1e71605448431ca7611fa17e48569
     - 49c70332e7905b646a3a254efce2a66f
+    - 297bcec861a701b4fb4b4e53135d4f9d
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -158,6 +179,20 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &1268401527158697045
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 896d2a533c583c641beda66b79fca9bc
+  m_EffectName: Attenuation
+  m_MixLevel: 2295e677bf3b6384d9a3dfa55cb147df
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &2868862083209001229
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -211,7 +246,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Music 1
+  m_Name: Calm Theme
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 49c70332e7905b646a3a254efce2a66f
   m_Children: []
