@@ -170,7 +170,7 @@ namespace Game.Core.StateMachines.Game
 						);
 						entity.GridPosition = bounds.min + gridPosition;
 						_state.Entities.Add(entity);
-						tilemap.SetTile(gridPosition, null);
+						tilemap.SetTile(entity.GridPosition, null);
 					}
 				}
 			}
