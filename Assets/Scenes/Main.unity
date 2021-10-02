@@ -401,7 +401,7 @@ MonoBehaviour:
   _debugRoot: {fileID: 1470820756}
   _debugText: {fileID: 1750842508}
   _gameplayRoot: {fileID: 759921887}
-  TimerText: {fileID: 1207473177}
+  GameplayText: {fileID: 1207473177}
   _pauseRoot: {fileID: 133772712}
   PauseButton1: {fileID: 801063056}
   PauseButton2: {fileID: 1810898285}
@@ -1754,11 +1754,11 @@ RectTransform:
   m_Father: {fileID: 759921888}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 35, y: -30}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -15, y: -15}
   m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1207473177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1781,15 +1781,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0a2583f5df1103541a8f66916fe41fcd, type: 2}
-  m_sharedMaterial: {fileID: -6066314340575914768, guid: 0a2583f5df1103541a8f66916fe41fcd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4093640704
-  m_fontColor: {r: 0, g: 0, b: 0, a: 0.95686275}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
