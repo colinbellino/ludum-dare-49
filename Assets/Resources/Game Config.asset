@@ -15,6 +15,8 @@ MonoBehaviour:
   DebugFSM: 0
   LockFPS: 60
   AllLevels:
+  - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
+  - {fileID: 7894139527700584289, guid: cb4209f868538f6408795d6ff8d91bab, type: 3}
   - {fileID: 7894139527700584289, guid: 61058a669b07bc6468ead2677049a936, type: 3}
   - {fileID: 7894139527700584289, guid: 7fb5ba1fd593b9841b3ad8109b8a9dc3, type: 3}
   - {fileID: 7894139527700584289, guid: 44c318d5ea52248358e49c9a68fd3874, type: 3}
