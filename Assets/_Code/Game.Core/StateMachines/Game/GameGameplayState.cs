@@ -131,6 +131,8 @@ namespace Game.Core.StateMachines.Game
 							if (entityAtPosition)
 							{
 								entityAtPosition.Animator.Play("Fall");
+								entityAtPosition.Moving = false;
+
 								await UniTask.Delay(500);
 
 								if (entityAtPosition.ControlledByPlayer)
@@ -219,15 +221,6 @@ namespace Game.Core.StateMachines.Game
 					if (entity.MoveT == 0)
 					{
 						entity.Animator.Play("Walk");
-					}
-
-					var clips = entity.Animator.runtimeAnimatorController.animationClips;
-					foreach (AnimationClip clip in clips)
-					{
-						if (clip && clip.name.Contains("Walk"))
-						{
-							UnityEngine.Debug.Log(clip.name + " " + clip.length);
-						}
 					}
 
 					entity.MoveT += Time.deltaTime * entity.MoveSpeed;
