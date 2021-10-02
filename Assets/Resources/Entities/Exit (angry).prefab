@@ -281,6 +281,7 @@ MonoBehaviour:
   MoveTowardsPlayer: 0
   Placed: 0
   GridPosition: {x: 0, y: 0, z: 0}
+  Direction: {x: 0, y: 0, z: 0}
   Moving: 0
   MoveSpeed: 4
   MoveT: 0
@@ -291,6 +292,7 @@ MonoBehaviour:
   Trigger: 1
   TriggerState: 2
   TriggerAction: 1
+  ExitAudioClip: {fileID: 8300000, guid: bebb3e839063b4447915648311b8765d, type: 3}
   BreaksAt: 1
   BreakableProgress: 0
   Breaking: 0
