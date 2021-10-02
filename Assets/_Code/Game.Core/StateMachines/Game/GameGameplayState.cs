@@ -304,8 +304,11 @@ namespace Game.Core.StateMachines.Game
 			_state.TriggerExitAt = 0;
 			_state.TriggerRetryAt = 0;
 			_state.PlayerDidAct = false;
-			Object.Destroy(_state.Level.gameObject);
-			_state.Level = null;
+			if (_state.Level)
+			{
+				Object.Destroy(_state.Level.gameObject);
+				_state.Level = null;
+			}
 		}
 
 		private void ConfirmStarted(InputAction.CallbackContext context) => _confirmWasPressedThisFrame = true;
