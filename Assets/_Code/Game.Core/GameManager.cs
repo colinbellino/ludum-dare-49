@@ -38,6 +38,7 @@ namespace Game.Core
 
 		private void Update()
 		{
+			Game.AudioPlayer.Tick();
 			Game?.GameFSM.Tick();
 		}
 	}

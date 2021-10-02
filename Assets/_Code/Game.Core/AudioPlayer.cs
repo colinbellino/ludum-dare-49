@@ -11,7 +11,7 @@ namespace Game.Core
 		private readonly GameConfig _config;
 		private readonly AudioSource _musicSource;
 
-		private readonly Dictionary<string, float> _musicTimes = new Dictionary<string, float>();
+		public readonly Dictionary<int, float> MusicTimes = new Dictionary<int, float>();
 
 		public AudioPlayer(GameConfig config, AudioSource musicSource)
 		{
@@ -19,13 +19,13 @@ namespace Game.Core
 			_musicSource = musicSource;
 		}
 
-		// public void Tick()
-		// {
-		// 	if (_musicSource.clip)
-		// 	{
-		// 		_musicTimes[_musicSource.clip.name] = _musicSource.time;
-		// 	}
-		// }
+		public void Tick()
+		{
+			if (_musicSource.clip)
+			{
+				MusicTimes[_musicSource.clip.GetInstanceID()] = _musicSource.time;
+			}
+		}
 
 		public UniTask PlayRandomSoundEffect(AudioClip[] clips, Vector3 position, float volume = 1f)
 		{
@@ -52,7 +52,7 @@ namespace Game.Core
 			}
 			else
 			{
-				_musicTimes.TryGetValue(clip.name, out var time);
+				MusicTimes.TryGetValue(clip.GetInstanceID(), out var time);
 				_musicSource.time = time;
 			}
 

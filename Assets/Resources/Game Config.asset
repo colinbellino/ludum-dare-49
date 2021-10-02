@@ -44,7 +44,8 @@ MonoBehaviour:
   DefaultAudioSnapshot: {fileID: 24500006, guid: c00711887b3714031932c58a1ac16396, type: 2}
   PauseAudioSnapshot: {fileID: 6893898828190700123, guid: c00711887b3714031932c58a1ac16396, type: 2}
   MusicVolume: 0.7
-  Music1Clip: {fileID: 8300000, guid: a9335854e4be02e4f9b4e7c424a53fc1, type: 3}
+  MusicCalmClip: {fileID: 8300000, guid: 9d58f4fb041d552408ca32476c6b4be9, type: 3}
+  MusicAngryClip: {fileID: 8300000, guid: 0b6ed7a94e419f044ab2ab208893c0c3, type: 3}
   SoundVolume: 0.8
   MenuTextAppearClip: {fileID: 8300000, guid: ea617f6da27fb4c67a099b74da43a20e, type: 3}
   MenuConfirmClip: {fileID: 8300000, guid: 4c1368389c5532e4faa388da887d74e9, type: 3}
