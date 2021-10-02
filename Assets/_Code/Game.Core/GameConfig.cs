@@ -42,6 +42,6 @@ namespace Game.Core
 	[Serializable]
 	public class TileInfo
 	{
-		public bool CanWalk;
+		public bool Walkable;
 	}
 }

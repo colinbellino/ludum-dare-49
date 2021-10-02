@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 8791468809558621453, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
+  m_Sprite: {fileID: 9094865689532351583, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 6662242044832962000}
   - component: {fileID: 3510502540373367279}
   m_Layer: 8
-  m_Name: Entity1
+  m_Name: Exit (angry)
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -282,3 +282,7 @@ MonoBehaviour:
   AffectedByAnger: 0
   AngerProgress: 0
   AngerState: 0
+  Trigger: 1
+  TriggerState: 2
+  TriggerAction: 1
+  MoveTowardsPlayer: 0

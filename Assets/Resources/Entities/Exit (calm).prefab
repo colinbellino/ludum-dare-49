@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5808595207856661743, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
+  m_Sprite: {fileID: -832514747781538365, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 6662242044832962000}
   - component: {fileID: 3510502540373367279}
   m_Layer: 8
-  m_Name: Player
+  m_Name: Exit (calm)
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,12 +277,12 @@ MonoBehaviour:
   Animator: {fileID: 3510502541799688830}
   SpriteRenderer: {fileID: 6662242043406632514}
   AudioSource: {fileID: 3510502540486019954}
-  ControlledByPlayer: 1
+  ControlledByPlayer: 0
   GridPosition: {x: 0, y: 0, z: 0}
-  AffectedByAnger: 1
+  AffectedByAnger: 0
   AngerProgress: 0
-  AngerState: 1
-  Trigger: 0
-  TriggerState: 0
-  TriggerAction: 0
+  AngerState: 0
+  Trigger: 1
+  TriggerState: 1
+  TriggerAction: 1
   MoveTowardsPlayer: 0
