@@ -196,10 +196,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -832514747781538365, guid: 87fc72d52535d47faa9e26bd167bed67, type: 3}
+  m_SortingLayerID: 37508923
+  m_SortingLayer: -1
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 7664688985958279823, guid: c9a7f17f1b746b247a9083c9cdcefaf6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -220,7 +220,7 @@ Animator:
   m_GameObject: {fileID: 6662242043406632512}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d62bc2313a8fd8d4abe53ba3939e13d5, type: 2}
+  m_Controller: {fileID: 9100000, guid: f5c4f15b1ba9d954ea3be91d90f9d719, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -289,5 +289,8 @@ MonoBehaviour:
   AngerProgress: 0
   AngerState: 0
   Trigger: 1
-  TriggerState: 1
+  TriggerState: 2
   TriggerAction: 1
+  BreaksAt: 1
+  BreakableProgress: 0
+  Breaking: 0
