@@ -129,14 +129,8 @@ namespace Game.Core.StateMachines.Game
 					{
 						var target = _state.Entities[0];
 						var path = Pathfinding.FindPath(_state.WalkableGrid, entity.GridPosition, target.GridPosition, Pathfinding.DistanceType.Manhattan);
-
 						var destination = path[0];
-						if (MoveTo(entity, destination))
-						{
-							// _state.PlayerDidAct = true;
-							// await UniTask.Delay(200);
-							// _state.PlayerDidAct = false;
-						}
+						MoveTo(entity, path[0]);
 					}
 				}
 			}
@@ -151,7 +145,15 @@ namespace Game.Core.StateMachines.Game
 			{
 				// TODO: LERP this, probably
 				entity.transform.position = entity.GridPosition + cellOffset;
+
+				if (entity.AffectedByAnger)
+				{
+					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.red;
+				}
 			}
+
+			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+			_ui.GameplayText.text = $"Progress: {player.AngerProgress}\nState: {player.AngerState}";
 
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
@@ -265,6 +267,19 @@ namespace Game.Core.StateMachines.Game
 
 			// UnityEngine.Debug.Log("Entity moved.");
 			entity.GridPosition = destination;
+
+			if (entity.AffectedByAnger)
+			{
+				entity.AngerProgress += 1;
+				if (entity.AngerProgress >= 3)
+				{
+					entity.AngerProgress = 0;
+					entity.AngerState = (entity.AngerState == AngerStates.Calm)
+						? AngerStates.Angry
+						: AngerStates.Calm;
+				}
+			}
+
 			return true;
 		}
 
