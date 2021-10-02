@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using NesScripts.Controls.PathFind;
-using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
@@ -19,10 +18,14 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			_ui.SetDebugText(@"[DEBUG]
+- F1: trigger victory
+- F2: trigger defeat
+- ESCAPE: pause/options");
+
 			// Load current level
 			{
-				// TODO(colin): Get the current level from the game state
-				_state.Level = Object.Instantiate(Resources.Load<Level>("Levels/LevelTemplate"));
+				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
 
 				Assert.AreNotEqual(_state.Level.Ground.origin, Vector3Int.zero,
 					"Make sure the tilemap's origin is at (0,0,0).");
