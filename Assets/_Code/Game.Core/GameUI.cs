@@ -15,7 +15,7 @@ namespace Game.Core
 		[SerializeField] private TMP_Text _debugText;
 		[Header("Gameplay")]
 		[SerializeField] private GameObject _gameplayRoot;
-		[SerializeField] public TMP_Text TimerText;
+		[SerializeField] public TMP_Text GameplayText;
 		[Header("Pause")]
 		[SerializeField] private GameObject _pauseRoot;
 		[SerializeField] public Button PauseButton1;
