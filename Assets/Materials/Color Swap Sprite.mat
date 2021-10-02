@@ -8,8 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Color Swap Sprite
-  m_Shader: {fileID: -6465566751694194690, guid: 4386ad5bac55f433096efdc0935d6a28,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 4386ad5bac55f433096efdc0935d6a28, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -21,8 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_a7b160c0a28c4371b969aa32a5c6d31d:
-        m_Texture: {fileID: -8328923581568760697, guid: 894386b3eaafc4ffa90bfb4a779914a5,
-          type: 3}
+        m_Texture: {fileID: -8328923581568760697, guid: 894386b3eaafc4ffa90bfb4a779914a5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _AlphaTex:
@@ -30,8 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: -8328923581568760697, guid: dd658b6cc7e0d4e00b03cca22810a891,
-          type: 3}
+        m_Texture: {fileID: -8328923581568760697, guid: dd658b6cc7e0d4e00b03cca22810a891, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -60,16 +57,16 @@ Material:
     - DarkModifier: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - HighlightModifier: {r: 1.1, g: 1.1, b: 1.1, a: 1}
     - OriginalColor0: {r: 0.24705884, g: 0.24705884, b: 0.454902, a: 1}
-    - OriginalColor1: {r: 0.35686275, g: 0.43137258, b: 0.882353, a: 1}
+    - OriginalColor1: {r: 0.80784315, g: 0.26666668, b: 0.15686275, a: 1}
     - OriginalColor1_: {r: 0.24705884, g: 0.24705884, b: 0.454902, a: 1}
-    - OriginalColor2: {r: 0.6745098, g: 0.19607845, b: 0.19607845, a: 1}
+    - OriginalColor2: {r: 0.9764706, g: 0.64705884, b: 0.4117647, a: 1}
     - OriginalColor2_: {r: 0.46226418, g: 0.14681971, b: 0.14681971, a: 1}
-    - OriginalColor3: {r: 0.9333334, g: 0.76470596, b: 0.6039216, a: 1}
+    - OriginalColor3: {r: 1, g: 1, b: 0.56078434, a: 1}
     - OriginalColor3_: {r: 0.5660378, g: 0.39114535, b: 0.22249907, a: 1}
     - ReplacementColor0: {r: 0.14099309, g: 0.7264151, b: 0.086804256, a: 1}
-    - ReplacementColor1: {r: 0.011764707, g: 0.5647059, b: 0.79215693, a: 1}
-    - ReplacementColor2: {r: 0.49097648, g: 0.10798619, b: 0.6132076, a: 1}
-    - ReplacementColor3: {r: 1, g: 0.8275862, b: 0.6666666, a: 1}
+    - ReplacementColor1: {r: 0.26666668, g: 0.5803922, b: 0.7647059, a: 1}
+    - ReplacementColor2: {r: 0.5803922, g: 0.9254902, b: 0.9254902, a: 1}
+    - ReplacementColor3: {r: 0.972549, g: 0.9843137, b: 0.9411765, a: 1}
     - Vector4_75182d4f77e745e9b100a8fb6e91b7f9: {r: 1.2, g: 1.2, b: 1.2, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
