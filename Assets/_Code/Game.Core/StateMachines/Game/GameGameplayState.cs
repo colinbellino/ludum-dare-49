@@ -228,7 +228,7 @@ namespace Game.Core.StateMachines.Game
 
 				if (entity.AffectedByAnger)
 				{
-					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.red;
+					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? Color.blue : Color.white;
 				}
 
 				if (entity.BreakableProgress > 0)
@@ -404,6 +404,7 @@ namespace Game.Core.StateMachines.Game
 
 
 			// UnityEngine.Debug.Log("Entity moved.");
+			entity.Direction = destination - entity.GridPosition;
 			entity.GridPosition = destination;
 			entity.MoveStartTimestamp = Time.time;
 			entity.MoveT = 0;
@@ -422,6 +423,12 @@ namespace Game.Core.StateMachines.Game
 							: AngerStates.Calm;
 					}
 				}
+			}
+
+			if (entity.Animator)
+			{
+				entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+				entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 			}
 
 			return true;

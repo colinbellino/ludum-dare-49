@@ -15,6 +15,7 @@ namespace Game.Core
 
 		[HideInInspector] public bool Placed;
 		[HideInInspector] public Vector3Int GridPosition;
+		[HideInInspector] public Vector3Int Direction;
 
 		[Header("Movement")]
 		[HideInInspector] public bool Moving;
