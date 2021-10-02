@@ -60,9 +60,9 @@ namespace Game.Core.StateMachines.Game
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
 
-			if (_config.Music1Clip && _audioPlayer.IsMusicPlaying() == false && _audioPlayer.IsCurrentMusic(_config.Music1Clip) == false)
+			if (_config.MusicCalmClip && _audioPlayer.IsMusicPlaying() == false && _audioPlayer.IsCurrentMusic(_config.MusicCalmClip) == false)
 			{
-				_ = _audioPlayer.PlayMusic(_config.Music1Clip, true, 0.5f);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, true, 0.5f);
 			}
 
 			_ = _ui.FadeOut();
@@ -267,7 +267,14 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
-			_ui.GameplayText.text = $"Progress: {player.AngerProgress}\nState: {player.AngerState}";
+
+			if (Utils.IsDevBuild())
+			{
+				_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
+State: {player.AngerState}
+Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
+Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
+			}
 
 			if (Utils.IsDevBuild())
 			{
@@ -426,9 +433,22 @@ namespace Game.Core.StateMachines.Game
 					if (entity.AngerProgress >= 3)
 					{
 						entity.AngerProgress = 0;
-						entity.AngerState = (entity.AngerState == AngerStates.Calm)
-							? AngerStates.Angry
-							: AngerStates.Calm;
+						entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
+
+						if (entity.ControlledByPlayer)
+						{
+							// UnityEngine.Debug.Log("Toggle audio");
+							if (_audioPlayer.IsCurrentMusic(_config.MusicAngryClip))
+							{
+								_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
+								_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0);
+							}
+							else
+							{
+								_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
+								_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0);
+							}
+						}
 					}
 				}
 			}
