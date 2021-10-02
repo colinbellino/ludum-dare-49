@@ -12,6 +12,9 @@ namespace Game.Core
 		public bool DebugFSM;
 		public int LockFPS = 60;
 
+		[Header("Level")]
+		public Level[] AllLevels;
+
 		[Header("Grid")]
 		public TileToEntity TileToEntity;
 		public TileToInfo TileToInfo;
