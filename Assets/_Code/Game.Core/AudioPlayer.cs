@@ -10,13 +10,15 @@ namespace Game.Core
 	{
 		private readonly GameConfig _config;
 		private readonly AudioSource _musicSource;
+		private readonly AudioSource _musicSource2;
 
 		public readonly Dictionary<int, float> MusicTimes = new Dictionary<int, float>();
 
-		public AudioPlayer(GameConfig config, AudioSource musicSource)
+		public AudioPlayer(GameConfig config, AudioSource musicSource, AudioSource musicSource2)
 		{
 			_config = config;
 			_musicSource = musicSource;
+			_musicSource2 = musicSource2;
 		}
 
 		public void Tick()
@@ -44,7 +46,7 @@ namespace Game.Core
 			return PlaySoundClipAtPoint(clip, position, volume);
 		}
 
-		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f)
+		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f, bool crossFade = false)
 		{
 			if (fromStart)
 			{
@@ -56,12 +58,23 @@ namespace Game.Core
 				_musicSource.time = time;
 			}
 
-			_musicSource.clip = clip;
-			_musicSource.Play();
-
 			if (fadeDuration > 0f)
 			{
-				await _musicSource.DOFade(volume, fadeDuration);
+				if (crossFade)
+				{
+					_musicSource2.clip = clip;
+					_musicSource2.Play();
+					_ = _musicSource.DOFade(0, fadeDuration);
+					_ = _musicSource2.DOFade(1, fadeDuration);
+					await UniTask.Delay(TimeSpan.FromMilliseconds(fadeDuration));
+				}
+				else
+				{
+					_musicSource.clip = clip;
+					_musicSource.Play();
+
+					await _musicSource.DOFade(volume, fadeDuration);
+				}
 			}
 			else
 			{

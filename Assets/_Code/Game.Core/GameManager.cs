@@ -11,14 +11,13 @@ namespace Game.Core
 
 		private void Start()
 		{
-			var musicAudioSource = GameObject.Find("Music Audio Source").GetComponent<AudioSource>();
+			var musicAudioSources = GameObject.Find("Music Audio Source").GetComponents<AudioSource>();
 			var config = Resources.Load<GameConfig>("Game Config");
 			var camera = Camera.main;
 			var ui = FindObjectOfType<GameUI>();
 			var cameraRig = FindObjectOfType<CameraRig>();
 
 			Assert.IsNotNull(config);
-			Assert.IsNotNull(musicAudioSource);
 			Assert.IsNotNull(camera);
 			Assert.IsNotNull(ui);
 			Assert.IsNotNull(cameraRig);
@@ -29,7 +28,7 @@ namespace Game.Core
 			Game.CameraRig = cameraRig;
 			Game.UI = ui;
 			Game.State = new GameState();
-			Game.AudioPlayer = new AudioPlayer(config, musicAudioSource);
+			Game.AudioPlayer = new AudioPlayer(config, musicAudioSources[0], musicAudioSources[1]);
 			Game.GameFSM = new GameFSM(config.DebugFSM, Game);
 
 			Game.UI.Inject(Game);
