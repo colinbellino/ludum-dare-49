@@ -556,18 +556,13 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 		private void ToggleMusic(Entity entity)
 		{
-			var calmId = _config.MusicCalmClip.GetInstanceID();
-			var angryId = _config.MusicAngryClip.GetInstanceID();
-
-			if (entity.AngerState == AngerStates.Calm)
+			if (entity.AngerState != AngerStates.Angry)
 			{
-				_audioPlayer.MusicTimes[calmId] = _audioPlayer.MusicTimes.ContainsKey(angryId) ? _audioPlayer.MusicTimes[angryId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f, 1f, true);
 			}
 			else
 			{
-				_audioPlayer.MusicTimes[angryId] = _audioPlayer.MusicTimes.ContainsKey(calmId) ? _audioPlayer.MusicTimes[calmId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 1f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.5f, 1f, true);
 			}
 		}
 
