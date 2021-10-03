@@ -25,15 +25,15 @@ namespace Game.Core
 		[SerializeField] public bool AffectedByAnger;
 		[HideInInspector] public int AngerProgress;
 		[SerializeField] public AngerStates AngerState;
+		[SerializeField] public AudioClip TransformationAudioClip;
 
 		[Header("Triggers")]
 		[SerializeField] public bool Trigger;
 		[SerializeField] public AngerStates TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
 		[SerializeField] public AudioClip KeyAudioClip;
-
-		[Header("Triggers")]
 		[SerializeField] public AudioClip ExitAudioClip;
+		[SerializeField] public AudioClip BreakingAudioClip;
 
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;

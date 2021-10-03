@@ -172,6 +172,10 @@ namespace Game.Core.StateMachines.Game
 									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
 									entity.Direction = Vector3Int.down;
 
+									if (entity.TransformationAudioClip)
+									{
+										_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
+									}
 									entity.Animator.Play("Transform");
 									await CurrentAnimation(entity);
 
@@ -421,6 +425,10 @@ namespace Game.Core.StateMachines.Game
 								entityAtDestination.Trigger = false;
 								entityAtDestination.BreakableProgress = 0;
 								entityAtDestination.Animator.Play("Breaking");
+								if (entityAtDestination.BreakingAudioClip)
+								{
+									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
+								}
 								await CurrentAnimation(entityAtDestination);
 
 								entity.Dead = true;
@@ -435,6 +443,7 @@ namespace Game.Core.StateMachines.Game
 								{
 									_state.Running = false;
 									await UniTask.Delay(500); // Wait for it to sink in
+
 
 									_ = _audioPlayer.StopMusic(2);
 									await _ui.FadeIn(Color.black);
@@ -459,6 +468,7 @@ namespace Game.Core.StateMachines.Game
 							}
 						}
 						break;
+
 
 					case TriggerActions.Fall:
 						{
