@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Game.Core
 {
@@ -112,6 +113,11 @@ namespace Game.Core
 		public void SetSoundVolume(float volume)
 		{
 			_config.AudioMixer.SetFloat("SoundVolume", ConvertToMixerVolume(volume));
+		}
+
+		public void TransitionToSnapshot(AudioMixerSnapshot snapshot, float duration = 0f)
+		{
+			_config.AudioMixer.TransitionToSnapshots(new AudioMixerSnapshot[] { snapshot }, new float[1] { 1 }, duration);
 		}
 
 		public bool IsMusicPlaying() => _musicSource.isPlaying;

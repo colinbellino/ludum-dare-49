@@ -14,19 +14,31 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
---- !u!244 &-7769054187860185214
+--- !u!244 &-7026480280503845693
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  m_EffectID: 21574835c39e1f146884d67630a133a1
-  m_EffectName: Lowpass Simple
-  m_MixLevel: 037b592c681985e4682503e5fbd08751
+  m_EffectID: a60c81c6405915649801bb066a6f09d3
+  m_EffectName: Duck Volume
+  m_MixLevel: 977975b14700c2f4890c6377abe6e8fc
   m_Parameters:
-  - m_ParameterName: Cutoff freq
-    m_GUID: 100b20bd5b1491e4f9b2155af66548b0
+  - m_ParameterName: Threshold
+    m_GUID: b3c39ee08fe97234aac1ae029e3aa0ce
+  - m_ParameterName: Ratio
+    m_GUID: 63a13aa3e81501e46829c6b4d9b0499a
+  - m_ParameterName: Attack Time
+    m_GUID: fcad8fa797e05fc499af7a639323ded0
+  - m_ParameterName: Release Time
+    m_GUID: f4ed03ec04929ee4c9cd93e95a9b301b
+  - m_ParameterName: Make-up Gain
+    m_GUID: 603aa8d62cf7656469cce4deaba9bdbe
+  - m_ParameterName: Knee
+    m_GUID: 88eb8181a05ce3c4ba83728028a9517e
+  - m_ParameterName: Sidechain Mix
+    m_GUID: 4ac8a488c41da5e4a853de13c0b290ae
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
@@ -80,7 +92,8 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -2884041024020504663}
-  - {fileID: -7769054187860185214}
+  - {fileID: 3386879439798224836}
+  - {fileID: 5326396119011036877}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -162,6 +175,9 @@ AudioMixerSnapshotController:
   m_SnapshotID: 1d9075c9bf8f34fe2b88abc9f5fd9586
   m_FloatValues:
     b512e1548eaf44dcbb631cfd55e5f9e7: 0
+    df2d4a287550b447fbde4220d70a1a3d: -9.833286
+    e8ed2be96187580428e0f7a8bccd9b9f: 22000
+    6a07cf0c8c1596c419c3c6d25a3b2feb: 10
     e007ad6c631114dd69a1e898f3884aae: 0
     100b20bd5b1491e4f9b2155af66548b0: 22000
   m_TransitionOverrides: {}
@@ -240,6 +256,42 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!244 &3386879439798224836
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 518ce75acab350248809ca7d3f6ee345
+  m_EffectName: Lowpass
+  m_MixLevel: 9de2032d88637564e85206f408760fe3
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: e8ed2be96187580428e0f7a8bccd9b9f
+  - m_ParameterName: Resonance
+    m_GUID: ef10d88ed3921b54faa38d451935a5ed
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!244 &5326396119011036877
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 265fb0cdc3fcdea47b4d8bf919506fb5
+  m_EffectName: Highpass
+  m_MixLevel: 94d9ce5367fdc4e4daae1d775c3e04aa
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: 6a07cf0c8c1596c419c3c6d25a3b2feb
+  - m_ParameterName: Resonance
+    m_GUID: 85c291b9e5eb13b4dbeb083fac9dbe2a
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!243 &6452800135207822030
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -272,18 +324,20 @@ AudioMixerSnapshotController:
     10713981abf60aa439bdc38ee438ddb2: 10
     96fbdca15f264bb40b6014e3c7fef644: 0.505
     b16eb792f20d73545aa63cc7dfb0f942: 500
-    b512e1548eaf44dcbb631cfd55e5f9e7: -15
+    b512e1548eaf44dcbb631cfd55e5f9e7: -8.0101185
     2e4f55b4419f555448a92f048a6148a8: 2.1
     ad4080358080fe94a94fbbcd0c84bb3f: 0.863
     650d3be5ff6b35f40a86d2bc8cc001c6: 0
     15bcdf47471bf06409f3355a7bfabc21: 0.1
     45586b6917d455146956d0195e6c2d18: 0.5
+    e8ed2be96187580428e0f7a8bccd9b9f: 2124
     d30ad55a84b5cd54d9fd8a2cf07faf83: 500
     792568ca9762fee489c0841c8089c490: 0
     1fd51d1b5810b3445a220facb11b9b98: 0.1
     f253ff1b8cab91d4fbfe875315f3b44d: 6.500001
     75ca9d0c210124c4c80fc2c4845d1d28: -10
-    100b20bd5b1491e4f9b2155af66548b0: 200
+    6a07cf0c8c1596c419c3c6d25a3b2feb: 9560
+    100b20bd5b1491e4f9b2155af66548b0: 275
     df11b2ed95e72c644a47f6f0c4d78b18: 0.5
     c1f7869ee3814824d8dd5dbbcc83d760: 0.505
     44694ede2260fdf4a99f35cd339e6eb2: 0.989
