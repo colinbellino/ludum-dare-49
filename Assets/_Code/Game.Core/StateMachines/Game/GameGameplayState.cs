@@ -155,7 +155,6 @@ namespace Game.Core.StateMachines.Game
 							entity.Breaking = false;
 							entity.BreakableProgress = 0;
 
-
 							var entityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
 							if (entityAtPosition)
 							{
@@ -172,10 +171,14 @@ namespace Game.Core.StateMachines.Game
 							}
 						}
 
-						if (entity.CanBeActivated && _state.Keys >= entity.ActivatesWithKeys)
+						if (entity.CanBeActivated && entity.Activated == false && _state.Keys >= entity.ActivatesWithKeys)
 						{
-							UnityEngine.Debug.Log("activate exit");
 							entity.Activated = true;
+						}
+
+						if (entity.Dead)
+						{
+							entity.Animator.Play("Dead");
 						}
 					}
 
@@ -457,49 +460,51 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 					return false;
 				}
 
-				switch (entityAtDestination.TriggerAction)
+				if (entityAtDestination.Dead == false)
 				{
-					case TriggerActions.Exit:
-						{
-							if (entity.ControlledByPlayer == false)
+					switch (entityAtDestination.TriggerAction)
+					{
+						case TriggerActions.Exit:
 							{
-								break;
-							}
+								if (entity.ControlledByPlayer == false)
+								{
+									break;
+								}
 
-							if (entityAtDestination.ExitAudioClip)
-							{
-								_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
-							}
+								if (entityAtDestination.ExitAudioClip)
+								{
+									_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
+								}
 
-							_state.TriggerExitAt = Time.time + 1f;
-						}
-						break;
-					case TriggerActions.Break:
-						{
-							if (entity.AngerState != AngerStates.Angry)
-							{
-								break;
+								_state.TriggerExitAt = Time.time + 1f;
 							}
+							break;
+						case TriggerActions.Break:
+							{
+								if (entity.AngerState != AngerStates.Angry)
+								{
+									break;
+								}
 
-							entityAtDestination.BreakableProgress += 1;
+								entityAtDestination.BreakableProgress += 1;
 
-							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
-							{
-								entityAtDestination.Breaking = true;
+								if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
+								{
+									entityAtDestination.Breaking = true;
+								}
 							}
-						}
-						break;
-					case TriggerActions.Key:
-						{
-							UnityEngine.Debug.Log("key");
-							if (entity.ControlledByPlayer)
+							break;
+						case TriggerActions.Key:
 							{
-								UnityEngine.Debug.Log("Key picked up!");
-								_state.Keys += 1;
+								if (entity.ControlledByPlayer)
+								{
+									entityAtDestination.Dead = true;
+									_state.Keys += 1;
+								}
 							}
-						}
-						break;
-					default: break;
+							break;
+						default: break;
+					}
 				}
 			}
 
