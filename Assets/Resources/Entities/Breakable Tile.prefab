@@ -293,7 +293,7 @@ MonoBehaviour:
   TriggerAction: 2
   KeyAudioClip: {fileID: 0}
   ExitAudioClip: {fileID: 0}
-  BreakingAudioClip: {fileID: 8300000, guid: 625c76d2dadabc9429d7d9f4874cbd1e, type: 3}
+  BreakingAudioClip: {fileID: 8300000, guid: 3cffe1a6daa36c64b9192c5671d2cb9e, type: 3}
   BreaksAt: 2
   BreakableProgress: 0
   CanBeActivated: 0
