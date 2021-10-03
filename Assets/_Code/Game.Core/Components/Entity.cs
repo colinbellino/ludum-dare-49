@@ -29,6 +29,7 @@ namespace Game.Core
 		[SerializeField] public bool Trigger;
 		[SerializeField] public AngerStates TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
+		[SerializeField] public AudioClip KeyAudioClip;
 
 		[Header("Triggers")]
 		[SerializeField] public AudioClip ExitAudioClip;
