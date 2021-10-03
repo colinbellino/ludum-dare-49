@@ -285,10 +285,12 @@ MonoBehaviour:
   FallAudioClip: {fileID: 8300000, guid: 7a5c49693fd462e45a1d0c366b648688, type: 3}
   WalkAudioClips:
   - {fileID: 8300000, guid: 6e34983c01ad876469f5b30aa33330f9, type: 3}
+  - {fileID: 8300000, guid: 491e1e8c33f63a544ba938d23ab02f63, type: 3}
+  - {fileID: 8300000, guid: c2f8a8e9d4f24e642beb82d968a16eed, type: 3}
   AffectedByAnger: 1
   AngerProgress: 0
   AngerState: 1
-  TransformationAudioClip: {fileID: 8300000, guid: cf8426943345de148938a2a77adb0569, type: 3}
+  TransformationAudioClip: {fileID: 8300000, guid: 30fdf42253b3ac6429be25fd00589e49, type: 3}
   Trigger: 0
   TriggerState: 0
   TriggerAction: 0
