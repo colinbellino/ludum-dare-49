@@ -17,9 +17,10 @@ namespace Game.Core.StateMachines.Game
 			_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
 
-			await UniTask.Delay(500);
-			_fsm.Fire(GameFSM.Triggers.LevelSelected);
+			await UniTask.Delay(1000);
 #endif
+
+			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
 		public override void Tick()
