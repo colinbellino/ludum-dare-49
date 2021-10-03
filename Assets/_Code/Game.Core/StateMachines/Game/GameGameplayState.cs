@@ -552,12 +552,12 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			if (entity.AngerState == AngerStates.Calm)
 			{
 				_audioPlayer.MusicTimes[calmId] = _audioPlayer.MusicTimes.ContainsKey(angryId) ? _audioPlayer.MusicTimes[angryId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f);
 			}
 			else
 			{
 				_audioPlayer.MusicTimes[angryId] = _audioPlayer.MusicTimes.ContainsKey(calmId) ? _audioPlayer.MusicTimes[calmId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 1f);
 			}
 		}
 
