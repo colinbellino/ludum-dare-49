@@ -17,6 +17,7 @@ namespace Game.Core.StateMachines.Game
 		private bool _running;
 
 		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
+		private Entity _player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -59,15 +60,13 @@ namespace Game.Core.StateMachines.Game
 				SpawnEntitiesFromTilemap(_state.Level.Entities);
 			}
 
-			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
-
 			// Initialize entities
 			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
 			foreach (var entity in _state.Entities)
 			{
 				entity.transform.position = entity.GridPosition + cellOffset;
 
-				if (entity.CanBeActivated && player.AngerState == entity.TriggerState)
+				if (entity.CanBeActivated && _player.AngerState == entity.TriggerState)
 				{
 					if (entity.ActivatesWhenKeyInLevel)
 					{
@@ -84,14 +83,14 @@ namespace Game.Core.StateMachines.Game
 
 			// Start or continue music where we left off
 			{
-				var moodClip = player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
+				var moodClip = _player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
 				if (_audioPlayer.IsMusicPlaying() == false)
 				{
 					_ = _audioPlayer.PlayMusic(moodClip, true, 0.5f);
 				}
 				else
 				{
-					ToggleMusic(player);
+					ToggleMusic(_player);
 				}
 			}
 
@@ -129,13 +128,13 @@ namespace Game.Core.StateMachines.Game
 					continue;
 				}
 
-				if (player.Dead)
+				if (_player.Dead)
 				{
 					continue;
 				}
 
-				var destination = player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-				var playerDidMove = await Turn(player, destination);
+				var destination = _player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+				var playerDidMove = await Turn(_player, destination);
 				if (playerDidMove)
 				{
 					foreach (var entity in _state.Entities)
@@ -144,7 +143,7 @@ namespace Game.Core.StateMachines.Game
 						{
 							var path = Pathfinding.FindPath(
 								_state.WalkableGrid,
-								entity.GridPosition, player.GridPosition,
+								entity.GridPosition, _player.GridPosition,
 								Pathfinding.DistanceType.Manhattan
 							);
 							await Turn(entity, path[0]);
@@ -188,9 +187,9 @@ namespace Game.Core.StateMachines.Game
 				}
 				else
 				{
-					if (player.CantMoveAudioClip)
+					if (_player.CantMoveAudioClip)
 					{
-						_ = _audioPlayer.PlaySoundEffect(player.CantMoveAudioClip);
+						_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
 					}
 				}
 			}
@@ -215,8 +214,6 @@ namespace Game.Core.StateMachines.Game
 		public override void Tick()
 		{
 			base.Tick();
-
-			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
@@ -252,7 +249,7 @@ namespace Game.Core.StateMachines.Game
 						if (entity.Activated == false)
 						{
 							if (
-								(_state.KeysInLevel == 0 && player.AngerState == entity.TriggerState) ||
+								(_state.KeysInLevel == 0 && _player.AngerState == entity.TriggerState) ||
 								_state.KeysInLevel > 0 && _state.KeysPickedUp >= entity.ActivatesWithKeys)
 							{
 								entity.Activated = true;
@@ -261,7 +258,7 @@ namespace Game.Core.StateMachines.Game
 						}
 						else
 						{
-							if (player.AngerState != entity.TriggerState)
+							if (_player.AngerState != entity.TriggerState)
 							{
 								entity.Activated = false;
 							}
@@ -273,13 +270,17 @@ namespace Game.Core.StateMachines.Game
 
 				if (_resetWasPressedThisFrame)
 				{
+					if (_config.RestartClip)
+					{
+						_ = _audioPlayer.PlaySoundEffect(_config.RestartClip);
+					}
 					_fsm.Fire(GameFSM.Triggers.Retry);
 				}
 
 				if (Utils.IsDevBuild())
 				{
-					_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
-State: {player.AngerState}
+					_ui.GameplayText.text = @$"Progress: {_player.AngerProgress}
+State: {_player.AngerState}
 Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
 Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
 				}
@@ -321,6 +322,16 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 			_ui.HideGameplay();
 
+			// Save the track position
+			if (_player.AngerState == AngerStates.Angry)
+			{
+				_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
+			}
+			else
+			{
+				_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
+			}
+
 			foreach (var entity in _state.Entities)
 			{
 				Object.Destroy(entity.gameObject);
@@ -330,7 +341,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_state.TriggerExitAt = 0;
 			_state.TriggerRetry = false;
 			_state.PlayerDidAct = false;
-			_audioPlayer.MusicTimes.Clear();
+
 			if (_state.Level)
 			{
 				Object.Destroy(_state.Level.gameObject);
@@ -545,19 +556,18 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 		private void ToggleMusic(Entity entity)
 		{
-			// UnityEngine.Debug.Log("Toggle audio");
 			var calmId = _config.MusicCalmClip.GetInstanceID();
 			var angryId = _config.MusicAngryClip.GetInstanceID();
 
 			if (entity.AngerState == AngerStates.Calm)
 			{
 				_audioPlayer.MusicTimes[calmId] = _audioPlayer.MusicTimes.ContainsKey(angryId) ? _audioPlayer.MusicTimes[angryId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f);
 			}
 			else
 			{
 				_audioPlayer.MusicTimes[angryId] = _audioPlayer.MusicTimes.ContainsKey(calmId) ? _audioPlayer.MusicTimes[calmId] : 0;
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 1f);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.5f);
 			}
 		}
 
