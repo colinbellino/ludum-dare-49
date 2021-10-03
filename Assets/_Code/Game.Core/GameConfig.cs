@@ -30,7 +30,7 @@ namespace Game.Core
 		[Range(0f, 1f)] public float SoundVolume = 1f;
 		public AudioClip MenuTextAppearClip;
 		public AudioClip MenuConfirmClip;
-		public AudioClip PlayerDeathClip;
+		public AudioClip RestartClip;
 	}
 
 	[Serializable]
