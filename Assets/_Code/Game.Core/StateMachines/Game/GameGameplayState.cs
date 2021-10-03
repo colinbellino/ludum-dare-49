@@ -60,9 +60,20 @@ namespace Game.Core.StateMachines.Game
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
 
-			if (_config.MusicCalmClip && _audioPlayer.IsMusicPlaying() == false && _audioPlayer.IsCurrentMusic(_config.MusicCalmClip) == false)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, true, 0.5f);
+				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+				var moodClip = player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
+				if (_audioPlayer.IsMusicPlaying() == false && _audioPlayer.IsCurrentMusic(moodClip) == false)
+				{
+					_ = _audioPlayer.PlayMusic(moodClip, true, 0.5f);
+				}
+				else
+				{
+					if (_audioPlayer.IsCurrentMusic(moodClip) == false)
+					{
+						SetMusic(player);
+					}
+				}
 			}
 
 			_ = _ui.FadeOut();
@@ -254,7 +265,6 @@ namespace Game.Core.StateMachines.Game
 			{
 				_state.TriggerExitAt = 0;
 				_state.CurrentLevelIndex += 1;
-
 				_state.Running = false;
 				_fsm.Fire(GameFSM.Triggers.NextLevel);
 			}
@@ -263,6 +273,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				_state.TriggerRetryAt = 0;
 				_state.Running = false;
+				// _ = _audioPlayer.StopMusic();
 				_fsm.Fire(GameFSM.Triggers.Retry);
 			}
 
@@ -437,17 +448,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 						if (entity.ControlledByPlayer)
 						{
-							// UnityEngine.Debug.Log("Toggle audio");
-							if (_audioPlayer.IsCurrentMusic(_config.MusicAngryClip))
-							{
-								_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
-								_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0);
-							}
-							else
-							{
-								_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
-								_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0);
-							}
+							SetMusic(entity);
 						}
 					}
 				}
@@ -460,6 +461,24 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			}
 
 			return true;
+		}
+
+		private void SetMusic(Entity entity)
+		{
+			UnityEngine.Debug.Log("Toggle audio");
+			var calmId = _config.MusicCalmClip.GetInstanceID();
+			var angryId = _config.MusicAngryClip.GetInstanceID();
+
+			if (entity.AngerState == AngerStates.Calm)
+			{
+				_audioPlayer.MusicTimes[calmId] = _audioPlayer.MusicTimes.ContainsKey(angryId) ? _audioPlayer.MusicTimes[angryId] : 0;
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0);
+			}
+			else
+			{
+				_audioPlayer.MusicTimes[angryId] = _audioPlayer.MusicTimes.ContainsKey(calmId) ? _audioPlayer.MusicTimes[calmId] : 0;
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0);
+			}
 		}
 
 		private bool IsTileWalkable(TileBase tile)
