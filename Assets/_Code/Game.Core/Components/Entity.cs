@@ -40,6 +40,8 @@ namespace Game.Core
 		[SerializeField] public int BreaksAt = 1;
 		[HideInInspector] public int BreakableProgress;
 		[HideInInspector] public bool Breaking;
+
+		[HideInInspector] public bool Dead;
 	}
 
 	[Flags] public enum AngerStates { None, Calm, Angry }
