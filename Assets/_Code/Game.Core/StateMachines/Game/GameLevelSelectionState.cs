@@ -15,6 +15,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			_running = true;
+
 #if UNITY_EDITOR
 			_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");

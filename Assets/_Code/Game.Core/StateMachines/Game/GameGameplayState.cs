@@ -304,7 +304,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
 
-			await _ui.FadeIn(Color.black);
+			await _ui.FadeIn(Color.white);
 
 			_ui.HideGameplay();
 
