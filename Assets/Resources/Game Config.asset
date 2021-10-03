@@ -47,10 +47,10 @@ MonoBehaviour:
   SoundsAudioMixerGroup: {fileID: 3053297684183750015, guid: c00711887b3714031932c58a1ac16396, type: 2}
   DefaultAudioSnapshot: {fileID: 24500006, guid: c00711887b3714031932c58a1ac16396, type: 2}
   PauseAudioSnapshot: {fileID: 6893898828190700123, guid: c00711887b3714031932c58a1ac16396, type: 2}
-  MusicVolume: 0.7
-  MusicCalmClip: {fileID: 8300000, guid: 9d58f4fb041d552408ca32476c6b4be9, type: 3}
-  MusicAngryClip: {fileID: 8300000, guid: 0b6ed7a94e419f044ab2ab208893c0c3, type: 3}
-  SoundVolume: 0.8
+  MusicVolume: 0.8
+  MusicCalmClip: {fileID: 8300000, guid: ae3ccf20aa086d74b9e09ac3354db884, type: 3}
+  MusicAngryClip: {fileID: 8300000, guid: 03279be18663f85489539c2db7233567, type: 3}
+  SoundVolume: 0.9
   MenuTextAppearClip: {fileID: 8300000, guid: ea617f6da27fb4c67a099b74da43a20e, type: 3}
   MenuConfirmClip: {fileID: 8300000, guid: 4c1368389c5532e4faa388da887d74e9, type: 3}
-  PlayerDeathClip: {fileID: 8300000, guid: bacb24a4ceb3def4ba00d375125b9b8f, type: 3}
+  PlayerDeathClip: {fileID: 8300000, guid: 7a5c49693fd462e45a1d0c366b648688, type: 3}
