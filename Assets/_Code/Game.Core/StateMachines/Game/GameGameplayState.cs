@@ -75,22 +75,19 @@ namespace Game.Core.StateMachines.Game
 			{
 				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 				var moodClip = player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
-				if (_audioPlayer.IsMusicPlaying() == false && _audioPlayer.IsCurrentMusic(moodClip) == false)
+				if (_audioPlayer.IsMusicPlaying() == false)
 				{
 					_ = _audioPlayer.PlayMusic(moodClip, true, 0.5f);
 				}
 				else
 				{
-					if (_audioPlayer.IsCurrentMusic(moodClip) == false)
-					{
-						SetMusic(player);
-					}
+					SetMusic(player);
 				}
 			}
 
-			_ = _ui.FadeOut();
-
 			_state.Running = true;
+
+			await _ui.FadeOut();
 
 			_ui.ShowGameplay();
 
@@ -133,7 +130,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					_state.PlayerDidAct = true;
 
-					await UniTask.Delay(200);
+					await UniTask.Delay(300);
 
 					foreach (var entity in _state.Entities)
 					{
@@ -165,7 +162,8 @@ namespace Game.Core.StateMachines.Game
 								if (entityAtPosition.ControlledByPlayer)
 								{
 									entityAtPosition.Dead = true;
-									_state.TriggerRetryAt = Time.time + 0.5f;
+
+									await Restart();
 								}
 							}
 						}
@@ -310,7 +308,7 @@ namespace Game.Core.StateMachines.Game
 
 			if (_resetWasPressedThisFrame)
 			{
-				_state.TriggerRetryAt = Time.time;
+				_ = Restart();
 			}
 
 			if (_state.TriggerExitAt > 0 && Time.time >= _state.TriggerExitAt)
@@ -320,14 +318,6 @@ namespace Game.Core.StateMachines.Game
 				_state.Running = false;
 				_ = _audioPlayer.StopMusic();
 				_fsm.Fire(GameFSM.Triggers.NextLevel);
-			}
-
-			if (_state.TriggerRetryAt > 0 && Time.time >= _state.TriggerRetryAt)
-			{
-				_state.TriggerRetryAt = 0;
-				_state.Running = false;
-				// _ = _audioPlayer.StopMusic();
-				_fsm.Fire(GameFSM.Triggers.Retry);
 			}
 
 			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
@@ -349,7 +339,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 				if (Keyboard.current.f2Key.wasPressedThisFrame)
 				{
-					Defeat();
+					_ = Restart();
 				}
 			}
 
@@ -370,7 +360,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
 
-			await _ui.FadeIn(Color.white);
+			await _ui.FadeIn(Color.black);
 
 			_ui.HideGameplay();
 
@@ -381,8 +371,9 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
 			_state.TriggerExitAt = 0;
-			_state.TriggerRetryAt = 0;
+			_state.TriggerRetry = false;
 			_state.PlayerDidAct = false;
+			_audioPlayer.MusicTimes.Clear();
 			if (_state.Level)
 			{
 				Object.Destroy(_state.Level.gameObject);
@@ -402,20 +393,11 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
-		private async void Defeat()
+		private async UniTask Restart()
 		{
-			if (_config.PlayerDeathClip)
-			{
-				_ = _audioPlayer.PlaySoundEffect(_config.PlayerDeathClip);
-			}
-
 			_state.Running = false;
-
-			await UniTask.Delay(1000);
-
-			_state.Running = true;
-
-			_fsm.Fire(GameFSM.Triggers.Lost);
+			await _audioPlayer.StopMusic(0);
+			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 
 		private bool MoveTo(Entity entity, Vector3Int destination)
@@ -520,6 +502,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			entity.MoveT = 0;
 			entity.Moving = true;
 
+			// TODO(colin): why is this necessary?
 			if (_state.TriggerExitAt == 0)
 			{
 				if (entity.AffectedByAnger)
