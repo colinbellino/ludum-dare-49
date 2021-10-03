@@ -288,11 +288,13 @@ MonoBehaviour:
   AffectedByAnger: 1
   AngerProgress: 0
   AngerState: 1
+  TransformationAudioClip: {fileID: 8300000, guid: cf8426943345de148938a2a77adb0569, type: 3}
   Trigger: 0
   TriggerState: 0
   TriggerAction: 0
   KeyAudioClip: {fileID: 0}
   ExitAudioClip: {fileID: 0}
+  BreakingAudioClip: {fileID: 0}
   BreaksAt: 1
   BreakableProgress: 0
   CanBeActivated: 0
