@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.InputSystem;
-using static Game.Core.Utils;
 
 namespace Game.Core.StateMachines.Game
 {
