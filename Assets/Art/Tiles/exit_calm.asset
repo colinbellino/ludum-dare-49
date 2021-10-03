@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: exit_calm_strip8_0
+  m_Name: exit_calm
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 9103640967977801528, guid: 75b553517799e2547a8efa7dbc619e0a, type: 3}
+  m_Sprite: {fileID: 3229200846342549848, guid: 8029b4c8bb8508f4d918e5d6c74670f2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
