@@ -189,7 +189,18 @@ namespace Game.Core.StateMachines.Game
 
 		private UniTask CurrentAnimation(Entity entity)
 		{
-			return UniTask.Delay(System.TimeSpan.FromSeconds(entity.AnimationClipLength[entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name]));
+			var infos = entity.Animator.GetCurrentAnimatorClipInfo(0);
+			if (infos.Length == 0)
+			{
+				return default;
+			}
+			var clipName = entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+			if (entity.AnimationClipLength.ContainsKey(clipName) == false)
+			{
+				return default;
+			}
+
+			return UniTask.Delay(System.TimeSpan.FromSeconds(entity.AnimationClipLength[clipName]));
 		}
 
 		public override void Tick()
@@ -378,6 +389,7 @@ namespace Game.Core.StateMachines.Game
 						{
 							if (entity.ControlledByPlayer == false)
 							{
+
 								break;
 							}
 
@@ -418,11 +430,11 @@ namespace Game.Core.StateMachines.Game
 								}
 								entity.Animator.Play("Fall");
 								await CurrentAnimation(entity);
-								await UniTask.Delay(500); // Wait for it to sink in
 
 								if (entity.ControlledByPlayer)
 								{
 									_state.Running = false;
+									await UniTask.Delay(500); // Wait for it to sink in
 
 									_ = _audioPlayer.StopMusic(2);
 									await _ui.FadeIn(Color.black);
@@ -445,6 +457,35 @@ namespace Game.Core.StateMachines.Game
 									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.KeyAudioClip);
 								}
 							}
+						}
+						break;
+
+					case TriggerActions.Fall:
+						{
+							if (entity.AngerState != AngerStates.Angry)
+							{
+								break;
+							}
+
+							entity.Dead = true;
+							if (entity.FallAudioClip)
+							{
+								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
+							}
+							entity.Animator.Play("Fall");
+							await CurrentAnimation(entity);
+
+							if (entity.ControlledByPlayer)
+							{
+								_state.Running = false;
+								await UniTask.Delay(500); // Wait for it to sink in
+
+								_ = _audioPlayer.StopMusic(2);
+								await _ui.FadeIn(Color.black);
+								await UniTask.Delay(1000);
+								_fsm.Fire(GameFSM.Triggers.Retry);
+							}
+
 						}
 						break;
 
@@ -516,8 +557,8 @@ namespace Game.Core.StateMachines.Game
 						_state.Entities.Add(entity);
 						tilemap.SetTile(entity.GridPosition, null);
 
-						var clips = entity.Animator.runtimeAnimatorController.animationClips;
 						entity.AnimationClipLength = new ClipLength();
+						var clips = entity.Animator.runtimeAnimatorController.animationClips;
 						foreach (var clip in clips)
 						{
 							if (entity.AnimationClipLength.ContainsKey(clip.name))
