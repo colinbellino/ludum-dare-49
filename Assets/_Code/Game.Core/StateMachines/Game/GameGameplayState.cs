@@ -388,10 +388,9 @@ namespace Game.Core.StateMachines.Game
 							await _ui.FadeIn(Color.black);
 							await UniTask.Delay(4000);
 							_fsm.Fire(GameFSM.Triggers.NextLevel);
-
-							return true;
 						}
 						break;
+
 					case TriggerActions.Break:
 						{
 							if (entity.AngerState != AngerStates.Angry)
@@ -429,15 +428,22 @@ namespace Game.Core.StateMachines.Game
 							}
 						}
 						break;
+
 					case TriggerActions.Key:
 						{
 							if (entity.ControlledByPlayer)
 							{
 								entityAtDestination.Dead = true;
 								_state.Keys += 1;
+
+								if (entityAtDestination.KeyAudioClip)
+								{
+									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.KeyAudioClip);
+								}
 							}
 						}
 						break;
+
 					default: break;
 				}
 			}
