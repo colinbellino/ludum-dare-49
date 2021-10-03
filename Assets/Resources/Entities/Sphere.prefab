@@ -289,7 +289,7 @@ MonoBehaviour:
   Trigger: 1
   TriggerState: 0
   TriggerAction: 3
-  KeyAudioClip: {fileID: 8300000, guid: bacb24a4ceb3def4ba00d375125b9b8f, type: 3}
+  KeyAudioClip: {fileID: 8300000, guid: 625c76d2dadabc9429d7d9f4874cbd1e, type: 3}
   ExitAudioClip: {fileID: 8300000, guid: bebb3e839063b4447915648311b8765d, type: 3}
   BreaksAt: 1
   BreakableProgress: 0
