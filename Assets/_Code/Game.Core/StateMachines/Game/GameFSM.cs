@@ -7,7 +7,7 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameFSM
 	{
-		public enum States { Init, LevelSelection, Gameplay, Victory, GameOver, Quit }
+		public enum States { Init, LevelSelection, LoadLevel, Gameplay, Victory, GameOver, Quit }
 		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, Quit }
 
 		private readonly bool _debug;
@@ -23,8 +23,9 @@ namespace Game.Core.StateMachines.Game
 			_states = new Dictionary<States, IState>
 			{
 				{ States.Init, new GameInitState(this, game) },
-				{ States.Gameplay, new GameGameplayState(this, game) },
 				{ States.LevelSelection, new GameLevelSelectionState(this, game) },
+				{ States.LoadLevel, new GameLoadLevelState(this, game) },
+				{ States.Gameplay, new GameGameplayState(this, game) },
 				{ States.Victory, new GameVictoryState(this, game) },
 				{ States.GameOver, new GameOverState(this, game) },
 				{ States.Quit, new GameQuitState(this, game) },
@@ -39,11 +40,14 @@ namespace Game.Core.StateMachines.Game
 			_machine.Configure(States.LevelSelection)
 				.Permit(Triggers.LevelSelected, States.Gameplay);
 
+			_machine.Configure(States.LoadLevel)
+				.Permit(Triggers.Done, States.Gameplay);
+
 			_machine.Configure(States.Gameplay)
 				.Permit(Triggers.Won, States.Victory)
 				.Permit(Triggers.Quit, States.Quit)
-				.PermitReentry(Triggers.NextLevel)
-				.PermitReentry(Triggers.Retry);
+				.Permit(Triggers.NextLevel, States.LoadLevel)
+				.Permit(Triggers.Retry, States.LoadLevel);
 
 			_machine.Configure(States.Victory)
 				.Permit(Triggers.Retry, States.Gameplay)
