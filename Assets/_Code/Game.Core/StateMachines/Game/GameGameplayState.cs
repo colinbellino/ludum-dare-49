@@ -221,7 +221,8 @@ namespace Game.Core.StateMachines.Game
 				{
 					Time.timeScale = 1f;
 					_state.Running = true;
-					_audioPlayer.ResumeMusic();
+					// _audioPlayer.ResumeMusic();
+					_audioPlayer.TransitionToSnapshot(_config.DefaultAudioSnapshot);
 					_ui.HidePause();
 
 					Time.timeScale = _state.AssistMode ? 0.7f : 1f;
@@ -230,7 +231,8 @@ namespace Game.Core.StateMachines.Game
 				{
 					Time.timeScale = 0f;
 					_state.Running = false;
-					_audioPlayer.PauseMusic();
+					// _audioPlayer.PauseMusic();
+					_audioPlayer.TransitionToSnapshot(_config.PauseAudioSnapshot);
 					_ui.ShowPause();
 				}
 			}
