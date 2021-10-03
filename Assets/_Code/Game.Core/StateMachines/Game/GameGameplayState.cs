@@ -59,17 +59,19 @@ namespace Game.Core.StateMachines.Game
 				SpawnEntitiesFromTilemap(_state.Level.Entities);
 			}
 
+			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+
 			// Initialize entities
+			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
 			foreach (var entity in _state.Entities)
 			{
 				entity.transform.position = entity.GridPosition + cellOffset;
 
-				if (entity.CanBeActivated)
+				if (entity.CanBeActivated && player.AngerState == entity.TriggerState)
 				{
 					if (entity.ActivatesWhenKeyInLevel)
 					{
-						var keys = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key);
-						if (keys.Count == 0)
+						if (_state.KeysInLevel == 0)
 						{
 							entity.Activated = true;
 						}
@@ -82,7 +84,6 @@ namespace Game.Core.StateMachines.Game
 
 			// Start or continue music where we left off
 			{
-				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 				var moodClip = player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
 				if (_audioPlayer.IsMusicPlaying() == false)
 				{
@@ -128,8 +129,6 @@ namespace Game.Core.StateMachines.Game
 					continue;
 				}
 
-				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
-
 				if (player.Dead)
 				{
 					continue;
@@ -149,11 +148,6 @@ namespace Game.Core.StateMachines.Game
 								Pathfinding.DistanceType.Manhattan
 							);
 							await Turn(entity, path[0]);
-						}
-
-						if (entity.CanBeActivated && entity.Activated == false && _state.Keys >= entity.ActivatesWithKeys)
-						{
-							entity.Activated = true;
 						}
 
 						if (entity.Dead)
@@ -222,6 +216,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			base.Tick();
 
+			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
 				if (Time.timeScale == 0f)
@@ -253,6 +249,26 @@ namespace Game.Core.StateMachines.Game
 
 					if (entity.CanBeActivated)
 					{
+						if (entity.Activated == false)
+						{
+							if (
+								(_state.KeysInLevel == 0 && player.AngerState == entity.TriggerState) ||
+								_state.KeysInLevel > 0 && _state.KeysPickedUp >= entity.ActivatesWithKeys)
+							{
+								UnityEngine.Debug.Log("activate");
+								entity.Activated = true;
+							}
+
+						}
+						else
+						{
+							if (player.AngerState != entity.TriggerState)
+							{
+								UnityEngine.Debug.Log("deactivate");
+								entity.Activated = false;
+							}
+						}
+
 						entity.Animator.SetBool("Active", entity.Activated);
 					}
 				}
@@ -264,7 +280,6 @@ namespace Game.Core.StateMachines.Game
 
 				if (Utils.IsDevBuild())
 				{
-					var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 					_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
 State: {player.AngerState}
 Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
@@ -304,7 +319,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
 
-			await _ui.FadeIn(Color.white);
+			await _ui.FadeIn(Color.black);
 
 			_ui.HideGameplay();
 
@@ -471,7 +486,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 							if (entity.ControlledByPlayer)
 							{
 								entityAtDestination.Dead = true;
-								_state.Keys += 1;
+								_state.KeysPickedUp += 1;
 
 								if (entityAtDestination.KeyAudioClip)
 								{
