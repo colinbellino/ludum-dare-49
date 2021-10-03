@@ -19,25 +19,21 @@ MonoBehaviour:
   - {fileID: 7894139527700584289, guid: cb4209f868538f6408795d6ff8d91bab, type: 3}
   TileToEntity:
     m_keys:
-    - {fileID: 11400000, guid: ff80212d9e3db4c748172b1107184293, type: 2}
-    - {fileID: 11400000, guid: 7ba1fe20905ef4758b8810baff19a4c2, type: 2}
-    - {fileID: 11400000, guid: 3640700726f9dbb4bb61264ed33a6adf, type: 2}
+    - {fileID: 11400000, guid: 4676f8cda5c552641b04efbd924842ef, type: 2}
     - {fileID: 11400000, guid: 6cbad39a7a932bb4fa2ab43211475e4e, type: 2}
+    - {fileID: 11400000, guid: 3640700726f9dbb4bb61264ed33a6adf, type: 2}
     - {fileID: 11400000, guid: 26a2b48ed2e694042bd91adefb59790f, type: 2}
     - {fileID: 11400000, guid: fa073c560021ec041931b151c328bcb9, type: 2}
     m_values:
     - {fileID: 3510502540373367279, guid: 59510419692fd415dbc2e3cab5c9b79e, type: 3}
-    - {fileID: 3510502540373367279, guid: c4564851f74ab4bd689d7d7a34e2ae06, type: 3}
-    - {fileID: 3510502540373367279, guid: 8e609c9c3bce88b4c9f8b0e38687349f, type: 3}
     - {fileID: 3510502540373367279, guid: ebc742d7727cc6f49ab5e4cac30ed175, type: 3}
+    - {fileID: 3510502540373367279, guid: 8e609c9c3bce88b4c9f8b0e38687349f, type: 3}
     - {fileID: 3329524165835136575, guid: 7afabfb54b243e043b0bf2be4cd30d3f, type: 3}
     - {fileID: 3510502540373367279, guid: 21a3732339258c34ca16c235fef3e394, type: 3}
   TileToInfo:
     m_keys:
-    - {fileID: 11400000, guid: a7d431761a9b4440fb9a9bd502f50d0c, type: 2}
     - {fileID: 11400000, guid: a00e2a9d22c32f947aa0fa04029caa7a, type: 2}
     m_values:
-    - Walkable: 1
     - Walkable: 1
   AudioMixer: {fileID: 24100000, guid: c00711887b3714031932c58a1ac16396, type: 2}
   MusicAudioMixerGroup: {fileID: -1804572004088458924, guid: c00711887b3714031932c58a1ac16396, type: 2}
