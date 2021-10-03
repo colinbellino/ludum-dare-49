@@ -48,7 +48,8 @@ namespace Game.Core.StateMachines.Game
 					for (var y = 0; y < tilemap.size.y - 0; y++)
 					{
 						var position = new Vector3Int(x, y, 0);
-						walkableTiles[x, y] = IsTileWalkable(tilemap.GetTile(position));
+						var tile = tilemap.GetTile(position) as Tile;
+						walkableTiles[x, y] = tile && IsTileWalkable(tile);
 					}
 				}
 				_state.WalkableGrid = new GridData(walkableTiles);
@@ -170,7 +171,10 @@ namespace Game.Core.StateMachines.Game
 									entity.AngerProgress = 0;
 									entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
 									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+
 									entity.Direction = Vector3Int.down;
+									entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+									entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 
 									if (entity.TransformationAudioClip)
 									{
@@ -186,6 +190,13 @@ namespace Game.Core.StateMachines.Game
 								}
 							}
 						}
+					}
+				}
+				else
+				{
+					if (player.BonkAudioClip)
+					{
+						_ = _audioPlayer.PlaySoundEffect(player.BonkAudioClip);
 					}
 				}
 			}
@@ -255,9 +266,9 @@ namespace Game.Core.StateMachines.Game
 				{
 					var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 					_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
-	State: {player.AngerState}
-	Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
-	Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
+State: {player.AngerState}
+Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
+Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
 				}
 
 				if (Utils.IsDevBuild())
@@ -328,7 +339,11 @@ namespace Game.Core.StateMachines.Game
 
 		private async UniTask<bool> Turn(Entity entity, Vector3Int destination)
 		{
-			var destinationTile = _state.Level.Ground.GetTile(destination);
+			entity.Direction = destination - entity.GridPosition;
+			entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+			entity.Animator.SetFloat("DirectionY", entity.Direction.y);
+
+			var destinationTile = _state.Level.Ground.GetTile(destination) as Tile;
 			var entitiesAtDestination = _state.Entities.FindAll(entity => entity.GridPosition == destination);
 			if (entitiesAtDestination.Count > 1)
 			{
@@ -337,17 +352,19 @@ namespace Game.Core.StateMachines.Game
 
 			var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
 
-			if (destinationTile == null && entityAtDestination == null)
+			if (destinationTile == null)
 			{
-				UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
-				return false;
-			}
-
-			if (destinationTile && _config.TileToInfo.TryGetValue(destinationTile, out var destinationTileInfo))
-			{
-				if (destinationTileInfo.Walkable == false)
+				if (entityAtDestination == null)
 				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (not walkable).");
+					UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
+					return false;
+				}
+			}
+			else
+			{
+				if (IsTileWalkable(destinationTile) == false)
+				{
+					UnityEngine.Debug.Log($"Can't move to {destination} (not walkable, {(destinationTile ? destinationTile.name : "null")}).");
 					return false;
 				}
 			}
@@ -373,9 +390,6 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			entity.Direction = destination - entity.GridPosition;
-			entity.Animator.SetFloat("DirectionX", entity.Direction.x);
-			entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 			entity.GridPosition = destination;
 			entity.Animator.Play("Walk");
 			if (entity.AngerState == AngerStates.Angry && entity.WalkAudioClips.Length > 0)
@@ -444,10 +458,8 @@ namespace Game.Core.StateMachines.Game
 									_state.Running = false;
 									await UniTask.Delay(500); // Wait for it to sink in
 
-
 									_ = _audioPlayer.StopMusic(2);
 									await _ui.FadeIn(Color.black);
-									await UniTask.Delay(1000);
 									_fsm.Fire(GameFSM.Triggers.Retry);
 								}
 							}
@@ -524,20 +536,14 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		private bool IsTileWalkable(TileBase tile)
+		private bool IsTileWalkable(Tile tile)
 		{
-			if (tile == null)
+			if (tile.colliderType == Tile.ColliderType.None)
 			{
 				return false;
 			}
 
-			var hasInfo = _config.TileToInfo.TryGetValue(tile, out var destinationTileInfo);
-			if (hasInfo && destinationTileInfo.Walkable == true)
-			{
-				return true;
-			}
-
-			return false;
+			return true;
 		}
 
 		private void SpawnEntitiesFromTilemap(Tilemap tilemap)
@@ -580,7 +586,7 @@ namespace Game.Core.StateMachines.Game
 					}
 					else
 					{
-						UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
+						// UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
 					}
 				}
 			}

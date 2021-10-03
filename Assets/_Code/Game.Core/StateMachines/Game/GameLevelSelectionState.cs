@@ -9,6 +9,8 @@ namespace Game.Core.StateMachines.Game
 	{
 		public GameLevelSelectionState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
+		private bool _running;
+
 		public override async UniTask Enter()
 		{
 			await base.Enter();
@@ -20,7 +22,10 @@ namespace Game.Core.StateMachines.Game
 			await UniTask.Delay(1000);
 #endif
 
-			_fsm.Fire(GameFSM.Triggers.LevelSelected);
+			if (_running)
+			{
+				_fsm.Fire(GameFSM.Triggers.LevelSelected);
+			}
 		}
 
 		public override void Tick()
@@ -102,6 +107,13 @@ namespace Game.Core.StateMachines.Game
 				_state.CurrentLevelIndex = 11;
 				_fsm.Fire(GameFSM.Triggers.LevelSelected);
 			}
+		}
+
+		public override UniTask Exit()
+		{
+			_running = false;
+
+			return default;
 		}
 	}
 }

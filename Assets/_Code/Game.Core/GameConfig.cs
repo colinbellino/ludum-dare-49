@@ -17,7 +17,6 @@ namespace Game.Core
 
 		[Header("Grid")]
 		public TileToEntity TileToEntity;
-		public TileToInfo TileToInfo;
 
 		[Header("Audio")]
 		public AudioMixer AudioMixer;

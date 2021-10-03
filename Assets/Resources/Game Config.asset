@@ -18,6 +18,7 @@ MonoBehaviour:
   - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
   - {fileID: 7894139527700584289, guid: cb4209f868538f6408795d6ff8d91bab, type: 3}
   - {fileID: 7894139527700584289, guid: 07cdcdb971c33304d92698526b7bc945, type: 3}
+  - {fileID: 7894139527700584289, guid: 32427adf6f15bd449baebe2f8ca436e6, type: 3}
   TileToEntity:
     m_keys:
     - {fileID: 11400000, guid: 4676f8cda5c552641b04efbd924842ef, type: 2}
