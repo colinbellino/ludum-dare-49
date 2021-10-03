@@ -150,39 +150,6 @@ namespace Game.Core.StateMachines.Game
 							await Turn(entity, path[0]);
 						}
 
-						if (entity.Breaking)
-						{
-							entity.Animator.Play("Breaking");
-							entity.Trigger = false;
-							entity.Breaking = false;
-							entity.BreakableProgress = 0;
-
-							var entityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
-							if (entityAtPosition)
-							{
-								if (entityAtPosition.FallAudioClip)
-								{
-									_ = _audioPlayer.PlaySoundEffect(entityAtPosition.FallAudioClip);
-								}
-								entityAtPosition.Animator.Play("Fall");
-								await CurrentAnimation(entityAtPosition);
-								await UniTask.Delay(500);
-
-								entityAtPosition.Dead = true;
-
-								if (entityAtPosition.ControlledByPlayer)
-								{
-									_state.Running = false;
-
-									_ = _audioPlayer.StopMusic(2);
-									await _ui.FadeIn(Color.black);
-									await UniTask.Delay(1000);
-									_fsm.Fire(GameFSM.Triggers.Retry);
-									return;
-								}
-							}
-						}
-
 						if (entity.CanBeActivated && entity.Activated == false && _state.Keys >= entity.ActivatesWithKeys)
 						{
 							entity.Activated = true;
@@ -202,8 +169,8 @@ namespace Game.Core.StateMachines.Game
 								{
 									entity.AngerProgress = 0;
 									entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
-									entity.Transforming = true;
 									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+									entity.Direction = Vector3Int.down;
 
 									entity.Animator.Play("Transform");
 									await CurrentAnimation(entity);
@@ -436,7 +403,29 @@ namespace Game.Core.StateMachines.Game
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
-								entityAtDestination.Breaking = true;
+								entityAtDestination.Trigger = false;
+								entityAtDestination.BreakableProgress = 0;
+								entityAtDestination.Animator.Play("Breaking");
+								await CurrentAnimation(entityAtDestination);
+
+								entity.Dead = true;
+								if (entity.FallAudioClip)
+								{
+									_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
+								}
+								entity.Animator.Play("Fall");
+								await CurrentAnimation(entity);
+								await UniTask.Delay(500); // Wait for it to sink in
+
+								if (entity.ControlledByPlayer)
+								{
+									_state.Running = false;
+
+									_ = _audioPlayer.StopMusic(2);
+									await _ui.FadeIn(Color.black);
+									await UniTask.Delay(1000);
+									_fsm.Fire(GameFSM.Triggers.Retry);
+								}
 							}
 						}
 						break;
