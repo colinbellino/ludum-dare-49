@@ -302,7 +302,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6e34983c01ad876469f5b30aa33330f9, type: 3}
   - {fileID: 8300000, guid: 491e1e8c33f63a544ba938d23ab02f63, type: 3}
   - {fileID: 8300000, guid: c2f8a8e9d4f24e642beb82d968a16eed, type: 3}
-  TransformationAudioClip: {fileID: 8300000, guid: 30fdf42253b3ac6429be25fd00589e49, type: 3}
+  TransformationAudioClip: {fileID: 0}
   KeyAudioClip: {fileID: 0}
   ExitAudioClip: {fileID: 0}
   BreakingAudioClip: {fileID: 0}
