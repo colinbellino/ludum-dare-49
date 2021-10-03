@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
@@ -36,9 +35,6 @@ namespace Game.Core.StateMachines.Game
 				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
 				UnityEngine.Debug.Log("Loaded level: " + _state.Level.name);
 
-				Assert.AreEqual(_state.Level.Ground.origin, Vector3Int.zero,
-					"Make sure the tilemap's origin is at (0,0,0).");
-
 				// Generate grid for walkable tiles
 				var tilemap = _state.Level.Ground;
 				var walkableTiles = new bool[tilemap.size.x, tilemap.size.y];
@@ -57,9 +53,26 @@ namespace Game.Core.StateMachines.Game
 				SpawnEntitiesFromTilemap(_state.Level.Entities);
 			}
 
+			// Initialize entities
+			foreach (var entity in _state.Entities)
+			{
+				if (entity.CanBeActivated)
+				{
+					if (entity.ActivatesWhenKeyInLevel)
+					{
+						var keys = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key);
+						if (keys.Count == 0)
+						{
+							entity.Activated = true;
+						}
+					}
+				}
+			}
+
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
 
+			// Start or continue music where we left off
 			{
 				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 				var moodClip = player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
@@ -157,6 +170,12 @@ namespace Game.Core.StateMachines.Game
 									_state.TriggerRetryAt = Time.time + 0.5f;
 								}
 							}
+						}
+
+						if (entity.CanBeActivated && _state.Keys >= entity.ActivatesWithKeys)
+						{
+							UnityEngine.Debug.Log("activate exit");
+							entity.Activated = true;
 						}
 					}
 
@@ -276,6 +295,11 @@ namespace Game.Core.StateMachines.Game
 				{
 					entity.Animator.Play("Damaged");
 				}
+
+				if (entity.CanBeActivated)
+				{
+					entity.Animator.SetBool("Active", entity.Activated);
+				}
 			}
 
 			if (_resetWasPressedThisFrame)
@@ -390,7 +414,13 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 		private bool MoveTo(Entity entity, Vector3Int destination)
 		{
 			var destinationTile = _state.Level.Ground.GetTile(destination);
-			var entityAtDestination = _state.Entities.Find(entity => entity.GridPosition == destination);
+			var entitiesAtDestination = _state.Entities.FindAll(entity => entity.GridPosition == destination);
+			if (entitiesAtDestination.Count > 1)
+			{
+				UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
+			}
+
+			var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
 
 			if (destinationTile == null && entityAtDestination == null)
 			{
@@ -418,6 +448,12 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 				if (entityAtDestination.TriggerState != AngerStates.None && entity.AngerState.HasFlag(entityAtDestination.TriggerState) == false)
 				{
 					UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
+					return false;
+				}
+
+				if (entityAtDestination.CanBeActivated && entityAtDestination.Activated == false)
+				{
+					UnityEngine.Debug.Log($"Can't move to {destination} (entity not activated).");
 					return false;
 				}
 
@@ -455,16 +491,17 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 						break;
 					case TriggerActions.Key:
 						{
+							UnityEngine.Debug.Log("key");
 							if (entity.ControlledByPlayer)
 							{
-								UnityEngine.Debug.Log("Key pickup!");
+								UnityEngine.Debug.Log("Key picked up!");
+								_state.Keys += 1;
 							}
 						}
 						break;
 					default: break;
 				}
 			}
-
 
 			// UnityEngine.Debug.Log("Entity moved.");
 			entity.Direction = destination - entity.GridPosition;

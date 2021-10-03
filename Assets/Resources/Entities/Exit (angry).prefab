@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 37508923
   m_SortingLayer: -1
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7664688985958279823, guid: c9a7f17f1b746b247a9083c9cdcefaf6, type: 3}
+  m_Sprite: {fileID: -4494706061652357526, guid: 8fa6baffbbf545c4da589e5cefa45bb8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -289,6 +289,8 @@ MonoBehaviour:
   AffectedByAnger: 0
   AngerProgress: 0
   AngerState: 0
+  Transforming: 0
+  TransformT: 0
   Trigger: 1
   TriggerState: 2
   TriggerAction: 1
@@ -296,3 +298,8 @@ MonoBehaviour:
   BreaksAt: 1
   BreakableProgress: 0
   Breaking: 0
+  CanBeActivated: 1
+  ActivatesWhenKeyInLevel: 1
+  ActivatesWithKeys: 1
+  Activated: 0
+  Dead: 0
