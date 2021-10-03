@@ -27,6 +27,10 @@ namespace Game.Core
 			{
 				MusicTimes[_musicSource.clip.GetInstanceID()] = _musicSource.time;
 			}
+			if (_musicSource2.clip)
+			{
+				MusicTimes[_musicSource2.clip.GetInstanceID()] = _musicSource2.time;
+			}
 		}
 
 		public UniTask PlayRandomSoundEffect(AudioClip[] clips, Vector3 position, float volume = 1f)
@@ -48,28 +52,30 @@ namespace Game.Core
 
 		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f, bool crossFade = false)
 		{
-			if (fromStart)
-			{
-				_musicSource.time = 0f;
-			}
-			else
-			{
-				MusicTimes.TryGetValue(clip.GetInstanceID(), out var time);
-				_musicSource.time = time;
-			}
-
 			if (fadeDuration > 0f)
 			{
 				if (crossFade)
 				{
 					_musicSource2.clip = clip;
+					_musicSource2.time = _musicSource.time;
 					_musicSource2.Play();
+
 					_ = _musicSource.DOFade(0, fadeDuration);
 					_ = _musicSource2.DOFade(1, fadeDuration);
-					await UniTask.Delay(TimeSpan.FromMilliseconds(fadeDuration));
+					await UniTask.Delay(TimeSpan.FromSeconds(fadeDuration));
 				}
 				else
 				{
+					if (fromStart)
+					{
+						_musicSource.time = 0f;
+					}
+					else
+					{
+						MusicTimes.TryGetValue(clip.GetInstanceID(), out var time);
+						_musicSource.time = time;
+					}
+
 					_musicSource.clip = clip;
 					_musicSource.Play();
 
