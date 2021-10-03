@@ -18,23 +18,16 @@ namespace Game.Core
 
 		[Header("Movement")]
 		[SerializeField] public float MoveSpeed = 4f;
-		[SerializeField] public AudioClip BonkAudioClip;
-		[SerializeField] public AudioClip FallAudioClip;
-		[SerializeField] public AudioClip[] WalkAudioClips;
 
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;
 		[HideInInspector] public int AngerProgress;
 		[SerializeField] public AngerStates AngerState;
-		[SerializeField] public AudioClip TransformationAudioClip;
 
 		[Header("Triggers")]
 		[SerializeField] public bool Trigger;
 		[SerializeField] public AngerStates TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
-		[SerializeField] public AudioClip KeyAudioClip;
-		[SerializeField] public AudioClip ExitAudioClip;
-		[SerializeField] public AudioClip BreakingAudioClip;
 
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;
@@ -45,6 +38,15 @@ namespace Game.Core
 		[SerializeField] public bool ActivatesWhenKeyInLevel;
 		[SerializeField] public int ActivatesWithKeys;
 		[HideInInspector] public bool Activated;
+
+		[Header("Audio")]
+		[SerializeField] public AudioClip CantMoveAudioClip;
+		[SerializeField] public AudioClip FallAudioClip;
+		[SerializeField] public AudioClip[] WalkAudioClips;
+		[SerializeField] public AudioClip TransformationAudioClip;
+		[SerializeField] public AudioClip KeyAudioClip;
+		[SerializeField] public AudioClip ExitAudioClip;
+		[SerializeField] public AudioClip BreakingAudioClip;
 
 		[HideInInspector] public bool Dead;
 
