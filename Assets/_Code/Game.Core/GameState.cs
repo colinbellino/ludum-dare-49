@@ -19,7 +19,7 @@ namespace Game.Core
 		public List<Entity> Entities = new List<Entity>(30);
 		public GridData WalkableGrid;
 		public float TriggerExitAt;
-		public float TriggerRetryAt;
+		public bool TriggerRetry;
 		public int Keys;
 	}
 }
