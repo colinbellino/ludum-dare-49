@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game.Core
@@ -50,7 +51,12 @@ namespace Game.Core
 		[HideInInspector] public bool Activated;
 
 		[HideInInspector] public bool Dead;
+
+		[HideInInspector] public ClipLength AnimationClipLength;
 	}
+
+	[Serializable]
+	public class ClipLength : SerializableDictionary<string, float> { }
 
 	public enum AngerStates { None, Calm, Angry }
 
