@@ -31,6 +31,8 @@ namespace Game.Core
 
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;
+		[SerializeField] public ParticleSystem BreakParticle;
+		[SerializeField] public Vector3 BreakParticleOffset;
 		[HideInInspector] public int BreakableProgress;
 
 		[Header("Activation")]
