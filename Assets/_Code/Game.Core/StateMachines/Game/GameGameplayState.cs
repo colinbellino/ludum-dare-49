@@ -443,6 +443,10 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 							entityAtDestination.BreakableProgress += 1;
 
+							if (entity.BreakParticle)
+							{
+								Object.Instantiate(entity.BreakParticle, entity.GridPosition + cellOffset + entity.BreakParticleOffset, Quaternion.identity);
+							}
 							if (entity.WalkAudioClips.Length > 0)
 							{
 								_ = _audioPlayer.PlayRandomSoundEffect(entity.WalkAudioClips, entity.GridPosition);
