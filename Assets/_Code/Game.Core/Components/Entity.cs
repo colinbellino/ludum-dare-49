@@ -44,11 +44,13 @@ namespace Game.Core
 		[Header("Audio")]
 		[SerializeField] public AudioClip CantMoveAudioClip;
 		[SerializeField] public AudioClip FallAudioClip;
-		[SerializeField] public AudioClip[] WalkAudioClips;
+		[SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("WalkAudioClips")] public AudioClip[] BreakGroundAudioClips;
 		[SerializeField] public AudioClip TransformationAudioClip;
 		[SerializeField] public AudioClip KeyAudioClip;
 		[SerializeField] public AudioClip ExitAudioClip;
 		[SerializeField] public AudioClip BreakingAudioClip;
+		[SerializeField] public AudioClip[] WalkCalmAudioClips;
+		[SerializeField] public AudioClip[] WalkAngryAudioClips;
 
 		[HideInInspector] public bool Dead;
 

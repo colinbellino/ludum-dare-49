@@ -404,6 +404,11 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			}
 
 			entity.GridPosition = destination;
+			var clips = entity.AngerState == AngerStates.Angry ? entity.WalkAngryAudioClips : entity.WalkCalmAudioClips;
+			if (clips.Length > 0)
+			{
+				_ = _audioPlayer.PlayRandomSoundEffect(clips, entity.GridPosition);
+			}
 			entity.Animator.Play("Walk");
 			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
 			entity.Animator.Play("Idle");
@@ -416,7 +421,6 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 						{
 							if (entity.ControlledByPlayer == false)
 							{
-
 								break;
 							}
 
@@ -447,9 +451,9 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 							{
 								Object.Instantiate(entity.BreakParticle, entity.GridPosition + cellOffset + entity.BreakParticleOffset, Quaternion.identity);
 							}
-							if (entity.WalkAudioClips.Length > 0)
+							if (entity.BreakGroundAudioClips.Length > 0)
 							{
-								_ = _audioPlayer.PlayRandomSoundEffect(entity.WalkAudioClips, entity.GridPosition);
+								_ = _audioPlayer.PlayRandomSoundEffect(entity.BreakGroundAudioClips, entity.GridPosition);
 								await UniTask.Delay(300);
 							}
 
