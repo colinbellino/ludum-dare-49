@@ -46,7 +46,7 @@ namespace Game.Core
 		[HideInInspector] public bool Dead;
 	}
 
-	[Flags] public enum AngerStates { None, Calm, Angry }
+	public enum AngerStates { None, Calm, Angry }
 
-	public enum TriggerActions { None, Exit, Break }
+	public enum TriggerActions { None, Exit, Break, Key }
 }

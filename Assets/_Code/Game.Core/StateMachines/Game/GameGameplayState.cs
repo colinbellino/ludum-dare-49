@@ -255,7 +255,6 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (entity.TransformT == 0)
 					{
-						UnityEngine.Debug.Log("transform start");
 						entity.Animator.Play("Transform (calm)");
 					}
 
@@ -426,24 +425,39 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 				{
 					case TriggerActions.Exit:
 						{
-							if (entity.ControlledByPlayer)
+							if (entity.ControlledByPlayer == false)
 							{
-								if (entityAtDestination.ExitAudioClip)
-								{
-									_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
-								}
-
-								_state.TriggerExitAt = Time.time + 1f;
+								break;
 							}
+
+							if (entityAtDestination.ExitAudioClip)
+							{
+								_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
+							}
+
+							_state.TriggerExitAt = Time.time + 1f;
 						}
 						break;
 					case TriggerActions.Break:
 						{
+							if (entity.AngerState != AngerStates.Angry)
+							{
+								break;
+							}
+
 							entityAtDestination.BreakableProgress += 1;
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
 								entityAtDestination.Breaking = true;
+							}
+						}
+						break;
+					case TriggerActions.Key:
+						{
+							if (entity.ControlledByPlayer)
+							{
+								UnityEngine.Debug.Log("Key pickup!");
 							}
 						}
 						break;
@@ -489,7 +503,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 		private void SetMusic(Entity entity)
 		{
-			UnityEngine.Debug.Log("Toggle audio");
+			// UnityEngine.Debug.Log("Toggle audio");
 			var calmId = _config.MusicCalmClip.GetInstanceID();
 			var angryId = _config.MusicAngryClip.GetInstanceID();
 
