@@ -194,9 +194,9 @@ namespace Game.Core.StateMachines.Game
 				}
 				else
 				{
-					if (player.BonkAudioClip)
+					if (player.CantMoveAudioClip)
 					{
-						_ = _audioPlayer.PlaySoundEffect(player.BonkAudioClip);
+						_ = _audioPlayer.PlaySoundEffect(player.CantMoveAudioClip);
 					}
 				}
 			}
