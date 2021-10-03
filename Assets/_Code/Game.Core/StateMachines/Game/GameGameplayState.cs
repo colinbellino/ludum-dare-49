@@ -110,6 +110,11 @@ namespace Game.Core.StateMachines.Game
 
 				var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
+				if (player.Dead)
+				{
+					continue;
+				}
+
 				var destination = player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 				var playerDidMove = MoveTo(player, destination);
 				if (playerDidMove)
@@ -148,6 +153,7 @@ namespace Game.Core.StateMachines.Game
 
 								if (entityAtPosition.ControlledByPlayer)
 								{
+									entityAtPosition.Dead = true;
 									_state.TriggerRetryAt = Time.time + 0.5f;
 								}
 							}
