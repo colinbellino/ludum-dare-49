@@ -1,7 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.Tilemaps;
 
 namespace Game.Core.StateMachines.Game
@@ -11,6 +13,9 @@ namespace Game.Core.StateMachines.Game
 		private bool _confirmWasPressedThisFrame;
 		private bool _cancelWasPressedThisFrame;
 		private bool _resetWasPressedThisFrame;
+		private bool _running;
+
+		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -55,6 +60,8 @@ namespace Game.Core.StateMachines.Game
 			// Initialize entities
 			foreach (var entity in _state.Entities)
 			{
+				entity.transform.position = entity.GridPosition + cellOffset;
+
 				if (entity.CanBeActivated)
 				{
 					if (entity.ActivatesWhenKeyInLevel)
@@ -81,13 +88,11 @@ namespace Game.Core.StateMachines.Game
 				}
 				else
 				{
-					SetMusic(player);
+					ToggleMusic(player);
 				}
 			}
 
 			_state.Running = true;
-
-			await _ui.FadeOut();
 
 			_ui.ShowGameplay();
 
@@ -97,7 +102,10 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Reset.started += ResetStarted;
 			_controls.Global.Enable();
 
-			while (true)
+			_ = _ui.FadeOut();
+
+			_running = true;
+			while (_running)
 			{
 				await UniTask.NextFrame();
 
@@ -106,13 +114,14 @@ namespace Game.Core.StateMachines.Game
 					continue;
 				}
 
-				if (_state.PlayerDidAct)
-				{
-					continue;
-				}
+				// var moveControl = (ButtonControl)_controls.Gameplay.Move.activeControl;
+				// if (moveControl == null || !moveControl.wasPressedThisFrame)
+				// {
+				// 	continue;
+				// }
 
 				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
-				if (moveInput.magnitude == 0f)
+				if (moveInput.magnitude == 0)
 				{
 					continue;
 				}
@@ -125,13 +134,9 @@ namespace Game.Core.StateMachines.Game
 				}
 
 				var destination = player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-				var playerDidMove = MoveTo(player, destination);
+				var playerDidMove = await Turn(player, destination);
 				if (playerDidMove)
 				{
-					_state.PlayerDidAct = true;
-
-					await UniTask.Delay(300);
-
 					foreach (var entity in _state.Entities)
 					{
 						if (entity.MoveTowardsPlayer)
@@ -141,7 +146,7 @@ namespace Game.Core.StateMachines.Game
 								entity.GridPosition, player.GridPosition,
 								Pathfinding.DistanceType.Manhattan
 							);
-							MoveTo(entity, path[0]);
+							await Turn(entity, path[0]);
 						}
 
 						if (entity.Breaking)
@@ -154,16 +159,24 @@ namespace Game.Core.StateMachines.Game
 							var entityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
 							if (entityAtPosition)
 							{
+								if (entityAtPosition.FallAudioClip)
+								{
+									_ = _audioPlayer.PlaySoundEffect(entityAtPosition.FallAudioClip);
+								}
 								entityAtPosition.Animator.Play("Fall");
-								entityAtPosition.Moving = false;
+								await UniTask.Delay(800);
 
-								await UniTask.Delay(500);
+								entityAtPosition.Dead = true;
 
 								if (entityAtPosition.ControlledByPlayer)
 								{
-									entityAtPosition.Dead = true;
+									_state.Running = false;
 
-									await Restart();
+									_ = _audioPlayer.StopMusic(2);
+									await _ui.FadeIn(Color.black);
+									await UniTask.Delay(1000);
+									_fsm.Fire(GameFSM.Triggers.Retry);
+									return;
 								}
 							}
 						}
@@ -177,48 +190,34 @@ namespace Game.Core.StateMachines.Game
 						{
 							entity.Animator.Play("Dead");
 						}
-					}
+						else
+						{
+							if (entity.AffectedByAnger)
+							{
+								entity.AngerProgress += 1;
 
-					_state.PlayerDidAct = false;
-				}
-			}
-		}
+								if (entity.AngerProgress >= 3)
+								{
+									entity.AngerProgress = 0;
+									entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
+									entity.Transforming = true;
+									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? -1 : 1);
 
-		private void SpawnEntitiesFromTilemap(Tilemap tilemap)
-		{
-			var bounds = tilemap.cellBounds;
-			var tiles = tilemap.GetTilesBlock(bounds);
-			for (int x = 0; x < bounds.size.x; x++)
-			{
-				for (int y = 0; y < bounds.size.y; y++)
-				{
-					var tile = tiles[x + y * bounds.size.x];
-					var gridPosition = new Vector3Int(x, y, 0);
-
-					if (tile == null)
-					{
-						continue;
-					}
-
-					if (_config.TileToEntity.ContainsKey(tile))
-					{
-						var entity = Object.Instantiate(
-							_config.TileToEntity[tile],
-							tilemap.transform
-						);
-						entity.GridPosition = bounds.min + gridPosition;
-						_state.Entities.Add(entity);
-						tilemap.SetTile(entity.GridPosition, null);
-					}
-					else
-					{
-						UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
+									entity.Animator.Play("Transform (calm)");
+									if (entity.ControlledByPlayer)
+									{
+										ToggleMusic(entity);
+									}
+									await UniTask.Delay(300);
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 
-		public override async void Tick()
+		public override void Tick()
 		{
 			base.Tick();
 
@@ -242,104 +241,46 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			if (_state.Running == false)
+			if (_state.Running)
 			{
-				return;
-			}
-
-			var cellOffset = new Vector3(0.5f, 0.5f);
-			foreach (var entity in _state.Entities)
-			{
-				if (entity.Placed == false)
+				foreach (var entity in _state.Entities)
 				{
-					entity.transform.position = entity.GridPosition + cellOffset;
-					entity.Placed = true;
-				}
-
-				if (entity.Moving)
-				{
-					if (entity.MoveT == 0)
+					if (entity.BreakableProgress > 0)
 					{
-						entity.Animator.Play("Walk");
+						entity.Animator.Play("Damaged");
 					}
 
-					entity.MoveT += Time.deltaTime * entity.MoveSpeed;
-					entity.transform.position = Vector3.Lerp(entity.transform.position, entity.GridPosition + cellOffset, entity.MoveT);
-
-					if (entity.MoveT >= 1)
+					if (entity.CanBeActivated)
 					{
-						entity.Animator.Play("Idle");
-						entity.MoveT = 0;
-						entity.Moving = false;
+						entity.Animator.SetBool("Active", entity.Activated);
 					}
 				}
 
-				if (entity.Transforming)
+				if (_resetWasPressedThisFrame)
 				{
-					if (entity.TransformT == 0)
+					_fsm.Fire(GameFSM.Triggers.Retry);
+				}
+
+				if (Utils.IsDevBuild())
+				{
+					var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
+					_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
+	State: {player.AngerState}
+	Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
+	Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
+				}
+
+				if (Utils.IsDevBuild())
+				{
+					if (Keyboard.current.f1Key.wasPressedThisFrame)
 					{
-						entity.Animator.Play("Transform (calm)");
+						Victory();
 					}
 
-					entity.TransformT += Time.deltaTime;
-
-					if (entity.TransformT >= 1)
+					if (Keyboard.current.f2Key.wasPressedThisFrame)
 					{
-						entity.TransformT = 0;
-						entity.Transforming = false;
+						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
-				}
-
-				if (entity.AffectedByAnger)
-				{
-					entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? -1 : 1);
-				}
-
-				if (entity.BreakableProgress > 0)
-				{
-					entity.Animator.Play("Damaged");
-				}
-
-				if (entity.CanBeActivated)
-				{
-					entity.Animator.SetBool("Active", entity.Activated);
-				}
-			}
-
-			if (_resetWasPressedThisFrame)
-			{
-				_ = Restart();
-			}
-
-			if (_state.TriggerExitAt > 0 && Time.time >= _state.TriggerExitAt)
-			{
-				_state.TriggerExitAt = 0;
-				_state.CurrentLevelIndex += 1;
-				_state.Running = false;
-				_ = _audioPlayer.StopMusic();
-				_fsm.Fire(GameFSM.Triggers.NextLevel);
-			}
-
-			var player = _state.Entities.Find((entity) => entity.ControlledByPlayer);
-
-			if (Utils.IsDevBuild())
-			{
-				_ui.GameplayText.text = @$"Progress: {player.AngerProgress}
-State: {player.AngerState}
-Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
-Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
-			}
-
-			if (Utils.IsDevBuild())
-			{
-				if (Keyboard.current.f1Key.wasPressedThisFrame)
-				{
-					Victory();
-				}
-
-				if (Keyboard.current.f2Key.wasPressedThisFrame)
-				{
-					_ = Restart();
 				}
 			}
 
@@ -351,6 +292,8 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 		public override async UniTask Exit()
 		{
 			await base.Exit();
+
+			_running = false;
 
 			_state.Running = false;
 
@@ -393,14 +336,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
-		private async UniTask Restart()
-		{
-			_state.Running = false;
-			await _audioPlayer.StopMusic(0);
-			_fsm.Fire(GameFSM.Triggers.Retry);
-		}
-
-		private bool MoveTo(Entity entity, Vector3Int destination)
+		private async UniTask<bool> Turn(Entity entity, Vector3Int destination)
 		{
 			var destinationTile = _state.Level.Ground.GetTile(destination);
 			var entitiesAtDestination = _state.Entities.FindAll(entity => entity.GridPosition == destination);
@@ -445,93 +381,74 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 					UnityEngine.Debug.Log($"Can't move to {destination} (entity not activated).");
 					return false;
 				}
-
-				if (entityAtDestination.Dead == false)
-				{
-					switch (entityAtDestination.TriggerAction)
-					{
-						case TriggerActions.Exit:
-							{
-								if (entity.ControlledByPlayer == false)
-								{
-									break;
-								}
-
-								if (entityAtDestination.ExitAudioClip)
-								{
-									_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
-								}
-
-								entity.Dead = true;
-								_state.TriggerExitAt = Time.time + 0.5f;
-							}
-							break;
-						case TriggerActions.Break:
-							{
-								if (entity.AngerState != AngerStates.Angry)
-								{
-									break;
-								}
-
-								entityAtDestination.BreakableProgress += 1;
-
-								if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
-								{
-									entityAtDestination.Breaking = true;
-								}
-							}
-							break;
-						case TriggerActions.Key:
-							{
-								if (entity.ControlledByPlayer)
-								{
-									entityAtDestination.Dead = true;
-									_state.Keys += 1;
-								}
-							}
-							break;
-						default: break;
-					}
-				}
 			}
 
-			// UnityEngine.Debug.Log("Entity moved.");
 			entity.Direction = destination - entity.GridPosition;
+			entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+			entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 			entity.GridPosition = destination;
-			entity.MoveStartTimestamp = Time.time;
-			entity.MoveT = 0;
-			entity.Moving = true;
+			entity.Animator.Play("Walk");
+			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
+			entity.Animator.Play("Idle");
 
-			// TODO(colin): why is this necessary?
-			if (_state.TriggerExitAt == 0)
+			if (entityAtDestination && entityAtDestination.Dead == false)
 			{
-				if (entity.AffectedByAnger)
+				switch (entityAtDestination.TriggerAction)
 				{
-					entity.AngerProgress += 1;
-					if (entity.AngerProgress >= 3)
-					{
-						entity.AngerProgress = 0;
-						entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
-						entity.Transforming = true;
-
-						if (entity.ControlledByPlayer)
+					case TriggerActions.Exit:
 						{
-							SetMusic(entity);
-						}
-					}
-				}
-			}
+							if (entity.ControlledByPlayer == false)
+							{
+								break;
+							}
 
-			if (entity.Animator)
-			{
-				entity.Animator.SetFloat("DirectionX", entity.Direction.x);
-				entity.Animator.SetFloat("DirectionY", entity.Direction.y);
+							_state.CurrentLevelIndex += 1;
+							_state.Running = false;
+
+							_ = _audioPlayer.StopMusic(2);
+							if (entityAtDestination.ExitAudioClip)
+							{
+								_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
+							}
+							await _ui.FadeIn(Color.black);
+							await UniTask.Delay(4000);
+							_fsm.Fire(GameFSM.Triggers.NextLevel);
+
+							return true;
+						}
+						break;
+					case TriggerActions.Break:
+						{
+							if (entity.AngerState != AngerStates.Angry)
+							{
+								break;
+							}
+
+							entityAtDestination.BreakableProgress += 1;
+
+							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
+							{
+								entityAtDestination.Breaking = true;
+							}
+						}
+						break;
+					case TriggerActions.Key:
+						{
+							if (entity.ControlledByPlayer)
+							{
+								entityAtDestination.Dead = true;
+								_state.Keys += 1;
+							}
+						}
+						break;
+					default: break;
+				}
 			}
 
 			return true;
 		}
 
-		private void SetMusic(Entity entity)
+		private void ToggleMusic(Entity entity)
 		{
 			// UnityEngine.Debug.Log("Toggle audio");
 			var calmId = _config.MusicCalmClip.GetInstanceID();
@@ -563,6 +480,40 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 			}
 
 			return false;
+		}
+
+		private void SpawnEntitiesFromTilemap(Tilemap tilemap)
+		{
+			var bounds = tilemap.cellBounds;
+			var tiles = tilemap.GetTilesBlock(bounds);
+			for (int x = 0; x < bounds.size.x; x++)
+			{
+				for (int y = 0; y < bounds.size.y; y++)
+				{
+					var tile = tiles[x + y * bounds.size.x];
+					var gridPosition = new Vector3Int(x, y, 0);
+
+					if (tile == null)
+					{
+						continue;
+					}
+
+					if (_config.TileToEntity.ContainsKey(tile))
+					{
+						var entity = Object.Instantiate(
+							_config.TileToEntity[tile],
+							tilemap.transform
+						);
+						entity.GridPosition = bounds.min + gridPosition;
+						_state.Entities.Add(entity);
+						tilemap.SetTile(entity.GridPosition, null);
+					}
+					else
+					{
+						UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
+					}
+				}
+			}
 		}
 	}
 }
