@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Game.Core
@@ -42,6 +41,12 @@ namespace Game.Core
 		[SerializeField] public int BreaksAt = 1;
 		[HideInInspector] public int BreakableProgress;
 		[HideInInspector] public bool Breaking;
+
+		[Header("Activation")]
+		[SerializeField] public bool CanBeActivated;
+		[SerializeField] public bool ActivatesWhenKeyInLevel;
+		[SerializeField] public int ActivatesWithKeys;
+		[HideInInspector] public bool Activated;
 
 		[HideInInspector] public bool Dead;
 	}

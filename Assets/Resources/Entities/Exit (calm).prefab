@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 37508923
   m_SortingLayer: -1
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7664688985958279823, guid: c9a7f17f1b746b247a9083c9cdcefaf6, type: 3}
+  m_Sprite: {fileID: 3229200846342549848, guid: 8029b4c8bb8508f4d918e5d6c74670f2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -220,7 +220,7 @@ Animator:
   m_GameObject: {fileID: 6662242043406632512}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f5c4f15b1ba9d954ea3be91d90f9d719, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2aac33d274f79a24081df9b1ad079700, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -281,6 +281,7 @@ MonoBehaviour:
   MoveTowardsPlayer: 0
   Placed: 0
   GridPosition: {x: 0, y: 0, z: 0}
+  Direction: {x: 0, y: 0, z: 0}
   Moving: 0
   MoveSpeed: 4
   MoveT: 0
@@ -288,6 +289,8 @@ MonoBehaviour:
   AffectedByAnger: 0
   AngerProgress: 0
   AngerState: 0
+  Transforming: 0
+  TransformT: 0
   Trigger: 1
   TriggerState: 1
   TriggerAction: 1
@@ -295,3 +298,8 @@ MonoBehaviour:
   BreaksAt: 1
   BreakableProgress: 0
   Breaking: 0
+  CanBeActivated: 1
+  ActivatesWhenKeyInLevel: 1
+  ActivatesWithKeys: 1
+  Activated: 0
+  Dead: 0

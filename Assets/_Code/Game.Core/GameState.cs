@@ -20,5 +20,6 @@ namespace Game.Core
 		public GridData WalkableGrid;
 		public float TriggerExitAt;
 		public float TriggerRetryAt;
+		public int Keys;
 	}
 }
