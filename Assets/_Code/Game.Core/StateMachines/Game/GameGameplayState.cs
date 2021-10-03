@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
@@ -164,7 +165,8 @@ namespace Game.Core.StateMachines.Game
 									_ = _audioPlayer.PlaySoundEffect(entityAtPosition.FallAudioClip);
 								}
 								entityAtPosition.Animator.Play("Fall");
-								await UniTask.Delay(800);
+								await CurrentAnimation(entityAtPosition);
+								await UniTask.Delay(500);
 
 								entityAtPosition.Dead = true;
 
@@ -201,20 +203,26 @@ namespace Game.Core.StateMachines.Game
 									entity.AngerProgress = 0;
 									entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
 									entity.Transforming = true;
-									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? -1 : 1);
+									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
 
-									entity.Animator.Play("Transform (calm)");
+									entity.Animator.Play("Transform");
+									await CurrentAnimation(entity);
+
 									if (entity.ControlledByPlayer)
 									{
 										ToggleMusic(entity);
 									}
-									await UniTask.Delay(300);
 								}
 							}
 						}
 					}
 				}
 			}
+		}
+
+		private UniTask CurrentAnimation(Entity entity)
+		{
+			return UniTask.Delay(System.TimeSpan.FromSeconds(entity.AnimationClipLength[entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name]));
 		}
 
 		public override void Tick()
@@ -505,8 +513,20 @@ namespace Game.Core.StateMachines.Game
 							tilemap.transform
 						);
 						entity.GridPosition = bounds.min + gridPosition;
+						entity.Direction = Vector3Int.down;
 						_state.Entities.Add(entity);
 						tilemap.SetTile(entity.GridPosition, null);
+
+						var clips = entity.Animator.runtimeAnimatorController.animationClips;
+						entity.AnimationClipLength = new ClipLength();
+						foreach (var clip in clips)
+						{
+							if (entity.AnimationClipLength.ContainsKey(clip.name))
+							{
+								continue;
+							}
+							entity.AnimationClipLength.Add(clip.name, clip.length);
+						}
 					}
 					else
 					{
