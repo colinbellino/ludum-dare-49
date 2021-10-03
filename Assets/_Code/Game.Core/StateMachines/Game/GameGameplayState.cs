@@ -27,8 +27,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
 				{
-					UnityEngine.Debug.Log("Last level reached!");
-					_fsm.Fire(GameFSM.Triggers.Won);
+					Victory();
 					return;
 				}
 
@@ -213,6 +212,10 @@ namespace Game.Core.StateMachines.Game
 						_state.Entities.Add(entity);
 						tilemap.SetTile(entity.GridPosition, null);
 					}
+					else
+					{
+						UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
+					}
 				}
 			}
 		}
@@ -315,6 +318,7 @@ namespace Game.Core.StateMachines.Game
 				_state.TriggerExitAt = 0;
 				_state.CurrentLevelIndex += 1;
 				_state.Running = false;
+				_ = _audioPlayer.StopMusic();
 				_fsm.Fire(GameFSM.Triggers.NextLevel);
 			}
 
@@ -476,7 +480,8 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 									_audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
 								}
 
-								_state.TriggerExitAt = Time.time + 1f;
+								entity.Dead = true;
+								_state.TriggerExitAt = Time.time + 0.5f;
 							}
 							break;
 						case TriggerActions.Break:
