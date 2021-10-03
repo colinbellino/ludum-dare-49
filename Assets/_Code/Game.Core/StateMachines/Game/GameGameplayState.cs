@@ -255,7 +255,6 @@ namespace Game.Core.StateMachines.Game
 								(_state.KeysInLevel == 0 && player.AngerState == entity.TriggerState) ||
 								_state.KeysInLevel > 0 && _state.KeysPickedUp >= entity.ActivatesWithKeys)
 							{
-								UnityEngine.Debug.Log("activate");
 								entity.Activated = true;
 							}
 
@@ -264,7 +263,6 @@ namespace Game.Core.StateMachines.Game
 						{
 							if (player.AngerState != entity.TriggerState)
 							{
-								UnityEngine.Debug.Log("deactivate");
 								entity.Activated = false;
 							}
 						}
@@ -407,10 +405,6 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 			entity.GridPosition = destination;
 			entity.Animator.Play("Walk");
-			if (entity.AngerState == AngerStates.Angry && entity.WalkAudioClips.Length > 0)
-			{
-				_ = _audioPlayer.PlayRandomSoundEffect(entity.WalkAudioClips, entity.GridPosition);
-			}
 			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
 			entity.Animator.Play("Idle");
 
@@ -449,14 +443,22 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 
 							entityAtDestination.BreakableProgress += 1;
 
+							if (entity.WalkAudioClips.Length > 0)
+							{
+								_ = _audioPlayer.PlayRandomSoundEffect(entity.WalkAudioClips, entity.GridPosition);
+								await UniTask.Delay(300);
+							}
+
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
 								entityAtDestination.Trigger = false;
 								entityAtDestination.BreakableProgress = 0;
 								entityAtDestination.Animator.Play("Breaking");
+
 								if (entityAtDestination.BreakingAudioClip)
 								{
 									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
+									await UniTask.Delay(500);
 								}
 								await CurrentAnimation(entityAtDestination);
 
