@@ -13,6 +13,7 @@ namespace Game.Core
 		public bool Running;
 		public bool AssistMode;
 		public float StepSoundTimestamp;
+		public float NextPlayerInput;
 		public int CurrentLevelIndex;
 		public Level Level;
 		public bool PlayerDidAct;
