@@ -19,6 +19,7 @@ namespace Game.Core
 		[Header("Movement")]
 		[SerializeField] public float MoveSpeed = 4f;
 		[SerializeField] public AudioClip FallAudioClip;
+		[SerializeField] public AudioClip[] WalkAudioClips;
 
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;

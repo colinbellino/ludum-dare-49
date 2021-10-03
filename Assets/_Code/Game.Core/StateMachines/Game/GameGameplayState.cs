@@ -363,6 +363,10 @@ namespace Game.Core.StateMachines.Game
 			entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 			entity.GridPosition = destination;
 			entity.Animator.Play("Walk");
+			if (entity.AngerState == AngerStates.Angry && entity.WalkAudioClips.Length > 0)
+			{
+				_ = _audioPlayer.PlayRandomSoundEffect(entity.WalkAudioClips, entity.GridPosition);
+			}
 			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
 			entity.Animator.Play("Idle");
 
