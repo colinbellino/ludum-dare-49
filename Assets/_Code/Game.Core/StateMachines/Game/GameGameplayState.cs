@@ -251,9 +251,26 @@ namespace Game.Core.StateMachines.Game
 					}
 				}
 
+				if (entity.Transforming)
+				{
+					if (entity.TransformT == 0)
+					{
+						UnityEngine.Debug.Log("transform start");
+						entity.Animator.Play("Transform (calm)");
+					}
+
+					entity.TransformT += Time.deltaTime;
+
+					if (entity.TransformT >= 1)
+					{
+						entity.TransformT = 0;
+						entity.Transforming = false;
+					}
+				}
+
 				if (entity.AffectedByAnger)
 				{
-					entity.SpriteRenderer.color = (entity.AngerState == AngerStates.Calm) ? new Color(0.5f, 0.5f, 1, 1) : Color.white;
+					entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? -1 : 1);
 				}
 
 				if (entity.BreakableProgress > 0)
@@ -451,6 +468,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 					{
 						entity.AngerProgress = 0;
 						entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
+						entity.Transforming = true;
 
 						if (entity.ControlledByPlayer)
 						{
