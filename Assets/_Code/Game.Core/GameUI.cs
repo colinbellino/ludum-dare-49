@@ -155,8 +155,7 @@ namespace Game.Core
 		{
 			_titleRoot.SetActive(true);
 			await _titleName.DOLocalMoveY(20, 0.5f);
-			// await _titleMenu.DOMoveY(-140, 0.5f);
-			await _titleLinks.DOMoveY(-330, 0.5f);
+			await _titleLinks.DOLocalMoveY(-330, 0.5f);
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
@@ -164,6 +163,8 @@ namespace Game.Core
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
+			await _titleName.DOLocalMoveY(128, 0.5f);
+			await _titleLinks.DOLocalMoveY(-330, 0.5f);
 			_titleRoot.SetActive(false);
 		}
 

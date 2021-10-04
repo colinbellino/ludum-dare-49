@@ -121,6 +121,12 @@ namespace Game.Core.StateMachines.Game
 					_state.CurrentLevelIndex = 11;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
+
+				if (Keyboard.current.pKey.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 15;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 			}
 		}
 
@@ -139,6 +145,7 @@ namespace Game.Core.StateMachines.Game
 			_ = _ui.FadeIn(Color.black, 1f);
 			await _audioPlayer.StopMusic(2f);
 			_state.CurrentLevelIndex = 0;
+			_ui.TitleButton1.onClick.RemoveListener(Start);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
@@ -146,7 +153,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			_ = _ui.FadeIn(Color.black, 1f);
 			await _audioPlayer.StopMusic(2f);
-
+			_ui.TitleButton2.onClick.RemoveListener(Quit);
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
