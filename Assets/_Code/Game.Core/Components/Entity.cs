@@ -13,6 +13,9 @@ namespace Game.Core
 		[SerializeField] public bool ControlledByPlayer;
 		[SerializeField] public bool MoveTowardsPlayer;
 
+		[Header("Authoring")]
+		[SerializeField] public bool ClearTileAfterConvert = true;
+
 		[HideInInspector] public Vector3Int GridPosition;
 		[HideInInspector] public Vector3Int Direction;
 
