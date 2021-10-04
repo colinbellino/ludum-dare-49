@@ -294,8 +294,9 @@ MonoBehaviour:
   BreakParticleOffset: {x: 0, y: 0, z: 0}
   BreakableProgress: 0
   CanBeActivated: 1
+  ActivatesInSpecificAngerState: 1
   ActivatesWhenKeyInLevel: 1
-  ActivatesWithKeys: 1
+  ActivatesWhenLevelStart: 0
   Activated: 0
   CantMoveAudioClip: {fileID: 0}
   FallAudioClip: {fileID: 0}
