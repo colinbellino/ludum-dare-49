@@ -33,6 +33,10 @@ namespace Game.Core
 		[SerializeField] private TMP_Text _defeatText;
 		[SerializeField] public Button DefeatButton1;
 		[SerializeField] public Button DefeatButton2;
+		[Header("Title")]
+		[SerializeField] private GameObject _titleRoot;
+		[SerializeField] public Button TitleButton1;
+		[SerializeField] public Button TitleButton2;
 		[Header("Transitions")]
 		[SerializeField] private Image _fadeToBlackImage;
 
@@ -61,6 +65,8 @@ namespace Game.Core
 			PauseButton2.onClick.AddListener(PlayButtonClip);
 			PauseButton3.onClick.AddListener(PlayButtonClip);
 			PauseButton4.onClick.AddListener(PlayButtonClip);
+			TitleButton1.onClick.AddListener(PlayButtonClip);
+			TitleButton2.onClick.AddListener(PlayButtonClip);
 		}
 
 		private void PlayButtonClip()
@@ -140,6 +146,19 @@ namespace Game.Core
 		public async UniTask HideDefeat(float duration = 0.5f)
 		{
 			await FadeOutPanel(_defeatPanel, duration);
+		}
+
+		public async UniTask ShowTitle()
+		{
+			_titleRoot.SetActive(true);
+
+			EventSystem.current.SetSelectedGameObject(null);
+			await UniTask.NextFrame();
+			EventSystem.current.SetSelectedGameObject(TitleButton1.gameObject);
+		}
+		public async UniTask HideTitle(float duration = 0.5f)
+		{
+			_titleRoot.SetActive(false);
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
