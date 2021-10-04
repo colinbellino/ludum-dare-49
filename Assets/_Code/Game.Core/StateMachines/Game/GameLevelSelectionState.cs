@@ -19,7 +19,7 @@ namespace Game.Core.StateMachines.Game
 			_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
 
-			await UniTask.Delay(1000);
+			await UniTask.Delay(5000);
 #endif
 
 			if (_running)
