@@ -501,12 +501,7 @@ namespace Game.Core.StateMachines.Game
 
 								if (entity.ControlledByPlayer)
 								{
-									_state.Running = false;
-									await UniTask.Delay(500); // Wait for it to sink in
-
-									_ = _audioPlayer.StopMusic(2);
-									await _ui.FadeIn(Color.black);
-									_fsm.Fire(GameFSM.Triggers.Retry);
+									await PlayerDeath();
 								}
 							}
 						}
@@ -544,13 +539,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entity.ControlledByPlayer)
 							{
-								_state.Running = false;
-								await UniTask.Delay(500); // Wait for it to sink in
-
-								_ = _audioPlayer.StopMusic(2);
-								await _ui.FadeIn(Color.black);
-								await UniTask.Delay(1000);
-								_fsm.Fire(GameFSM.Triggers.Retry);
+								await PlayerDeath();
 							}
 
 						}
@@ -573,13 +562,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entity.ControlledByPlayer)
 							{
-								_state.Running = false;
-								await UniTask.Delay(500); // Wait for it to sink in
-
-								_ = _audioPlayer.StopMusic(2);
-								await _ui.FadeIn(Color.black);
-								await UniTask.Delay(1000);
-								_fsm.Fire(GameFSM.Triggers.Retry);
+								await PlayerDeath();
 							}
 						}
 						break;
@@ -587,6 +570,14 @@ namespace Game.Core.StateMachines.Game
 					default: break;
 				}
 			}
+		}
+
+		private async UniTask PlayerDeath()
+		{
+			_state.Running = false;
+			_ = _audioPlayer.StopMusic(2);
+			await _ui.FadeIn(Color.black);
+			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 
 		private void ToggleMusic(Entity entity)
