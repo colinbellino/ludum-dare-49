@@ -16,6 +16,7 @@ namespace Game.Core.StateMachines.Game
 		private bool _running;
 
 		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
+		private float _noTransitionTimestamp;
 		private Entity _player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
@@ -29,11 +30,13 @@ namespace Game.Core.StateMachines.Game
 - F2: trigger defeat
 - ESCAPE: pause/options");
 
+			_noTransitionTimestamp = Time.time + 3f;
+
 			// Load current level
 			{
 				if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
 				{
-					Victory();
+					await Victory();
 					return;
 				}
 
@@ -221,7 +224,7 @@ namespace Game.Core.StateMachines.Game
 			return UniTask.Delay(System.TimeSpan.FromSeconds(entity.AnimationClipLength[clipName]));
 		}
 
-		public override void Tick()
+		public override async void Tick()
 		{
 			base.Tick();
 
@@ -282,25 +285,29 @@ namespace Game.Core.StateMachines.Game
 					}
 				}
 
-				if (_resetWasPressedThisFrame)
+				// Quick and dirty fix just to prevent spamming gamebreaking stuff
+				if (Time.time >= _noTransitionTimestamp)
 				{
-					if (_config.RestartClip)
+					if (_resetWasPressedThisFrame)
 					{
-						_ = _audioPlayer.PlaySoundEffect(_config.RestartClip);
+						if (_config.RestartClip)
+						{
+							_ = _audioPlayer.PlaySoundEffect(_config.RestartClip);
+						}
+						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
-					_fsm.Fire(GameFSM.Triggers.Retry);
-				}
 
-				if (Keyboard.current.f2Key.wasPressedThisFrame)
-				{
-					_ = NextLevel(true);
+					if (Keyboard.current.f2Key.wasPressedThisFrame)
+					{
+						_ = NextLevel(true);
+					}
 				}
 
 				if (Utils.IsDevBuild())
 				{
 					if (Keyboard.current.f1Key.wasPressedThisFrame)
 					{
-						Victory();
+						await Victory();
 					}
 				}
 			}
@@ -364,9 +371,10 @@ namespace Game.Core.StateMachines.Game
 
 		private void ResetStarted(InputAction.CallbackContext context) => _resetWasPressedThisFrame = true;
 
-		private void Victory()
+		private async UniTask Victory()
 		{
-			_ = _audioPlayer.StopMusic(2f);
+			_running = false;
+			await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
