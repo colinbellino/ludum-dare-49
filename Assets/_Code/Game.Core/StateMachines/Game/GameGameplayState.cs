@@ -572,6 +572,21 @@ namespace Game.Core.StateMachines.Game
 						}
 						break;
 
+					case TriggerActions.ActivateBurn:
+						{
+							if (entity.AngerState != AngerStates.Angry)
+							{
+								break;
+							}
+
+							entityAtDestination.Activated = true;
+							entityAtDestination.Animator.SetBool("Active", entityAtDestination.Activated);
+							await CurrentAnimation(entityAtDestination);
+
+							entityAtDestination.TriggerAction = TriggerActions.Burn;
+						}
+						break;
+
 					default: break;
 				}
 			}
