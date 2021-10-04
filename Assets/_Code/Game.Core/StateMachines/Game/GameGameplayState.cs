@@ -88,7 +88,7 @@ namespace Game.Core.StateMachines.Game
 			// Start or continue music where we left off
 			if (_audioPlayer.IsMusicPlaying() == false)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f);
 			}
 			else
 			{
@@ -106,7 +106,7 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Reset.started += ResetStarted;
 			_controls.Global.Enable();
 
-			_ = _ui.FadeOut();
+			_ = _ui.FadeOut(3);
 
 			_running = true;
 			while (_running)
