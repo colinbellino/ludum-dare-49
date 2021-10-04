@@ -560,11 +560,11 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 		{
 			if (entity.AngerState != AngerStates.Angry)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 2f, 1f, true);
 			}
 			else
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.5f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 2f, 1f, true);
 			}
 		}
 
