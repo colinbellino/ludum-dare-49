@@ -12,11 +12,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_audioPlayer.SetMusicVolume(_config.MusicVolume);
-			_audioPlayer.SetSoundVolume(_config.SoundVolume);
-
-			_state.InitialMusicVolume = _state.CurrentMusicVolume = _config.MusicVolume;
-			_state.InitialSoundVolume = _state.CurrentSoundVolume = _config.SoundVolume;
+			_state.InitialMusicVolume = 1;
+			_state.InitialSoundVolume = 1;
 
 			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
 			_ui.PauseButton2.onClick.AddListener(ToggleMusic);

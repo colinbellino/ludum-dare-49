@@ -81,16 +81,13 @@ namespace Game.Core.StateMachines.Game
 			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
 
 			// Start or continue music where we left off
+			if (_audioPlayer.IsMusicPlaying() == false)
 			{
-				var moodClip = _player.AngerState == AngerStates.Calm ? _config.MusicCalmClip : _config.MusicAngryClip;
-				if (_audioPlayer.IsMusicPlaying() == false)
-				{
-					_ = _audioPlayer.PlayMusic(moodClip, true, 0.5f);
-				}
-				else
-				{
-					ToggleMusic(_player);
-				}
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f);
+			}
+			else
+			{
+				ToggleMusic(_player);
 			}
 
 			_state.Running = true;
@@ -155,7 +152,7 @@ namespace Game.Core.StateMachines.Game
 						}
 						else
 						{
-							if (entity.AffectedByAnger)
+							if (_state.Running && entity.AffectedByAnger)
 							{
 								entity.AngerProgress += 1;
 
@@ -180,7 +177,6 @@ namespace Game.Core.StateMachines.Game
 									{
 										ToggleMusic(entity);
 									}
-
 
 									var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
 									if (_state.Running && otherEntityAtPosition)
@@ -297,7 +293,7 @@ namespace Game.Core.StateMachines.Game
 
 					if (Keyboard.current.f2Key.wasPressedThisFrame)
 					{
-						_fsm.Fire(GameFSM.Triggers.Retry);
+						_ = NextLevel(true);
 					}
 				}
 			}
@@ -326,13 +322,16 @@ namespace Game.Core.StateMachines.Game
 			_ui.HideGameplay();
 
 			// Save the track position
-			if (_player.AngerState == AngerStates.Angry)
+			if (_player)
 			{
-				_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
-			}
-			else
-			{
-				_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
+				if (_player.AngerState == AngerStates.Angry)
+				{
+					_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
+				}
+				else
+				{
+					_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
+				}
 			}
 
 			foreach (var entity in _state.Entities)
@@ -360,7 +359,7 @@ namespace Game.Core.StateMachines.Game
 
 		private void Victory()
 		{
-			_ = _audioPlayer.StopMusic();
+			_ = _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
@@ -445,17 +444,11 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							_state.CurrentLevelIndex += 1;
-							_state.Running = false;
-
-							_ = _audioPlayer.StopMusic(2);
 							if (entityAtDestination.ExitAudioClip)
 							{
 								_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
 							}
-							await _ui.FadeIn(Color.black);
-							await UniTask.Delay(4000);
-							_fsm.Fire(GameFSM.Triggers.NextLevel);
+							await NextLevel();
 						}
 						break;
 
@@ -572,10 +565,23 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
+		private async UniTask NextLevel(bool skipDelay = false)
+		{
+			_state.CurrentLevelIndex += 1;
+			_state.Running = false;
+			_ = _audioPlayer.StopMusic();
+			await _ui.FadeIn(Color.black);
+			if (skipDelay == false)
+			{
+				await UniTask.Delay(3000);
+			}
+			_fsm.Fire(GameFSM.Triggers.NextLevel);
+		}
+
 		private async UniTask PlayerDeath()
 		{
 			_state.Running = false;
-			_ = _audioPlayer.StopMusic(2);
+			_ = _audioPlayer.StopMusic();
 			await _ui.FadeIn(Color.black);
 			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
@@ -584,11 +590,11 @@ namespace Game.Core.StateMachines.Game
 		{
 			if (entity.AngerState != AngerStates.Angry)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f, 1f, true);
 			}
 			else
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 1f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.5f, 1f, true);
 			}
 		}
 
