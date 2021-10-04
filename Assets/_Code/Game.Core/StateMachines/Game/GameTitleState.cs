@@ -146,8 +146,11 @@ namespace Game.Core.StateMachines.Game
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private void Quit()
+		private async void Quit()
 		{
+			_ = _ui.FadeIn(Color.black, 1f);
+			await _audioPlayer.StopMusic(2f);
+
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
