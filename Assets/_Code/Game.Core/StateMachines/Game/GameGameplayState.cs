@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
@@ -179,9 +180,15 @@ namespace Game.Core.StateMachines.Game
 									{
 										ToggleMusic(entity);
 									}
+
+
+									var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
+									if (_state.Running && otherEntityAtPosition)
+									{
+										await CheckTrigger(entity, otherEntityAtPosition);
+									}
 								}
 
-								UnityEngine.Debug.Log("anger : " + entity.AngerProgress + " , " + entity.AngerState);
 								_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
 							}
 						}
@@ -420,6 +427,13 @@ namespace Game.Core.StateMachines.Game
 			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
 			entity.Animator.Play("Idle");
 
+			await CheckTrigger(entity, entityAtDestination);
+
+			return true;
+		}
+
+		private async UniTask CheckTrigger(Entity entity, Entity entityAtDestination)
+		{
 			if (entityAtDestination && entityAtDestination.Dead == false)
 			{
 				switch (entityAtDestination.TriggerAction)
@@ -487,12 +501,7 @@ namespace Game.Core.StateMachines.Game
 
 								if (entity.ControlledByPlayer)
 								{
-									_state.Running = false;
-									await UniTask.Delay(500); // Wait for it to sink in
-
-									_ = _audioPlayer.StopMusic(2);
-									await _ui.FadeIn(Color.black);
-									_fsm.Fire(GameFSM.Triggers.Retry);
+									await PlayerDeath();
 								}
 							}
 						}
@@ -530,13 +539,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entity.ControlledByPlayer)
 							{
-								_state.Running = false;
-								await UniTask.Delay(500); // Wait for it to sink in
-
-								_ = _audioPlayer.StopMusic(2);
-								await _ui.FadeIn(Color.black);
-								await UniTask.Delay(1000);
-								_fsm.Fire(GameFSM.Triggers.Retry);
+								await PlayerDeath();
 							}
 
 						}
@@ -559,13 +562,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entity.ControlledByPlayer)
 							{
-								_state.Running = false;
-								await UniTask.Delay(500); // Wait for it to sink in
-
-								_ = _audioPlayer.StopMusic(2);
-								await _ui.FadeIn(Color.black);
-								await UniTask.Delay(1000);
-								_fsm.Fire(GameFSM.Triggers.Retry);
+								await PlayerDeath();
 							}
 						}
 						break;
@@ -573,8 +570,14 @@ namespace Game.Core.StateMachines.Game
 					default: break;
 				}
 			}
+		}
 
-			return true;
+		private async UniTask PlayerDeath()
+		{
+			_state.Running = false;
+			_ = _audioPlayer.StopMusic(2);
+			await _ui.FadeIn(Color.black);
+			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 
 		private void ToggleMusic(Entity entity)
