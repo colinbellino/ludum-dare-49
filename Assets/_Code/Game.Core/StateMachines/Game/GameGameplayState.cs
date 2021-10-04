@@ -284,16 +284,16 @@ namespace Game.Core.StateMachines.Game
 					_fsm.Fire(GameFSM.Triggers.Retry);
 				}
 
+				if (Keyboard.current.f2Key.wasPressedThisFrame)
+				{
+					_ = NextLevel(true);
+				}
+
 				if (Utils.IsDevBuild())
 				{
 					if (Keyboard.current.f1Key.wasPressedThisFrame)
 					{
 						Victory();
-					}
-
-					if (Keyboard.current.f2Key.wasPressedThisFrame)
-					{
-						_ = NextLevel(true);
 					}
 				}
 			}
