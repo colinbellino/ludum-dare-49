@@ -253,15 +253,14 @@ namespace Game.Core.StateMachines.Game
 
 					if (entity.CanBeActivated)
 					{
-						if (entity.Activated == false)
+						if (entity.Activated == false && _player.AngerState == entity.TriggerState)
 						{
 							if (
-								(_state.KeysInLevel == 0 && _player.AngerState == entity.TriggerState) ||
-								_state.KeysInLevel > 0 && _state.KeysPickedUp >= entity.ActivatesWithKeys)
+								(_state.KeysInLevel == 0) ||
+								_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
 							{
 								entity.Activated = true;
 							}
-
 						}
 						else
 						{
@@ -590,11 +589,11 @@ namespace Game.Core.StateMachines.Game
 		{
 			if (entity.AngerState != AngerStates.Angry)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.5f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.3f, 1f, true);
 			}
 			else
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.5f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.3f, 1f, true);
 			}
 		}
 
