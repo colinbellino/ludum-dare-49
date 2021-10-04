@@ -53,22 +53,28 @@ namespace Game.Core
 
 		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f, bool crossFade = false)
 		{
+			// UnityEngine.Debug.Log("PlayMusic");
 			if (fadeDuration > 0f)
 			{
 				if (crossFade)
 				{
+					// init temp source
+					_musicSource2.volume = 0;
 					_musicSource2.clip = clip;
 					_musicSource2.time = _musicSource.time;
 					_musicSource2.Play();
 
 					_ = _musicSource.DOFade(0, fadeDuration);
-					_ = _musicSource2.DOFade(1, fadeDuration);
+					_ = _musicSource2.DOFade(volume, fadeDuration);
 					await UniTask.Delay(TimeSpan.FromSeconds(fadeDuration));
 
-					_musicSource.volume = 1;
+					_musicSource.volume = volume;
 					_musicSource.clip = _musicSource2.clip;
 					_musicSource.time = _musicSource2.time;
 					_musicSource.Play();
+
+					// stop temp source
+					_musicSource2.clip = null;
 					_musicSource2.Stop();
 				}
 				else
