@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
@@ -32,34 +31,10 @@ namespace Game.Core.StateMachines.Game
 
 			_noTransitionTimestamp = Time.time + 3f;
 
-			// Load current level
+			if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
 			{
-				if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
-				{
-					await Victory();
-					return;
-				}
-
-				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
-				UnityEngine.Debug.Log("Loaded level: " + _state.Level.name);
-
-				// Generate grid for walkable tiles
-				var tilemap = _state.Level.Ground;
-				var walkableTiles = new bool[tilemap.size.x, tilemap.size.y];
-				for (var x = 0; x < tilemap.size.x - 0; x++)
-				{
-					for (var y = 0; y < tilemap.size.y - 0; y++)
-					{
-						var position = new Vector3Int(x, y, 0);
-						var tile = tilemap.GetTile(position) as Tile;
-						walkableTiles[x, y] = tile && IsTileWalkable(tile);
-					}
-				}
-				_state.WalkableGrid = new GridData(walkableTiles);
-
-				// Spawn entities
-				SpawnEntitiesFromTilemap(_state.Level.Ground);
-				SpawnEntitiesFromTilemap(_state.Level.Entities);
+				await Victory();
+				return;
 			}
 
 			// Initialize entities
@@ -330,6 +305,8 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Cancel.started -= CancelStarted;
 			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
+
+			_ = _ui.HideLevelTitle();
 
 			await _ui.FadeIn(Color.black);
 
@@ -633,7 +610,7 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		private bool IsTileWalkable(Tile tile)
+		public static bool IsTileWalkable(Tile tile)
 		{
 			if (tile.colliderType == Tile.ColliderType.None)
 			{
@@ -641,56 +618,6 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			return true;
-		}
-
-		private void SpawnEntitiesFromTilemap(Tilemap tilemap)
-		{
-			var bounds = tilemap.cellBounds;
-			var tiles = tilemap.GetTilesBlock(bounds);
-			for (int x = 0; x < bounds.size.x; x++)
-			{
-				for (int y = 0; y < bounds.size.y; y++)
-				{
-					var tile = tiles[x + y * bounds.size.x];
-					var gridPosition = new Vector3Int(x, y, 0);
-
-					if (tile == null)
-					{
-						continue;
-					}
-
-					if (_config.TileToEntity.ContainsKey(tile))
-					{
-						var entity = Object.Instantiate(
-							_config.TileToEntity[tile],
-							tilemap.transform
-						);
-						entity.GridPosition = bounds.min + gridPosition;
-						entity.Direction = Vector3Int.down;
-						_state.Entities.Add(entity);
-
-						if (entity.ClearTileAfterConvert)
-						{
-							tilemap.SetTile(entity.GridPosition, null);
-						}
-
-						entity.AnimationClipLength = new ClipLength();
-						var clips = entity.Animator.runtimeAnimatorController.animationClips;
-						foreach (var clip in clips)
-						{
-							if (entity.AnimationClipLength.ContainsKey(clip.name))
-							{
-								continue;
-							}
-							entity.AnimationClipLength.Add(clip.name, clip.length);
-						}
-					}
-					else
-					{
-						// UnityEngine.Debug.LogWarning("Missing entity for tile: " + tile.name);
-					}
-				}
-			}
 		}
 	}
 }
