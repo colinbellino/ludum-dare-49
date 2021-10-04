@@ -43,13 +43,11 @@ jobs:
         env:
           PRIVATE_TOKEN: ${{ secrets.PRIVATE_TOKEN }}
 
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-
-            Library-
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
 
       - name: Activate Unity
         uses: webbertakken/unity-activate@v1.3
