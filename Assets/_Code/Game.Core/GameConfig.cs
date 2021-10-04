@@ -26,6 +26,7 @@ namespace Game.Core
 		public AudioMixerSnapshot PauseAudioSnapshot;
 		public AudioClip MusicCalmClip;
 		public AudioClip MusicAngryClip;
+		public AudioClip TitleClip;
 		public AudioClip MenuTextAppearClip;
 		public AudioClip MenuConfirmClip;
 		public AudioClip RestartClip;
