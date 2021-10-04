@@ -488,7 +488,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 								{
 									_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
 								}
-								entity.Animator.Play("Fall");
+								entity.Animator.Play("Death");
 								await CurrentAnimation(entity);
 
 								if (entity.ControlledByPlayer)
@@ -519,7 +519,6 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 						}
 						break;
 
-
 					case TriggerActions.Fall:
 						{
 							if (entity.AngerState != AngerStates.Angry)
@@ -532,7 +531,7 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 							{
 								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
 							}
-							entity.Animator.Play("Fall");
+							entity.Animator.Play("Death");
 							await CurrentAnimation(entity);
 
 							if (entity.ControlledByPlayer)
@@ -549,6 +548,34 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 						}
 						break;
 
+					case TriggerActions.Burn:
+						{
+							if (entity.AngerState != AngerStates.Calm)
+							{
+								break;
+							}
+
+							entity.Dead = true;
+							if (entity.FallAudioClip)
+							{
+								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
+							}
+							entity.Animator.Play("Death");
+							await CurrentAnimation(entity);
+
+							if (entity.ControlledByPlayer)
+							{
+								_state.Running = false;
+								await UniTask.Delay(500); // Wait for it to sink in
+
+								_ = _audioPlayer.StopMusic(2);
+								await _ui.FadeIn(Color.black);
+								await UniTask.Delay(1000);
+								_fsm.Fire(GameFSM.Triggers.Retry);
+							}
+						}
+						break;
+
 					default: break;
 				}
 			}
@@ -560,11 +587,11 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 		{
 			if (entity.AngerState != AngerStates.Angry)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 2f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f, 1f, true);
 			}
 			else
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 2f, 1f, true);
+				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 1f, 1f, true);
 			}
 		}
 
