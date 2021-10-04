@@ -35,6 +35,9 @@ namespace Game.Core
 		[SerializeField] public Button DefeatButton2;
 		[Header("Title")]
 		[SerializeField] private GameObject _titleRoot;
+		[SerializeField] private RectTransform _titleName;
+		[SerializeField] private RectTransform _titleMenu;
+		[SerializeField] private RectTransform _titleLinks;
 		[SerializeField] public Button TitleButton1;
 		[SerializeField] public Button TitleButton2;
 		[Header("Transitions")]
@@ -151,6 +154,9 @@ namespace Game.Core
 		public async UniTask ShowTitle()
 		{
 			_titleRoot.SetActive(true);
+			await _titleName.DOLocalMoveY(20, 0.5f);
+			// await _titleMenu.DOMoveY(-140, 0.5f);
+			await _titleLinks.DOMoveY(-330, 0.5f);
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();

@@ -16,21 +16,24 @@ namespace Game.Core.StateMachines.Game
 
 			_running = true;
 
-			await _audioPlayer.PlayMusic(_config.TitleClip);
-			await _ui.ShowTitle();
-
 			_ui.TitleButton1.onClick.AddListener(Start);
 			_ui.TitleButton2.onClick.AddListener(Quit);
 
-			if (Utils.IsDevBuild())
+			if (_running)
 			{
-				_ui.SetDebugText(@"[DEBUG]
+				_ = _audioPlayer.PlayMusic(_config.TitleClip, true, 3f, 1f, false);
+				await UniTask.Delay(2000);
+				_ = _ui.FadeOut(2f);
+				await UniTask.Delay(1200);
+				await _ui.ShowTitle();
+
+				if (Utils.IsDevBuild())
+				{
+					_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
 
-				await UniTask.Delay(5000);
+					await UniTask.Delay(5000);
 
-				if (_running)
-				{
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
@@ -135,14 +138,19 @@ namespace Game.Core.StateMachines.Game
 			await _ui.HideTitle();
 		}
 
-		private void Start()
+		private async void Start()
 		{
+			_ = _ui.FadeIn(Color.black, 1f);
+			await _audioPlayer.StopMusic(2f);
 			_state.CurrentLevelIndex = 0;
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private void Quit()
+		private async void Quit()
 		{
+			_ = _ui.FadeIn(Color.black, 1f);
+			await _audioPlayer.StopMusic(2f);
+
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
