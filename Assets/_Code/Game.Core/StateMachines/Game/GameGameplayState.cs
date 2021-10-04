@@ -293,7 +293,7 @@ namespace Game.Core.StateMachines.Game
 
 					if (Keyboard.current.f2Key.wasPressedThisFrame)
 					{
-						_ = NextLevel();
+						_ = NextLevel(true);
 					}
 				}
 			}
@@ -565,13 +565,16 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		private async UniTask NextLevel()
+		private async UniTask NextLevel(bool skipDelay = false)
 		{
 			_state.CurrentLevelIndex += 1;
 			_state.Running = false;
 			_ = _audioPlayer.StopMusic();
 			await _ui.FadeIn(Color.black);
-			await UniTask.Delay(3000);
+			if (skipDelay == false)
+			{
+				await UniTask.Delay(3000);
+			}
 			_fsm.Fire(GameFSM.Triggers.NextLevel);
 		}
 
