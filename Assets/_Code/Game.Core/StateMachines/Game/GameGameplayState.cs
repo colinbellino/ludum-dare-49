@@ -181,7 +181,6 @@ namespace Game.Core.StateMachines.Game
 									}
 								}
 
-								UnityEngine.Debug.Log("anger : " + entity.AngerProgress + " , " + entity.AngerState);
 								_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
 							}
 						}
