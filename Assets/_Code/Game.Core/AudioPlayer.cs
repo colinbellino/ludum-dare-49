@@ -64,6 +64,12 @@ namespace Game.Core
 					_ = _musicSource.DOFade(0, fadeDuration);
 					_ = _musicSource2.DOFade(1, fadeDuration);
 					await UniTask.Delay(TimeSpan.FromSeconds(fadeDuration));
+
+					_musicSource.volume = 1;
+					_musicSource.clip = _musicSource2.clip;
+					_musicSource.time = _musicSource2.time;
+					_musicSource.Play();
+					_musicSource2.Stop();
 				}
 				else
 				{
