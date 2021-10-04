@@ -16,6 +16,7 @@ namespace Game.Core.StateMachines.Game
 
 			_running = true;
 
+			await _audioPlayer.PlayMusic(_config.TitleClip);
 			await _ui.ShowTitle();
 
 			_ui.TitleButton1.onClick.AddListener(Start);
@@ -37,82 +38,90 @@ namespace Game.Core.StateMachines.Game
 
 		public override void Tick()
 		{
-			if (Keyboard.current.f1Key.wasPressedThisFrame)
+			if (Keyboard.current.escapeKey.wasReleasedThisFrame)
 			{
-				_state.CurrentLevelIndex = 0;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				Quit();
 			}
 
-			if (Keyboard.current.f2Key.wasPressedThisFrame)
+			if (Utils.IsDevBuild())
 			{
-				_state.CurrentLevelIndex = 1;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f1Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 0;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f3Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 2;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f2Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 1;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f4Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 3;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f3Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 2;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f5Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 4;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f4Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 3;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f6Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 5;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f5Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 4;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f7Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 6;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f6Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 5;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f8Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 7;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f7Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 6;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f8Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 7;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f8Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 7;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f9Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 8;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f8Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 7;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f10Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 9;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f9Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 8;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f11Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 10;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
-			}
+				if (Keyboard.current.f10Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 9;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 
-			if (Keyboard.current.f12Key.wasPressedThisFrame)
-			{
-				_state.CurrentLevelIndex = 11;
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				if (Keyboard.current.f11Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 10;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
+
+				if (Keyboard.current.f12Key.wasReleasedThisFrame)
+				{
+					_state.CurrentLevelIndex = 11;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 			}
 		}
 

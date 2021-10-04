@@ -45,7 +45,7 @@ namespace Game.Core.StateMachines.Game
 				.Permit(Triggers.Done, States.Gameplay);
 
 			_machine.Configure(States.Gameplay)
-				.Permit(Triggers.Won, States.Victory)
+				.Permit(Triggers.Won, States.Title)
 				.Permit(Triggers.Quit, States.Quit)
 				.Permit(Triggers.NextLevel, States.LoadLevel)
 				.Permit(Triggers.Retry, States.LoadLevel);
