@@ -40,7 +40,9 @@ namespace Game.Core
 
 		[Header("Activation")]
 		[SerializeField] public bool CanBeActivated;
+		[SerializeField] public bool ActivatesInSpecificAngerState;
 		[SerializeField] public bool ActivatesWhenKeyInLevel;
+		[SerializeField] public bool ActivatesWhenLevelStart;
 		[HideInInspector] public bool Activated;
 
 		[Header("Audio")]
