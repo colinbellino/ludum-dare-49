@@ -5,6 +5,7 @@ namespace Game.Core
 {
 	public class Level : MonoBehaviour
 	{
+		public string Title;
 		public Tilemap Ground;
 		public Tilemap Entities;
 	}
