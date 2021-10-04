@@ -65,8 +65,13 @@ namespace Game.Core.StateMachines.Game
 			{
 				entity.transform.position = entity.GridPosition + cellOffset;
 
-				if (entity.CanBeActivated && _player.AngerState == entity.TriggerState)
+				if (entity.CanBeActivated)
 				{
+					if (entity.ActivatesWhenLevelStart)
+					{
+						entity.Activated = true;
+					}
+
 					if (entity.ActivatesWhenKeyInLevel)
 					{
 						if (_state.KeysInLevel == 0)
@@ -253,20 +258,23 @@ namespace Game.Core.StateMachines.Game
 
 					if (entity.CanBeActivated)
 					{
-						if (entity.Activated == false && _player.AngerState == entity.TriggerState)
+						if (entity.ActivatesInSpecificAngerState)
 						{
-							if (
-								(_state.KeysInLevel == 0) ||
-								_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
+							if (entity.Activated == false && _player.AngerState == entity.TriggerState)
 							{
-								entity.Activated = true;
+								if (
+									(_state.KeysInLevel == 0) ||
+									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
+								{
+									entity.Activated = true;
+								}
 							}
-						}
-						else
-						{
-							if (_player.AngerState != entity.TriggerState)
+							else
 							{
-								entity.Activated = false;
+								if (_player.AngerState != entity.TriggerState)
+								{
+									entity.Activated = false;
+								}
 							}
 						}
 
@@ -402,17 +410,17 @@ namespace Game.Core.StateMachines.Game
 					return false;
 				}
 
-				if (entityAtDestination.TriggerState != AngerStates.None && entity.AngerState.HasFlag(entityAtDestination.TriggerState) == false)
-				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
-					return false;
-				}
+				// if (entityAtDestination.TriggerState != AngerStates.None && entity.AngerState.HasFlag(entityAtDestination.TriggerState) == false)
+				// {
+				// 	UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
+				// 	return false;
+				// }
 
-				if (entityAtDestination.CanBeActivated && entityAtDestination.Activated == false)
-				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (entity not activated).");
-					return false;
-				}
+				// if (entityAtDestination.CanBeActivated && entityAtDestination.Activated == false)
+				// {
+				// 	UnityEngine.Debug.Log($"Can't move to {destination} (entity not activated).");
+				// 	return false;
+				// }
 			}
 
 			entity.GridPosition = destination;
@@ -439,6 +447,11 @@ namespace Game.Core.StateMachines.Game
 					case TriggerActions.Exit:
 						{
 							if (entity.ControlledByPlayer == false)
+							{
+								break;
+							}
+
+							if (entity.AngerState != entityAtDestination.TriggerState)
 							{
 								break;
 							}
