@@ -42,6 +42,7 @@ namespace Game.Core
 		[SerializeField] public Button TitleButton2;
 		[Header("Transitions")]
 		[SerializeField] private Image _fadeToBlackImage;
+		[SerializeField] public TMP_Text FadeText;
 
 		private AudioPlayer _audioPlayer;
 		private GameConfig _config;
@@ -163,9 +164,19 @@ namespace Game.Core
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
-			await _titleName.DOLocalMoveY(128, 0.5f);
-			await _titleLinks.DOLocalMoveY(-330, 0.5f);
+			await _titleName.DOLocalMoveY(128, duration);
+			await _titleLinks.DOLocalMoveY(-330, duration);
 			_titleRoot.SetActive(false);
+		}
+
+		public async UniTask ShowLevelTitle(string title)
+		{
+			FadeText.text = title;
+			await FadeText.rectTransform.DOLocalMoveY(-87, 0.5f);
+		}
+		public async UniTask HideLevelTitle(float duration = 0.25f)
+		{
+			await FadeText.rectTransform.DOLocalMoveY(-120, duration);
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
