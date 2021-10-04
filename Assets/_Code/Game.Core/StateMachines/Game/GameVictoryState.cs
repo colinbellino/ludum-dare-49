@@ -31,6 +31,7 @@ namespace Game.Core.StateMachines.Game
 
 		private void Restart()
 		{
+			_state.CurrentLevelIndex = 0;
 			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 
