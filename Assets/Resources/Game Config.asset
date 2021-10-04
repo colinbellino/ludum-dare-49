@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d9faba923454a5cad26655791da1fbd, type: 3}
   m_Name: Game Config
   m_EditorClassIdentifier: 
-  DebugFSM: 1
+  DebugFSM: 0
   LockFPS: 60
   AllLevels:
   - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
