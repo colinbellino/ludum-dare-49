@@ -630,7 +630,11 @@ Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryC
 						entity.GridPosition = bounds.min + gridPosition;
 						entity.Direction = Vector3Int.down;
 						_state.Entities.Add(entity);
-						tilemap.SetTile(entity.GridPosition, null);
+
+						if (entity.ClearTileAfterConvert)
+						{
+							tilemap.SetTile(entity.GridPosition, null);
+						}
 
 						entity.AnimationClipLength = new ClipLength();
 						var clips = entity.Animator.runtimeAnimatorController.animationClips;

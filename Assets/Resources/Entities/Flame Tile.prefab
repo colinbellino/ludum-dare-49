@@ -362,6 +362,7 @@ MonoBehaviour:
   AudioSource: {fileID: 3329524165931142306}
   ControlledByPlayer: 0
   MoveTowardsPlayer: 0
+  ClearTileAfterConvert: 1
   GridPosition: {x: 0, y: 0, z: 0}
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4

@@ -279,27 +279,34 @@ MonoBehaviour:
   AudioSource: {fileID: 3510502540486019954}
   ControlledByPlayer: 0
   MoveTowardsPlayer: 0
-  Placed: 0
+  ClearTileAfterConvert: 1
   GridPosition: {x: 0, y: 0, z: 0}
   Direction: {x: 0, y: 0, z: 0}
-  Moving: 0
   MoveSpeed: 4
-  MoveT: 0
-  MoveStartTimestamp: 0
   AffectedByAnger: 0
   AngerProgress: 0
   AngerState: 0
-  Transforming: 0
-  TransformT: 0
   Trigger: 1
   TriggerState: 1
   TriggerAction: 1
-  ExitAudioClip: {fileID: 8300000, guid: e405fb94bae2db141aa4e0ae4016c367, type: 3}
   BreaksAt: 1
+  BreakParticle: {fileID: 0}
+  BreakParticleOffset: {x: 0, y: 0, z: 0}
   BreakableProgress: 0
-  Breaking: 0
   CanBeActivated: 1
   ActivatesWhenKeyInLevel: 1
   ActivatesWithKeys: 1
   Activated: 0
+  CantMoveAudioClip: {fileID: 0}
+  FallAudioClip: {fileID: 0}
+  BreakGroundAudioClips: []
+  TransformationAudioClip: {fileID: 0}
+  KeyAudioClip: {fileID: 0}
+  ExitAudioClip: {fileID: 8300000, guid: e405fb94bae2db141aa4e0ae4016c367, type: 3}
+  BreakingAudioClip: {fileID: 0}
+  WalkCalmAudioClips: []
+  WalkAngryAudioClips: []
   Dead: 0
+  AnimationClipLength:
+    m_keys: []
+    m_values: []
