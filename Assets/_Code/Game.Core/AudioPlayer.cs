@@ -53,7 +53,7 @@ namespace Game.Core
 
 		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f, bool crossFade = false)
 		{
-			// UnityEngine.Debug.Log("PlayMusic");
+			UnityEngine.Debug.Log("PlayMusic " + clip.name);
 			if (fadeDuration > 0f)
 			{
 				if (crossFade)
