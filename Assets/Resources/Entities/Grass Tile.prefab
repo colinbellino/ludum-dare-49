@@ -371,7 +371,7 @@ MonoBehaviour:
   AngerState: 0
   Trigger: 1
   TriggerState: 0
-  TriggerAction: 5
+  TriggerAction: 6
   BreaksAt: 2
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
