@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 using UnityEngine.Tilemaps;
 
 namespace Game.Core.StateMachines.Game
@@ -96,6 +94,7 @@ namespace Game.Core.StateMachines.Game
 
 			_state.Running = true;
 
+			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
 			_ui.ShowGameplay();
 
 			_controls.Gameplay.Enable();
@@ -181,6 +180,9 @@ namespace Game.Core.StateMachines.Game
 										ToggleMusic(entity);
 									}
 								}
+
+								UnityEngine.Debug.Log("anger : " + entity.AngerProgress + " , " + entity.AngerState);
+								_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
 							}
 						}
 					}
@@ -277,14 +279,6 @@ namespace Game.Core.StateMachines.Game
 						_ = _audioPlayer.PlaySoundEffect(_config.RestartClip);
 					}
 					_fsm.Fire(GameFSM.Triggers.Retry);
-				}
-
-				if (Utils.IsDevBuild())
-				{
-					_ui.GameplayText.text = @$"Progress: {_player.AngerProgress}
-State: {_player.AngerState}
-Calm Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicCalmClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] : 0)}
-Angry Track Timestamp: {(_audioPlayer.MusicTimes.ContainsKey(_config.MusicAngryClip.GetInstanceID()) ? _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] : 0)}";
 				}
 
 				if (Utils.IsDevBuild())
