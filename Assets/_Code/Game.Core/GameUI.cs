@@ -15,8 +15,8 @@ namespace Game.Core
 		[SerializeField] private TMP_Text _debugText;
 		[Header("Gameplay")]
 		[SerializeField] private GameObject _gameplayRoot;
-		[SerializeField] public Image[] _angerMeterParts;
-		[SerializeField] private Sprite[] _angerMeterSprites;
+		[SerializeField] private Animator _angerMeterAnimator;
+		[SerializeField] private RectTransform _angerMeterCache;
 		[Header("Pause")]
 		[SerializeField] private GameObject _pauseRoot;
 		[SerializeField] public Button PauseButton1;
@@ -85,36 +85,20 @@ namespace Game.Core
 		public void ShowGameplay() { _gameplayRoot.SetActive(true); }
 		public void HideGameplay() { _gameplayRoot.SetActive(false); }
 
-		public void SetAngerMeter(int value, AngerStates mood)
+		public void SetAngerMeter(int value, AngerStates angerState)
 		{
-			var currentStateSprite = mood == AngerStates.Angry ? _angerMeterSprites[1] : _angerMeterSprites[2];
-			var otherStateSprite = mood == AngerStates.Angry ? _angerMeterSprites[2] : _angerMeterSprites[1];
-			var emptySprite = _angerMeterSprites[0];
+			_angerMeterAnimator.SetFloat("AngerState", (angerState == AngerStates.Calm) ? 0 : 1);
+			var cacheSize = _angerMeterCache.sizeDelta;
+
 			switch (value)
 			{
-				case 2:
-					{
-						_angerMeterParts[0].sprite = currentStateSprite;
-						_angerMeterParts[1].sprite = otherStateSprite;
-						_angerMeterParts[2].sprite = otherStateSprite;
-					}
-					break;
-				case 1:
-					{
-						_angerMeterParts[0].sprite = currentStateSprite;
-						_angerMeterParts[1].sprite = currentStateSprite;
-						_angerMeterParts[2].sprite = otherStateSprite;
-					}
-					break;
-				case 0:
-					{
-						_angerMeterParts[0].sprite = currentStateSprite;
-						_angerMeterParts[1].sprite = currentStateSprite;
-						_angerMeterParts[2].sprite = currentStateSprite;
-					}
-					break;
+				case 2: { cacheSize.x = 19; } break;
+				case 1: { cacheSize.x = 10; } break;
+				case 0: { cacheSize.x = 0; } break;
 				default: break;
 			}
+
+			_angerMeterCache.sizeDelta = cacheSize;
 		}
 
 		public async void ShowPause()
