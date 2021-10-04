@@ -79,5 +79,5 @@ MonoBehaviour:
   MusicAngryClip: {fileID: 8300000, guid: 4fc1546e3d77cba4198042c61501d67a, type: 3}
   TitleClip: {fileID: 8300000, guid: 07aba3aa41358f943b6d2384f3911983, type: 3}
   MenuTextAppearClip: {fileID: 8300000, guid: ea617f6da27fb4c67a099b74da43a20e, type: 3}
-  MenuConfirmClip: {fileID: 8300000, guid: 3085390264650bf45b91b204008ab5a2, type: 3}
+  MenuConfirmClip: {fileID: 8300000, guid: 04a6677330bfab44f9a9d53f597c6ff0, type: 3}
   RestartClip: {fileID: 8300000, guid: 38935b804b3af2f44a2db72e3778d2b4, type: 3}
