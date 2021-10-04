@@ -304,7 +304,10 @@ MonoBehaviour:
   KeyAudioClip: {fileID: 0}
   ExitAudioClip: {fileID: 8300000, guid: e405fb94bae2db141aa4e0ae4016c367, type: 3}
   BreakingAudioClip: {fileID: 0}
-  WalkCalmAudioClips: []
+  WalkCalmAudioClips:
+  - {fileID: 8300000, guid: 1a15878dcb1655846b74f8e965fbcddb, type: 3}
+  - {fileID: 8300000, guid: 66ef5871b203d6f4c8c5f12994d2898a, type: 3}
+  - {fileID: 8300000, guid: 457010ac4588c2949a85c4ac6a0efbc1, type: 3}
   WalkAngryAudioClips: []
   Dead: 0
   AnimationClipLength:
