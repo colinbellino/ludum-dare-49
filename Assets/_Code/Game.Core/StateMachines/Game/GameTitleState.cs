@@ -31,10 +31,6 @@ namespace Game.Core.StateMachines.Game
 				{
 					_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
-
-					await UniTask.Delay(5000);
-
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
 		}
