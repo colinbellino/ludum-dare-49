@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
@@ -178,6 +179,13 @@ namespace Game.Core.StateMachines.Game
 									if (entity.ControlledByPlayer)
 									{
 										ToggleMusic(entity);
+									}
+
+
+									var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
+									if (_state.Running && otherEntityAtPosition)
+									{
+										await CheckTrigger(entity, otherEntityAtPosition);
 									}
 								}
 
@@ -419,6 +427,13 @@ namespace Game.Core.StateMachines.Game
 			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
 			entity.Animator.Play("Idle");
 
+			await CheckTrigger(entity, entityAtDestination);
+
+			return true;
+		}
+
+		private async UniTask CheckTrigger(Entity entity, Entity entityAtDestination)
+		{
 			if (entityAtDestination && entityAtDestination.Dead == false)
 			{
 				switch (entityAtDestination.TriggerAction)
@@ -572,8 +587,6 @@ namespace Game.Core.StateMachines.Game
 					default: break;
 				}
 			}
-
-			return true;
 		}
 
 		private void ToggleMusic(Entity entity)
