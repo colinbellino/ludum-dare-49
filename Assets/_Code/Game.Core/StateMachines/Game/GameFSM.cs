@@ -7,7 +7,7 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameFSM
 	{
-		public enum States { Init, LevelSelection, LoadLevel, Gameplay, Victory, GameOver, Quit }
+		public enum States { Init, Title, LoadLevel, Gameplay, Victory, GameOver, Quit }
 		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, Quit }
 
 		private readonly bool _debug;
@@ -23,7 +23,7 @@ namespace Game.Core.StateMachines.Game
 			_states = new Dictionary<States, IState>
 			{
 				{ States.Init, new GameInitState(this, game) },
-				{ States.LevelSelection, new GameLevelSelectionState(this, game) },
+				{ States.Title, new GameTitleState(this, game) },
 				{ States.LoadLevel, new GameLoadLevelState(this, game) },
 				{ States.Gameplay, new GameGameplayState(this, game) },
 				{ States.Victory, new GameVictoryState(this, game) },
@@ -35,10 +35,11 @@ namespace Game.Core.StateMachines.Game
 			_machine.OnTransitioned(OnTransitioned);
 
 			_machine.Configure(States.Init)
-				.Permit(Triggers.Done, States.LevelSelection);
+				.Permit(Triggers.Done, States.Title);
 
-			_machine.Configure(States.LevelSelection)
-				.Permit(Triggers.LevelSelected, States.Gameplay);
+			_machine.Configure(States.Title)
+				.Permit(Triggers.LevelSelected, States.Gameplay)
+				.Permit(Triggers.Quit, States.Quit);
 
 			_machine.Configure(States.LoadLevel)
 				.Permit(Triggers.Done, States.Gameplay);

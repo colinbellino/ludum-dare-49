@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Game.Core.StateMachines.Game
 {
-	public class GameLevelSelectionState : BaseGameState
+	public class GameTitleState : BaseGameState
 	{
-		public GameLevelSelectionState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
+		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
 		private bool _running;
 
@@ -15,16 +16,22 @@ namespace Game.Core.StateMachines.Game
 
 			_running = true;
 
-#if UNITY_EDITOR
-			_ui.SetDebugText(@"[DEBUG]
+			await _ui.ShowTitle();
+
+			_ui.TitleButton1.onClick.AddListener(Start);
+			_ui.TitleButton2.onClick.AddListener(Quit);
+
+			if (Utils.IsDevBuild())
+			{
+				_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels");
 
-			await UniTask.Delay(5000);
-#endif
+				await UniTask.Delay(5000);
 
-			if (_running)
-			{
-				_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				if (_running)
+				{
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
 			}
 		}
 
@@ -109,11 +116,25 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		public override UniTask Exit()
+		public override async UniTask Exit()
 		{
 			_running = false;
 
-			return default;
+			_ui.TitleButton1.onClick.RemoveListener(Start);
+			_ui.TitleButton2.onClick.RemoveListener(Quit);
+
+			await _ui.HideTitle();
+		}
+
+		private void Start()
+		{
+			_state.CurrentLevelIndex = 0;
+			_fsm.Fire(GameFSM.Triggers.LevelSelected);
+		}
+
+		private void Quit()
+		{
+			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
 }
