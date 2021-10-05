@@ -19,7 +19,7 @@ namespace Game.Core
 		public bool TriggerRetry;
 		public int KeysPickedUp;
 		public int KeysInLevel;
-		public bool IsMusicPlaying;
-		public bool IsSoundPlaying;
+		public bool IsMusicPlaying = true;
+		public bool IsSoundPlaying = true;
 	}
 }

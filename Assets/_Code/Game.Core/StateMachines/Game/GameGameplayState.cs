@@ -52,7 +52,6 @@ namespace Game.Core.StateMachines.Game
 								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
 							)
 						{
-							UnityEngine.Debug.Log("init1");
 							entity.Activated = true;
 						}
 					}
@@ -66,7 +65,6 @@ namespace Game.Core.StateMachines.Game
 								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
 							)
 							{
-								UnityEngine.Debug.Log("init2");
 								entity.Activated = true;
 							}
 						}
@@ -197,7 +195,6 @@ namespace Game.Core.StateMachines.Game
 									(_state.KeysInLevel == 0) ||
 									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
 								{
-									UnityEngine.Debug.Log("activating");
 									entity.Activated = true;
 								}
 							}
@@ -205,7 +202,6 @@ namespace Game.Core.StateMachines.Game
 							{
 								if (_player.AngerState != entity.TriggerState)
 								{
-									UnityEngine.Debug.Log("deactivating");
 									entity.Activated = false;
 								}
 							}
@@ -248,7 +244,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					Time.timeScale = 1f;
 					_state.Running = true;
-					_audioPlayer.SetMusicVolume(1);
+					_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
 					_ui.HidePause();
 
 					Time.timeScale = _state.AssistMode ? 0.7f : 1f;
@@ -257,7 +253,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					Time.timeScale = 0f;
 					_state.Running = false;
-					_audioPlayer.SetMusicVolume(1);
+					_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
 					_ui.ShowPause();
 				}
 			}

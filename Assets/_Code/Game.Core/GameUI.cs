@@ -118,7 +118,7 @@ namespace Game.Core
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(PauseButton1.gameObject);
+			EventSystem.current.SetSelectedGameObject(PauseButton2.gameObject);
 		}
 		public void HidePause() { _pauseRoot.SetActive(false); }
 
@@ -155,13 +155,13 @@ namespace Game.Core
 
 		public async UniTask ShowTitle(CancellationToken cancellationToken)
 		{
-			_titleRoot.SetActive(true);
-			await _titleName.DOLocalMoveY(20, 0.5f).WithCancellation(cancellationToken);
-			await _titleLinks.DOLocalMoveY(-330, 0.5f).WithCancellation(cancellationToken);
-
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
 			EventSystem.current.SetSelectedGameObject(TitleButton1.gameObject);
+
+			_titleRoot.SetActive(true);
+			await _titleName.DOLocalMoveY(20, 0.5f).WithCancellation(cancellationToken);
+			await _titleLinks.DOLocalMoveY(-330, 0.5f).WithCancellation(cancellationToken);
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
