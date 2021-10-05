@@ -12,9 +12,6 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_state.InitialMusicVolume = _state.CurrentMusicVolume = 1;
-			_state.InitialSoundVolume = _state.CurrentSoundVolume = 1;
-
 			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
 			_ui.PauseButton2.onClick.AddListener(ToggleMusic);
 			_ui.PauseButton3.onClick.AddListener(QuitGame);
@@ -44,18 +41,14 @@ namespace Game.Core.StateMachines.Game
 
 		private void ToggleSounds()
 		{
-			var isOn = _state.CurrentSoundVolume == _state.InitialSoundVolume;
-			_state.CurrentSoundVolume = isOn ? 0f : _state.InitialSoundVolume;
-			_audioPlayer.SetSoundVolume(_state.CurrentSoundVolume);
-			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (isOn ? "OFF" : "ON");
+			_audioPlayer.SetSoundVolume(_state.IsSoundPlaying ? 0 : 1);
+			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.IsSoundPlaying ? "OFF" : "ON");
 		}
 
 		private void ToggleMusic()
 		{
-			var isOn = _state.CurrentMusicVolume == _state.InitialMusicVolume;
-			_state.CurrentMusicVolume = isOn ? 0f : _state.InitialMusicVolume;
-			_audioPlayer.SetMusicVolume(_state.CurrentMusicVolume);
-			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (isOn ? "OFF" : "ON");
+			_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0 : 1);
+			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.IsMusicPlaying ? "OFF" : "ON");
 		}
 
 		private void ToggleAssistMode()
