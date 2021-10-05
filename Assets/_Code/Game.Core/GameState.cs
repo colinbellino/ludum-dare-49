@@ -5,10 +5,6 @@ namespace Game.Core
 {
 	public class GameState
 	{
-		public float InitialMusicVolume;
-		public float CurrentMusicVolume;
-		public float InitialSoundVolume;
-		public float CurrentSoundVolume;
 		public Unity.Mathematics.Random Random;
 		public bool Running;
 		public bool AssistMode;
@@ -23,5 +19,7 @@ namespace Game.Core
 		public bool TriggerRetry;
 		public int KeysPickedUp;
 		public int KeysInLevel;
+		public bool IsMusicPlaying;
+		public bool IsSoundPlaying;
 	}
 }
