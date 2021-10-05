@@ -47,14 +47,28 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (entity.ActivatesWhenLevelStart)
 					{
-						entity.Activated = true;
+						if (
+								(entity.ActivatesInSpecificAngerState && entity.TriggerState == _player.AngerState) ||
+								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
+							)
+						{
+							UnityEngine.Debug.Log("init1");
+							entity.Activated = true;
+						}
 					}
 
 					if (entity.ActivatesWhenKeyInLevel)
 					{
 						if (_state.KeysInLevel == 0)
 						{
-							entity.Activated = true;
+							if (
+								(entity.ActivatesInSpecificAngerState && entity.TriggerState == _player.AngerState) ||
+								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
+							)
+							{
+								UnityEngine.Debug.Log("init2");
+								entity.Activated = true;
+							}
 						}
 					}
 				}
@@ -172,6 +186,31 @@ namespace Game.Core.StateMachines.Game
 							}
 						}
 					}
+
+					foreach (var entity in _state.Entities)
+					{
+						if (entity.ActivatesInSpecificAngerState)
+						{
+							if (entity.Activated == false && _player.AngerState == entity.TriggerState)
+							{
+								if (
+									(_state.KeysInLevel == 0) ||
+									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
+								{
+									UnityEngine.Debug.Log("activating");
+									entity.Activated = true;
+								}
+							}
+							else
+							{
+								if (_player.AngerState != entity.TriggerState)
+								{
+									UnityEngine.Debug.Log("deactivating");
+									entity.Activated = false;
+								}
+							}
+						}
+					}
 				}
 				else
 				{
@@ -236,26 +275,6 @@ namespace Game.Core.StateMachines.Game
 
 					if (entity.CanBeActivated)
 					{
-						if (entity.ActivatesInSpecificAngerState)
-						{
-							if (entity.Activated == false && _player.AngerState == entity.TriggerState)
-							{
-								if (
-									(_state.KeysInLevel == 0) ||
-									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
-								{
-									entity.Activated = true;
-								}
-							}
-							else
-							{
-								if (_player.AngerState != entity.TriggerState)
-								{
-									entity.Activated = false;
-								}
-							}
-						}
-
 						entity.Animator.SetBool("Active", entity.Activated);
 					}
 				}
@@ -437,6 +456,11 @@ namespace Game.Core.StateMachines.Game
 							}
 
 							if (entity.AngerState != entityAtDestination.TriggerState)
+							{
+								break;
+							}
+
+							if (entityAtDestination.Activated == false)
 							{
 								break;
 							}
