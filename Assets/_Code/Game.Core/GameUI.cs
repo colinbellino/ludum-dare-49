@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
@@ -152,11 +153,11 @@ namespace Game.Core
 			await FadeOutPanel(_defeatPanel, duration);
 		}
 
-		public async UniTask ShowTitle()
+		public async UniTask ShowTitle(CancellationToken cancellationToken)
 		{
 			_titleRoot.SetActive(true);
-			await _titleName.DOLocalMoveY(20, 0.5f);
-			await _titleLinks.DOLocalMoveY(-330, 0.5f);
+			await _titleName.DOLocalMoveY(20, 0.5f).WithCancellation(cancellationToken);
+			await _titleLinks.DOLocalMoveY(-330, 0.5f).WithCancellation(cancellationToken);
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
