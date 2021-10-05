@@ -43,12 +43,14 @@ namespace Game.Core.StateMachines.Game
 		{
 			_audioPlayer.SetSoundVolume(_state.IsSoundPlaying ? 0 : 1);
 			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.IsSoundPlaying ? "OFF" : "ON");
+			_state.IsSoundPlaying = !_state.IsSoundPlaying;
 		}
 
 		private void ToggleMusic()
 		{
-			_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0 : 1);
+			_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0 : 0.1f);
 			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.IsMusicPlaying ? "OFF" : "ON");
+			_state.IsMusicPlaying = !_state.IsMusicPlaying;
 		}
 
 		private void ToggleAssistMode()

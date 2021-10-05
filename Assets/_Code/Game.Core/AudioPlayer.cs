@@ -119,12 +119,14 @@ namespace Game.Core
 
 		public void SetMusicVolume(float volume)
 		{
-			_config.AudioMixer.SetFloat("MusicVolume", ConvertToMixerVolume(volume));
+			_musicSource.volume = volume;
+			_musicSource2.volume = volume;
+			// _config.AudioMixer.SetFloat("MusicVolume", ConvertToMixerVolume(volume));
 		}
 
 		public void SetSoundVolume(float volume)
 		{
-			_config.AudioMixer.SetFloat("SoundVolume", ConvertToMixerVolume(volume));
+			// _config.AudioMixer.SetFloat("SoundVolume", ConvertToMixerVolume(volume));
 		}
 
 		public void TransitionToSnapshot(AudioMixerSnapshot snapshot, float duration = 0f)
