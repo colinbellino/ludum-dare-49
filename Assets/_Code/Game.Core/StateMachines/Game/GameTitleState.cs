@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,12 +10,14 @@ namespace Game.Core.StateMachines.Game
 		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
 		private bool _running;
+		private CancellationTokenSource _cancellationSource;
 
 		public override async UniTask Enter()
 		{
 			await base.Enter();
 
 			_running = true;
+			_cancellationSource = new CancellationTokenSource();
 
 			_ui.TitleButton1.onClick.AddListener(Start);
 			_ui.TitleButton2.onClick.AddListener(Quit);
@@ -22,10 +25,10 @@ namespace Game.Core.StateMachines.Game
 			if (_running)
 			{
 				_ = _audioPlayer.PlayMusic(_config.TitleClip, true, 3f, 1f, false);
-				await UniTask.Delay(2000);
+				await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 				_ = _ui.FadeOut(2f);
-				await UniTask.Delay(1200);
-				await _ui.ShowTitle();
+				await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
+				await _ui.ShowTitle(_cancellationSource.Token);
 
 				if (Utils.IsDevBuild())
 				{
@@ -122,9 +125,9 @@ namespace Game.Core.StateMachines.Game
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 
-				if (Keyboard.current.pKey.wasReleasedThisFrame)
+				if (Keyboard.current.lKey.wasReleasedThisFrame)
 				{
-					_state.CurrentLevelIndex = 15;
+					_state.CurrentLevelIndex = _config.AllLevels.Length - 1;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
@@ -133,6 +136,9 @@ namespace Game.Core.StateMachines.Game
 		public override async UniTask Exit()
 		{
 			_running = false;
+
+			_cancellationSource.Cancel();
+			_cancellationSource.Dispose();
 
 			_ui.TitleButton1.onClick.RemoveListener(Start);
 			_ui.TitleButton2.onClick.RemoveListener(Quit);
