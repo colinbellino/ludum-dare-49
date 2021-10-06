@@ -1,16 +1,16 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.IO;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Tilemaps;
 
 namespace Game.Core.StateMachines.Game
 {
 	public class GameGameplayState : BaseGameState
 	{
-		private bool _confirmWasPressedThisFrame;
-		private bool _cancelWasPressedThisFrame;
 		private bool _resetWasPressedThisFrame;
 		private bool _running;
 
@@ -24,13 +24,18 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_ui.SetDebugText(@"[DEBUG]
+			if (Utils.IsDevBuild())
+			{
+				_ui.SetDebugText(@"[DEBUG]
 - F1: trigger victory
-- F2: trigger defeat
-- ESCAPE: pause/options");
+- K: start replay");
+			}
 
+
+			// TODO: Remove this ?
 			_noTransitionTimestamp = Time.time + 3f;
 
+			// TODO: Why isn't this done in the level loading state ?
 			if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
 			{
 				await Victory();
@@ -87,14 +92,27 @@ namespace Game.Core.StateMachines.Game
 
 			_state.Running = true;
 
-			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
-			_ui.ShowGameplay();
-
 			_controls.Gameplay.Enable();
-			_controls.Gameplay.Confirm.started += ConfirmStarted;
-			_controls.Gameplay.Cancel.started += CancelStarted;
 			_controls.Gameplay.Reset.started += ResetStarted;
 			_controls.Global.Enable();
+
+			if (_state.IsReplaying)
+			{
+				var replayPath = $"{Application.dataPath}/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.inputtrace";
+				UnityEngine.Debug.Log("Loading input trace: " + replayPath);
+				if (File.Exists(replayPath))
+				{
+					_game.InputRecorder.LoadCaptureFromFile(replayPath);
+					_game.InputRecorder.StartReplay();
+				}
+				else
+				{
+					UnityEngine.Debug.LogWarning("Input trace for this level doesn't exit.");
+				}
+			}
+
+			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
+			_ui.ShowGameplay();
 
 			_ = _ui.FadeOut(3);
 
@@ -109,7 +127,7 @@ namespace Game.Core.StateMachines.Game
 				}
 
 				// var moveControl = (ButtonControl)_controls.Gameplay.Move.activeControl;
-				// if (moveControl == null || !moveControl.wasPressedThisFrame)
+				// if (moveControl == null || !moveControl.wasReleasedThisFrame)
 				// {
 				// 	continue;
 				// }
@@ -271,6 +289,7 @@ namespace Game.Core.StateMachines.Game
 					entity.Animator.SetBool("Active", entity.Activated);
 				}
 
+				// TODO: Clean this up
 				// Quick and dirty fix just to prevent spamming gamebreaking stuff
 				if (Time.time >= _noTransitionTimestamp)
 				{
@@ -283,7 +302,7 @@ namespace Game.Core.StateMachines.Game
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 
-					if (Keyboard.current.f2Key.wasPressedThisFrame)
+					if (Keyboard.current.f2Key.wasReleasedThisFrame)
 					{
 						_ = NextLevel(true);
 					}
@@ -291,15 +310,19 @@ namespace Game.Core.StateMachines.Game
 
 				if (Utils.IsDevBuild())
 				{
-					if (Keyboard.current.f1Key.wasPressedThisFrame)
+					if (Keyboard.current.f1Key.wasReleasedThisFrame)
 					{
 						await Victory();
+					}
+
+					if (Keyboard.current.kKey.wasReleasedThisFrame)
+					{
+						_state.IsReplaying = true;
+						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 				}
 			}
 
-			_confirmWasPressedThisFrame = false;
-			_cancelWasPressedThisFrame = false;
 			_resetWasPressedThisFrame = false;
 		}
 
@@ -307,13 +330,16 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Exit();
 
+			// TODO: Why do we need both ?
 			_running = false;
-
 			_state.Running = false;
 
+			if (_state.IsReplaying)
+			{
+				_game.InputRecorder.ClearCapture();
+			}
+
 			_controls.Gameplay.Disable();
-			_controls.Gameplay.Confirm.started -= ConfirmStarted;
-			_controls.Gameplay.Cancel.started -= CancelStarted;
 			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Global.Disable();
 
@@ -353,10 +379,6 @@ namespace Game.Core.StateMachines.Game
 				_state.Level = null;
 			}
 		}
-
-		private void ConfirmStarted(InputAction.CallbackContext context) => _confirmWasPressedThisFrame = true;
-
-		private void CancelStarted(InputAction.CallbackContext context) => _cancelWasPressedThisFrame = true;
 
 		private void ResetStarted(InputAction.CallbackContext context) => _resetWasPressedThisFrame = true;
 

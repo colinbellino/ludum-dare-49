@@ -1,5 +1,6 @@
 ﻿using Game.Core.StateMachines.Game;
 using Game.Inputs;
+using UnityEngine.InputSystem;
 
 namespace Game.Core
 {
@@ -12,5 +13,6 @@ namespace Game.Core
 		public GameState State;
 		public AudioPlayer AudioPlayer;
 		public GameFSM GameFSM;
+		public InputRecorder InputRecorder;
 	}
 }

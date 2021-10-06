@@ -21,5 +21,6 @@ namespace Game.Core
 		public int KeysInLevel;
 		public bool IsMusicPlaying = true;
 		public bool IsSoundPlaying = true;
+		public bool IsReplaying;
 	}
 }
