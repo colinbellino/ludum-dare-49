@@ -187,7 +187,7 @@ namespace Game.Core.StateMachines.Game
 
 					foreach (var entity in _state.Entities)
 					{
-						if (entity.ActivatesInSpecificAngerState)
+						if (entity.CanBeActivated && entity.ActivatesInSpecificAngerState)
 						{
 							if (entity.Activated == false && _player.AngerState == entity.TriggerState)
 							{
@@ -196,6 +196,7 @@ namespace Game.Core.StateMachines.Game
 									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
 								{
 									entity.Activated = true;
+									entity.CanBeActivated = false;
 								}
 							}
 							else
@@ -267,10 +268,7 @@ namespace Game.Core.StateMachines.Game
 						entity.Animator.Play("Damaged");
 					}
 
-					if (entity.CanBeActivated)
-					{
-						entity.Animator.SetBool("Active", entity.Activated);
-					}
+					entity.Animator.SetBool("Active", entity.Activated);
 				}
 
 				// Quick and dirty fix just to prevent spamming gamebreaking stuff
@@ -347,6 +345,7 @@ namespace Game.Core.StateMachines.Game
 			_state.TriggerExitAt = 0;
 			_state.TriggerRetry = false;
 			_state.PlayerDidAct = false;
+			_state.KeysPickedUp = 0;
 
 			if (_state.Level)
 			{
