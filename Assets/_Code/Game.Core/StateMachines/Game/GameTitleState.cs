@@ -33,7 +33,8 @@ namespace Game.Core.StateMachines.Game
 				if (Utils.IsDevBuild())
 				{
 					_ui.SetDebugText(@"[DEBUG]
-- F1-F12: load levels");
+- F1-F12: load levels
+- K: start replay");
 				}
 			}
 		}
@@ -128,6 +129,14 @@ namespace Game.Core.StateMachines.Game
 				if (Keyboard.current.lKey.wasReleasedThisFrame)
 				{
 					_state.CurrentLevelIndex = _config.AllLevels.Length - 1;
+					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+				}
+
+				if (Keyboard.current.kKey.wasReleasedThisFrame)
+				{
+					UnityEngine.Debug.Log("Starting in replay mode.");
+					_state.CurrentLevelIndex = 0;
+					_state.IsReplaying = true;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}

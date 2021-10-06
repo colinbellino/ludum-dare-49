@@ -2,6 +2,7 @@ using Game.Core.StateMachines.Game;
 using Game.Inputs;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.InputSystem;
 
 namespace Game.Core
 {
@@ -14,13 +15,15 @@ namespace Game.Core
 			var musicAudioSources = GameObject.Find("Music Audio Source").GetComponents<AudioSource>();
 			var config = Resources.Load<GameConfig>("Game Config");
 			var camera = Camera.main;
-			var ui = FindObjectOfType<GameUI>();
 			var cameraRig = FindObjectOfType<CameraRig>();
+			var ui = FindObjectOfType<GameUI>();
+			var inputRecorder = FindObjectOfType<InputRecorder>();
 
-			Assert.IsNotNull(config);
-			Assert.IsNotNull(camera);
-			Assert.IsNotNull(ui);
-			Assert.IsNotNull(cameraRig);
+			Assert.IsNotNull(config, "Could not find the Game Config file.");
+			Assert.IsNotNull(camera, "Could not find the Camera in the scene.");
+			Assert.IsNotNull(cameraRig, "Could not find the CameraRig in the scene.");
+			Assert.IsNotNull(ui, "Could not find the GameUI in the scene.");
+			Assert.IsNotNull(inputRecorder, "Could not find the InputRecorder in the scene.");
 
 			Game = new GameSingleton();
 			Game.Config = config;
@@ -30,6 +33,7 @@ namespace Game.Core
 			Game.State = new GameState();
 			Game.AudioPlayer = new AudioPlayer(config, musicAudioSources[0], musicAudioSources[1]);
 			Game.GameFSM = new GameFSM(config.DebugFSM, Game);
+			Game.InputRecorder = inputRecorder;
 
 			Game.UI.Inject(Game);
 			Game.GameFSM.Start();
