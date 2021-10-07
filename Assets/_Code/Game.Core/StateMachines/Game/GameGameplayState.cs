@@ -403,7 +403,14 @@ namespace Game.Core.StateMachines.Game
 					_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
 				}
 			}
-			// UnityEngine.Debug.Log("turn3 " + Time.time);
+
+			if (_player.Dead)
+			{
+				_state.Running = false;
+				_ = _audioPlayer.StopMusic();
+				await UniTask.Delay(500);
+				_fsm.Fire(GameFSM.Triggers.Retry);
+			}
 		}
 
 		private UniTask WaitForCurrentAnimation(Entity entity)
@@ -446,19 +453,19 @@ namespace Game.Core.StateMachines.Game
 
 			if (destinationTile == null)
 			{
-				if (entityAtDestination == null)
-				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
-					return false;
-				}
-			}
-			else
-			{
-				if (IsTileWalkable(destinationTile) == false)
-				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (not walkable, {(destinationTile ? destinationTile.name : "null")}).");
-					return false;
-				}
+				// 	if (entityAtDestination == null)
+				// 	{
+				// 		UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
+				// 		return false;
+				// 	}
+				// }
+				// else
+				// {
+				// 	if (IsTileWalkable(destinationTile) == false)
+				// 	{
+				// 		UnityEngine.Debug.Log($"Can't move to {destination} (not walkable, {(destinationTile ? destinationTile.name : "null")}).");
+				// 		return false;
+				// 	}
 			}
 
 			if (entityAtDestination)
@@ -496,6 +503,13 @@ namespace Game.Core.StateMachines.Game
 				1 / entity.MoveSpeed / Time.timeScale
 			);
 			entity.Animator.Play("Idle");
+
+			if (
+				(destinationTile == null && entityAtDestination == null) ||
+				(destinationTile != null && IsTileWalkable(destinationTile) == false))
+			{
+				await Fall(entity);
+			}
 
 			await CheckTrigger(entity, entityAtDestination);
 
@@ -565,18 +579,7 @@ namespace Game.Core.StateMachines.Game
 								}
 								await WaitForCurrentAnimation(entityAtDestination);
 
-								entity.Dead = true;
-								if (entity.FallAudioClip)
-								{
-									_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
-								}
-								entity.Animator.Play("Death");
-								await WaitForCurrentAnimation(entity);
-
-								if (entity.ControlledByPlayer)
-								{
-									PlayerDeath();
-								}
+								await Fall(entity);
 							}
 						}
 						break;
@@ -603,19 +606,7 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							entity.Dead = true;
-							if (entity.FallAudioClip)
-							{
-								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
-							}
-							entity.Animator.Play("Death");
-							await WaitForCurrentAnimation(entity);
-
-							if (entity.ControlledByPlayer)
-							{
-								PlayerDeath();
-							}
-
+							await Fall(entity);
 						}
 						break;
 
@@ -626,18 +617,7 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							entity.Dead = true;
-							if (entity.BurnAudioClip)
-							{
-								_ = _audioPlayer.PlaySoundEffect(entity.BurnAudioClip);
-							}
-							entity.Animator.Play("Death");
-							await WaitForCurrentAnimation(entity);
-
-							if (entity.ControlledByPlayer)
-							{
-								PlayerDeath();
-							}
+							await Fall(entity);
 						}
 						break;
 
@@ -664,19 +644,24 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
+		private async UniTask Fall(Entity entity)
+		{
+			entity.Dead = true;
+			var clip = entity.AngerState == AngerStates.Angry ? entity.FallAudioClip : entity.BurnAudioClip;
+			if (clip)
+			{
+				_ = _audioPlayer.PlaySoundEffect(clip);
+			}
+			entity.Animator.Play("Death");
+			await WaitForCurrentAnimation(entity);
+		}
+
 		private void NextLevel()
 		{
 			_state.CurrentLevelIndex += 1;
 			_state.Running = false;
 			_ = _audioPlayer.StopMusic();
 			_fsm.Fire(GameFSM.Triggers.NextLevel);
-		}
-
-		private void PlayerDeath()
-		{
-			_state.Running = false;
-			_ = _audioPlayer.StopMusic();
-			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 
 		private void ToggleMusic(Entity entity)
