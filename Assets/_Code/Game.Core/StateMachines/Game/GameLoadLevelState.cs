@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static Game.Core.Utils;
 
 namespace Game.Core.StateMachines.Game
 {
@@ -18,7 +17,11 @@ namespace Game.Core.StateMachines.Game
 			if (_state.CurrentLevelIndex <= _config.AllLevels.Length - 1)
 			{
 				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
-				_ = _ui.ShowLevelTitle(_state.Level.Title);
+				if (Utils.IsDevBuild())
+				{
+					_ = _ui.ShowLevelTitle(_state.Level.Title);
+				}
+				_ = _ui.ShowLevelTitle($"{_state.CurrentLevelIndex + 1:D2} - {_state.Level.Title}");
 
 				// Generate grid for walkable tiles
 				var tilemap = _state.Level.Ground;

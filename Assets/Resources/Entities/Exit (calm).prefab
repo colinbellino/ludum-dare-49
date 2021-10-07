@@ -293,6 +293,7 @@ MonoBehaviour:
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
   BreakableProgress: 0
+  HasActiveAnimation: 1
   CanBeActivated: 1
   ActivatesInSpecificAngerState: 1
   ActivatesWhenKeyInLevel: 1
