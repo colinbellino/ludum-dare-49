@@ -24,6 +24,9 @@ namespace Game.Core
 
 		public void Tick()
 		{
+			_musicSource.pitch = Time.timeScale;
+			_musicSource2.pitch = Time.timeScale;
+
 			if (_musicSource.clip)
 			{
 				MusicTimes[_musicSource.clip.GetInstanceID()] = _musicSource.time;
@@ -53,7 +56,6 @@ namespace Game.Core
 
 		public async UniTask PlayMusic(AudioClip clip, bool fromStart = true, float fadeDuration = 0f, float volume = 1f, bool crossFade = false)
 		{
-			UnityEngine.Debug.Log("PlayMusic " + clip.name);
 			if (fadeDuration > 0f)
 			{
 				if (crossFade)
@@ -154,7 +156,7 @@ namespace Game.Core
 			return (volume - 1f) * 80f;
 		}
 
-		// TODO: Use polling instead of creating game object each time
+		// FIXME: Use polling instead of creating game object each time
 		private UniTask PlaySoundClipAtPoint(AudioClip clip, Vector3 position, float volume)
 		{
 			var gameObject = new GameObject("One shot audio");
@@ -163,6 +165,7 @@ namespace Game.Core
 			audioSource.clip = clip;
 			audioSource.outputAudioMixerGroup = _config.SoundsAudioMixerGroup;
 			audioSource.volume = volume;
+			audioSource.pitch = Time.timeScale;
 			audioSource.Play();
 			UnityEngine.Object.Destroy(gameObject, clip.length * ((double)Time.timeScale < 0.00999999977648258 ? 0.01f : Time.timeScale));
 			return UniTask.Delay(TimeSpan.FromSeconds(clip.length));

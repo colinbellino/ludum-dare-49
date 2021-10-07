@@ -107,7 +107,7 @@ namespace Game.Core.StateMachines.Game
 			if (_state.IsReplaying)
 			{
 				var replayPath = $"{Application.dataPath}/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.inputtrace";
-				UnityEngine.Debug.Log("Loading input trace: " + replayPath);
+				// UnityEngine.Debug.Log("Loading input trace: " + replayPath);
 				if (File.Exists(replayPath))
 				{
 					_game.InputRecorder.ClearCapture();
@@ -119,6 +119,11 @@ namespace Game.Core.StateMachines.Game
 					while (_game.InputRecorder.capture.GetNextEvent(ref current))
 					{
 						if (current == null)
+						{
+							break;
+						}
+
+						if (_controller == null)
 						{
 							break;
 						}
