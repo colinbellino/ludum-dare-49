@@ -12,6 +12,9 @@ namespace Game.Core
 		public bool DebugFSM;
 		public int LockFPS = 60;
 
+		[Header("Replay")]
+		public bool TakeScreenshots;
+
 		[Header("Level")]
 		public Level[] AllLevels;
 
