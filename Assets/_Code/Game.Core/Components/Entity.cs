@@ -39,6 +39,7 @@ namespace Game.Core
 		[HideInInspector] public int BreakableProgress;
 
 		[Header("Activation")]
+		[SerializeField] public bool HasActiveAnimation;
 		[SerializeField] public bool CanBeActivated;
 		[SerializeField] public bool ActivatesInSpecificAngerState;
 		[SerializeField] public bool ActivatesWhenKeyInLevel;

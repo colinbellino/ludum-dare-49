@@ -2011,15 +2011,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_StartRecordingWhenEnabled: 0
-  m_RecordFrames: 1
+  m_RecordFrames: 0
   m_ReplayOnNewDevices: 0
   m_SimulateOriginalTimingOnReplay: 0
   m_RecordStateEventsOnly: 0
-  m_CaptureMemoryDefaultSize: 8388608
-  m_CaptureMemoryMaxSize: 14680064
+  m_CaptureMemoryDefaultSize: 31457280
+  m_CaptureMemoryMaxSize: 104857600
   m_DevicePath: 
-  m_RecordButtonPath: <Keyboard>/t
-  m_PlayButtonPath: <Keyboard>/p
+  m_RecordButtonPath: 
+  m_PlayButtonPath: 
   m_ChangeEvent:
     m_PersistentCalls:
       m_Calls: []

@@ -2,6 +2,8 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,6 +11,7 @@ using UnityEngine.UI;
 
 namespace Game.Core
 {
+	// FIXME: Make every timing in here use  Time.timeScale
 	public class GameUI : MonoBehaviour
 	{
 		[Header("Debug")]
@@ -47,6 +50,7 @@ namespace Game.Core
 
 		private AudioPlayer _audioPlayer;
 		private GameConfig _config;
+		private TweenerCore<Color, Color, ColorOptions> _fadeTweener;
 
 		public void Inject(GameSingleton game)
 		{
@@ -98,7 +102,11 @@ namespace Game.Core
 
 		public void SetAngerMeter(int value, AngerStates angerState)
 		{
-			_angerMeterAnimator.SetFloat("AngerState", (angerState == AngerStates.Calm) ? 0 : 1);
+
+			if (_angerMeterAnimator.isActiveAndEnabled)
+			{
+				_angerMeterAnimator.SetFloat("AngerState", (angerState == AngerStates.Calm) ? 0 : 1);
+			}
 			var cacheSize = _angerMeterCache.sizeDelta;
 
 			switch (value)
@@ -153,41 +161,51 @@ namespace Game.Core
 			await FadeOutPanel(_defeatPanel, duration);
 		}
 
-		public async UniTask ShowTitle(CancellationToken cancellationToken)
+		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
 		{
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
 			EventSystem.current.SetSelectedGameObject(TitleButton1.gameObject);
 
 			_titleRoot.SetActive(true);
-			await _titleName.DOLocalMoveY(20, 0.5f).WithCancellation(cancellationToken);
-			await _titleLinks.DOLocalMoveY(-330, 0.5f).WithCancellation(cancellationToken);
+			await _titleName.DOLocalMoveY(20, duration / Time.timeScale).WithCancellation(cancellationToken);
+			await _titleLinks.DOLocalMoveY(-330, duration / Time.timeScale).WithCancellation(cancellationToken);
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
-			await _titleName.DOLocalMoveY(128, duration);
-			await _titleLinks.DOLocalMoveY(-330, duration);
+			await _titleName.DOLocalMoveY(128, duration / Time.timeScale);
+			await _titleLinks.DOLocalMoveY(-330, duration / Time.timeScale);
 			_titleRoot.SetActive(false);
 		}
 
-		public async UniTask ShowLevelTitle(string title)
+		public async UniTask ShowLevelTitle(string title, float duration = 0.5f)
 		{
 			FadeText.text = title;
-			await FadeText.rectTransform.DOLocalMoveY(-87, 0.5f);
+			await FadeText.rectTransform.DOLocalMoveY(-87, duration / Time.timeScale);
 		}
 		public async UniTask HideLevelTitle(float duration = 0.25f)
 		{
-			await FadeText.rectTransform.DOLocalMoveY(-120, duration);
+			await FadeText.rectTransform.DOLocalMoveY(-120, duration / Time.timeScale);
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
 		{
-			await _fadeToBlackImage.DOColor(color, duration);
+			if (_fadeTweener != null)
+			{
+				_fadeTweener.Rewind(false);
+			}
+			_fadeTweener = _fadeToBlackImage.DOColor(color, duration / Time.timeScale);
+			await _fadeTweener;
 		}
 
 		public async UniTask FadeOut(float duration = 1f)
 		{
-			await _fadeToBlackImage.DOColor(Color.clear, duration);
+			if (_fadeTweener != null)
+			{
+				_fadeTweener.Rewind(false);
+			}
+			_fadeTweener = _fadeToBlackImage.DOColor(Color.clear, duration / Time.timeScale);
+			await _fadeTweener;
 		}
 
 		private async UniTask FadeInPanel(Image panel, TMP_Text text, float duration)
