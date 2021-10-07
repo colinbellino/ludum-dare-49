@@ -13,7 +13,6 @@ namespace Game.Core.StateMachines.Game
 	public class GameGameplayState : BaseGameState
 	{
 		private bool _resetWasPressedThisFrame;
-		private bool _running;
 
 		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
 		private float _noTransitionTimestamp;
@@ -91,7 +90,6 @@ namespace Game.Core.StateMachines.Game
 				ToggleMusic(_player);
 			}
 
-			_running = true;
 			_state.Running = true;
 
 			_controls.Gameplay.Enable();
@@ -243,8 +241,6 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Exit();
 
-			// TODO: Why do we need both ?
-			_running = false;
 			_state.Running = false;
 
 			if (_controller != null)
@@ -429,7 +425,6 @@ namespace Game.Core.StateMachines.Game
 
 		private async UniTask Victory()
 		{
-			_running = false;
 			await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
@@ -632,9 +627,9 @@ namespace Game.Core.StateMachines.Game
 							}
 
 							entity.Dead = true;
-							if (entity.FallAudioClip)
+							if (entity.BurnAudioClip)
 							{
-								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
+								_ = _audioPlayer.PlaySoundEffect(entity.BurnAudioClip);
 							}
 							entity.Animator.Play("Death");
 							await WaitForCurrentAnimation(entity);
