@@ -61,7 +61,12 @@ namespace Game.Core
 					// init temp source
 					_musicSource2.volume = 0;
 					_musicSource2.clip = clip;
-					_musicSource2.time = _musicSource.time;
+					var time = _musicSource.time;
+					if (time > clip.length)
+					{
+						time = 0;
+					}
+					_musicSource2.time = time;
 					_musicSource2.Play();
 
 					_ = _musicSource.DOFade(0, fadeDuration);
