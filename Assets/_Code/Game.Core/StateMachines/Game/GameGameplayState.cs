@@ -104,6 +104,16 @@ namespace Game.Core.StateMachines.Game
 
 			if (_state.IsReplaying)
 			{
+				if (_config.TakeScreenshots)
+				{
+					await UniTask.Delay(2000);
+
+					_ui.HideDebug();
+					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.png");
+					await UniTask.NextFrame();
+					_ui.ShowDebug();
+				}
+
 				var replayPath = $"{Application.dataPath}/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.inputtrace";
 				// UnityEngine.Debug.Log("Loading input trace: " + replayPath);
 				if (File.Exists(replayPath))
