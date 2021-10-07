@@ -27,16 +27,6 @@ namespace Game.Core
 		[SerializeField] public Button PauseButton2;
 		[SerializeField] public Button PauseButton3;
 		[SerializeField] public Button PauseButton4;
-		[Header("Victory")]
-		[SerializeField] private Image _victoryPanel;
-		[SerializeField] private TMP_Text _victoryText;
-		[SerializeField] public Button VictoryButton1;
-		[SerializeField] public Button VictoryButton2;
-		[Header("Defeat")]
-		[SerializeField] private Image _defeatPanel;
-		[SerializeField] private TMP_Text _defeatText;
-		[SerializeField] public Button DefeatButton1;
-		[SerializeField] public Button DefeatButton2;
 		[Header("Title")]
 		[SerializeField] private GameObject _titleRoot;
 		[SerializeField] private RectTransform _titleName;
@@ -63,13 +53,7 @@ namespace Game.Core
 			HideDebug();
 			HideGameplay();
 			HidePause();
-			_ = HideVictory(0f);
-			_ = HideDefeat(0f);
 
-			VictoryButton1.onClick.AddListener(PlayButtonClip);
-			VictoryButton2.onClick.AddListener(PlayButtonClip);
-			DefeatButton1.onClick.AddListener(PlayButtonClip);
-			DefeatButton2.onClick.AddListener(PlayButtonClip);
 			PauseButton1.onClick.AddListener(PlayButtonClip);
 			PauseButton2.onClick.AddListener(PlayButtonClip);
 			PauseButton3.onClick.AddListener(PlayButtonClip);
@@ -129,37 +113,6 @@ namespace Game.Core
 			EventSystem.current.SetSelectedGameObject(PauseButton2.gameObject);
 		}
 		public void HidePause() { _pauseRoot.SetActive(false); }
-
-		public async UniTask ShowVictory(string text)
-		{
-			if (text != null)
-			{
-				_victoryText.text = text;
-			}
-
-			await FadeInPanel(_victoryPanel, _victoryText, 0.5f);
-
-			EventSystem.current.SetSelectedGameObject(null);
-			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(VictoryButton1.gameObject);
-		}
-		public async UniTask HideVictory(float duration = 0.5f)
-		{
-			await FadeOutPanel(_victoryPanel, duration);
-		}
-
-		public async UniTask ShowDefeat()
-		{
-			await FadeInPanel(_defeatPanel, _defeatText, 0.5f);
-
-			EventSystem.current.SetSelectedGameObject(null);
-			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(DefeatButton1.gameObject);
-		}
-		public async UniTask HideDefeat(float duration = 0.5f)
-		{
-			await FadeOutPanel(_defeatPanel, duration);
-		}
 
 		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
 		{
