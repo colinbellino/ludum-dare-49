@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugFSM: 0
   LockFPS: 60
+  TakeScreenshots: 0
   AllLevels:
   - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
   - {fileID: 7894139527700584289, guid: 79f8674885d50644087fbd579aad7809, type: 3}
