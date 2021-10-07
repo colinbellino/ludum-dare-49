@@ -16,6 +16,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			// TODO(colin): Do we really need this?
 			_running = true;
 			_cancellationSource = new CancellationTokenSource();
 
