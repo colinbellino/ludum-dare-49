@@ -17,7 +17,7 @@ namespace Game.Core.StateMachines.Game
 			_ui.PauseButton3.onClick.AddListener(QuitGame);
 			_ui.PauseButton4.onClick.AddListener(ToggleAssistMode);
 
-			Time.timeScale = 1f;
+			_state.CurrentTimeScale = _state.DefaultTimeScale = 1f;
 
 			if (IsDevBuild())
 			{

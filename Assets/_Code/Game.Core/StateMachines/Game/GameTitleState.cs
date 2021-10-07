@@ -137,6 +137,7 @@ namespace Game.Core.StateMachines.Game
 					UnityEngine.Debug.Log("Starting in replay mode.");
 					_state.CurrentLevelIndex = 0;
 					_state.IsReplaying = true;
+					_state.CurrentTimeScale = 10f;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
@@ -145,6 +146,11 @@ namespace Game.Core.StateMachines.Game
 		public override async UniTask Exit()
 		{
 			_running = false;
+
+			_ = _ui.FadeIn(Color.black);
+
+			await _audioPlayer.StopMusic(2f);
+			_ui.TitleButton1.onClick.RemoveListener(Start);
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
@@ -155,20 +161,15 @@ namespace Game.Core.StateMachines.Game
 			await _ui.HideTitle();
 		}
 
-		private async void Start()
+		private void Start()
 		{
-			_ = _ui.FadeIn(Color.black, 1f);
-			await _audioPlayer.StopMusic(2f);
 			_state.CurrentLevelIndex = 0;
-			_ui.TitleButton1.onClick.RemoveListener(Start);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
 		private async void Quit()
 		{
-			_ = _ui.FadeIn(Color.black, 1f);
 			await _audioPlayer.StopMusic(2f);
-			_ui.TitleButton2.onClick.RemoveListener(Quit);
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}

@@ -4,6 +4,7 @@ using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Tilemaps;
 
@@ -16,6 +17,9 @@ namespace Game.Core.StateMachines.Game
 
 		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
 		private float _noTransitionTimestamp;
+		private bool _turnInProgress;
+		private InputEventTrace.ReplayController _controller;
+
 		private Entity _player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
@@ -26,11 +30,8 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
-				_ui.SetDebugText(@"[DEBUG]
-- F1: trigger victory
-- K: start replay");
+				_ui.SetDebugText("[DEBUG]\n- F1: trigger victory\n- K: start replay");
 			}
-
 
 			// TODO: Remove this ?
 			_noTransitionTimestamp = Time.time + 3f;
@@ -90,11 +91,18 @@ namespace Game.Core.StateMachines.Game
 				ToggleMusic(_player);
 			}
 
+			_running = true;
 			_state.Running = true;
 
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Reset.started += ResetStarted;
+			_controls.Gameplay.Move.performed += OnMovePerformed;
 			_controls.Global.Enable();
+
+			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
+			_ui.ShowGameplay();
+
+			_ = _ui.FadeOut(2);
 
 			if (_state.IsReplaying)
 			{
@@ -102,155 +110,45 @@ namespace Game.Core.StateMachines.Game
 				UnityEngine.Debug.Log("Loading input trace: " + replayPath);
 				if (File.Exists(replayPath))
 				{
+					_game.InputRecorder.ClearCapture();
 					_game.InputRecorder.LoadCaptureFromFile(replayPath);
-					_game.InputRecorder.StartReplay();
+					_controller = _game.InputRecorder.capture.Replay();
+					_controller.WithAllDevicesMappedToNewInstances();
+
+					var current = default(InputEventPtr);
+					while (_game.InputRecorder.capture.GetNextEvent(ref current))
+					{
+						if (current == null)
+						{
+							break;
+						}
+
+						_controller.PlayOneEvent();
+						await UniTask.Delay(300);
+					}
 				}
 				else
 				{
 					UnityEngine.Debug.LogWarning("Input trace for this level doesn't exit.");
 				}
 			}
-
-			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
-			_ui.ShowGameplay();
-
-			_ = _ui.FadeOut(3);
-
-			_running = true;
-			while (_running)
-			{
-				await UniTask.NextFrame();
-
-				if (_state.Running == false)
-				{
-					continue;
-				}
-
-				// var moveControl = (ButtonControl)_controls.Gameplay.Move.activeControl;
-				// if (moveControl == null || !moveControl.wasReleasedThisFrame)
-				// {
-				// 	continue;
-				// }
-
-				var moveInput = _controls.Gameplay.Move.ReadValue<Vector2>();
-				if (moveInput.magnitude == 0)
-				{
-					continue;
-				}
-
-				if (_player.Dead)
-				{
-					continue;
-				}
-
-				var destination = _player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-				var playerDidMove = await Turn(_player, destination);
-				if (playerDidMove)
-				{
-					foreach (var entity in _state.Entities)
-					{
-						if (entity.MoveTowardsPlayer)
-						{
-							var path = Pathfinding.FindPath(
-								_state.WalkableGrid,
-								entity.GridPosition, _player.GridPosition,
-								Pathfinding.DistanceType.Manhattan
-							);
-							await Turn(entity, path[0]);
-						}
-
-						if (entity.Dead)
-						{
-							entity.Animator.Play("Dead");
-						}
-						else
-						{
-							if (_state.Running && entity.AffectedByAnger)
-							{
-								entity.AngerProgress += 1;
-
-								if (entity.AngerProgress >= 3)
-								{
-									entity.AngerProgress = 0;
-									entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
-									entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
-
-									entity.Direction = Vector3Int.down;
-									entity.Animator.SetFloat("DirectionX", entity.Direction.x);
-									entity.Animator.SetFloat("DirectionY", entity.Direction.y);
-
-									if (entity.TransformationAudioClip)
-									{
-										_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
-									}
-									entity.Animator.Play("Transform");
-									await CurrentAnimation(entity);
-
-									if (entity.ControlledByPlayer)
-									{
-										ToggleMusic(entity);
-									}
-
-									var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
-									if (_state.Running && otherEntityAtPosition)
-									{
-										await CheckTrigger(entity, otherEntityAtPosition);
-									}
-								}
-
-								_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
-							}
-						}
-					}
-
-					foreach (var entity in _state.Entities)
-					{
-						if (entity.CanBeActivated && entity.ActivatesInSpecificAngerState)
-						{
-							if (entity.Activated == false && _player.AngerState == entity.TriggerState)
-							{
-								if (
-									(_state.KeysInLevel == 0) ||
-									_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
-								{
-									entity.Activated = true;
-									entity.CanBeActivated = false;
-								}
-							}
-							else
-							{
-								if (_player.AngerState != entity.TriggerState)
-								{
-									entity.Activated = false;
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					if (_player.CantMoveAudioClip)
-					{
-						_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
-					}
-				}
-			}
 		}
 
-		private UniTask CurrentAnimation(Entity entity)
+		private async void OnMovePerformed(InputAction.CallbackContext context)
 		{
-			var infos = entity.Animator.GetCurrentAnimatorClipInfo(0);
-			if (infos.Length == 0)
+			if (_turnInProgress)
 			{
-				return default;
-			}
-			var clipName = entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-			if (entity.AnimationClipLength.ContainsKey(clipName) == false)
-			{
-				return default;
+				return;
 			}
 
-			return UniTask.Delay(System.TimeSpan.FromSeconds(entity.AnimationClipLength[clipName]));
+			if (_state.Running == false)
+			{
+				return;
+			}
+
+			_turnInProgress = true;
+			await Loop(context.ReadValue<Vector2>());
+			_turnInProgress = false;
 		}
 
 		public override async void Tick()
@@ -286,7 +184,10 @@ namespace Game.Core.StateMachines.Game
 						entity.Animator.Play("Damaged");
 					}
 
-					entity.Animator.SetBool("Active", entity.Activated);
+					if (entity.HasActiveAnimation)
+					{
+						entity.Animator.SetBool("Active", entity.Activated);
+					}
 				}
 
 				// TODO: Clean this up
@@ -304,7 +205,7 @@ namespace Game.Core.StateMachines.Game
 
 					if (Keyboard.current.f2Key.wasReleasedThisFrame)
 					{
-						_ = NextLevel(true);
+						NextLevel();
 					}
 				}
 
@@ -315,9 +216,16 @@ namespace Game.Core.StateMachines.Game
 						await Victory();
 					}
 
+					if (Keyboard.current.tKey.wasReleasedThisFrame)
+					{
+						_game.InputRecorder.ClearCapture();
+						_game.InputRecorder.StartCapture();
+					}
+
 					if (Keyboard.current.kKey.wasReleasedThisFrame)
 					{
 						_state.IsReplaying = true;
+						_state.CurrentTimeScale = 5f;
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 				}
@@ -334,19 +242,30 @@ namespace Game.Core.StateMachines.Game
 			_running = false;
 			_state.Running = false;
 
-			if (_state.IsReplaying)
+			if (_controller != null)
 			{
-				_game.InputRecorder.ClearCapture();
+				_controller.Dispose();
+				_controller = null;
+			}
+
+			if (Utils.IsDevBuild())
+			{
+				if (_game.InputRecorder.captureIsRunning)
+				{
+					_game.InputRecorder.StopCapture();
+					UnityEngine.Debug.LogWarning("Pausing the game to save the level inputs!");
+					Debug.Break();
+				}
 			}
 
 			_controls.Gameplay.Disable();
 			_controls.Gameplay.Reset.started -= ResetStarted;
+			_controls.Gameplay.Move.performed -= OnMovePerformed;
 			_controls.Global.Disable();
-
-			_ = _ui.HideLevelTitle();
 
 			await _ui.FadeIn(Color.black);
 
+			_ = _ui.HideLevelTitle();
 			_ui.HideGameplay();
 
 			// Save the track position
@@ -362,10 +281,6 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			foreach (var entity in _state.Entities)
-			{
-				Object.Destroy(entity.gameObject);
-			}
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
 			_state.TriggerExitAt = 0;
@@ -375,12 +290,137 @@ namespace Game.Core.StateMachines.Game
 
 			if (_state.Level)
 			{
+				_state.Level.gameObject.SetActive(false);
 				Object.Destroy(_state.Level.gameObject);
 				_state.Level = null;
 			}
 		}
 
 		private void ResetStarted(InputAction.CallbackContext context) => _resetWasPressedThisFrame = true;
+
+		private async UniTask Loop(Vector2 moveInput)
+		{
+			if (moveInput.magnitude == 0)
+			{
+				return;
+			}
+
+			if (_player.Dead)
+			{
+				return;
+			}
+
+			var destination = _player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+
+			var playerDidMove = await Turn(_player, destination);
+			if (playerDidMove)
+			{
+				foreach (var entity in _state.Entities)
+				{
+					// if (entity.MoveTowardsPlayer)
+					// {
+					// 	var path = Pathfinding.FindPath(
+					// 		_state.WalkableGrid,
+					// 		entity.GridPosition, _player.GridPosition,
+					// 		Pathfinding.DistanceType.Manhattan
+					// 	);
+					// 	await Turn(entity, path[0]);
+					// }
+
+					if (entity.Dead)
+					{
+						entity.Animator.Play("Dead");
+					}
+					else
+					{
+						if (_state.Running && entity.AffectedByAnger)
+						{
+							entity.AngerProgress += 1;
+
+							if (entity.AngerProgress >= 3)
+							{
+								entity.AngerProgress = 0;
+								entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
+								entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+
+								entity.Direction = Vector3Int.down;
+								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+								entity.Animator.SetFloat("DirectionY", entity.Direction.y);
+
+								if (entity.TransformationAudioClip)
+								{
+									_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
+								}
+								entity.Animator.Play("Transform");
+								await WaitForCurrentAnimation(entity);
+
+								if (entity.ControlledByPlayer)
+								{
+									ToggleMusic(entity);
+								}
+
+								var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
+								if (_state.Running && otherEntityAtPosition)
+								{
+									await CheckTrigger(entity, otherEntityAtPosition);
+								}
+							}
+
+							_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
+						}
+					}
+				}
+
+				foreach (var entity in _state.Entities)
+				{
+					if (entity.CanBeActivated && entity.ActivatesInSpecificAngerState)
+					{
+						if (entity.Activated == false && _player.AngerState == entity.TriggerState)
+						{
+							if (
+								(_state.KeysInLevel == 0) ||
+								_state.KeysInLevel > 0 && _state.KeysPickedUp >= _state.KeysInLevel)
+							{
+								entity.Activated = true;
+								entity.CanBeActivated = false;
+							}
+						}
+						else
+						{
+							if (_player.AngerState != entity.TriggerState)
+							{
+								entity.Activated = false;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if (_player.CantMoveAudioClip)
+				{
+					_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
+				}
+			}
+			// UnityEngine.Debug.Log("turn3 " + Time.time);
+		}
+
+		private UniTask WaitForCurrentAnimation(Entity entity)
+		{
+			var infos = entity.Animator.GetCurrentAnimatorClipInfo(0);
+			if (infos.Length == 0)
+			{
+				return default;
+			}
+			var clipName = entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+			if (entity.AnimationClipLength.ContainsKey(clipName) == false)
+			{
+				return default;
+			}
+
+			var length = entity.AnimationClipLength[clipName];
+			return UniTask.Delay(System.TimeSpan.FromSeconds(length / Time.timeScale));
+		}
 
 		private async UniTask Victory()
 		{
@@ -449,7 +489,12 @@ namespace Game.Core.StateMachines.Game
 				_ = _audioPlayer.PlayRandomSoundEffect(clips, entity.GridPosition);
 			}
 			entity.Animator.Play("Walk");
-			await DOTween.To(() => entity.transform.position, x => entity.transform.position = x, entity.GridPosition + cellOffset, 1 / entity.MoveSpeed);
+			await DOTween.To(
+				() => entity.transform.position,
+				x => entity.transform.position = x,
+				entity.GridPosition + cellOffset,
+				1 / entity.MoveSpeed / Time.timeScale
+			);
 			entity.Animator.Play("Idle");
 
 			await CheckTrigger(entity, entityAtDestination);
@@ -484,7 +529,7 @@ namespace Game.Core.StateMachines.Game
 							{
 								_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
 							}
-							await NextLevel();
+							NextLevel();
 						}
 						break;
 
@@ -518,7 +563,7 @@ namespace Game.Core.StateMachines.Game
 									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
 									await UniTask.Delay(500);
 								}
-								await CurrentAnimation(entityAtDestination);
+								await WaitForCurrentAnimation(entityAtDestination);
 
 								entity.Dead = true;
 								if (entity.FallAudioClip)
@@ -526,11 +571,11 @@ namespace Game.Core.StateMachines.Game
 									_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
 								}
 								entity.Animator.Play("Death");
-								await CurrentAnimation(entity);
+								await WaitForCurrentAnimation(entity);
 
 								if (entity.ControlledByPlayer)
 								{
-									await PlayerDeath();
+									PlayerDeath();
 								}
 							}
 						}
@@ -564,11 +609,11 @@ namespace Game.Core.StateMachines.Game
 								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
 							}
 							entity.Animator.Play("Death");
-							await CurrentAnimation(entity);
+							await WaitForCurrentAnimation(entity);
 
 							if (entity.ControlledByPlayer)
 							{
-								await PlayerDeath();
+								PlayerDeath();
 							}
 
 						}
@@ -587,11 +632,11 @@ namespace Game.Core.StateMachines.Game
 								_ = _audioPlayer.PlaySoundEffect(entity.FallAudioClip);
 							}
 							entity.Animator.Play("Death");
-							await CurrentAnimation(entity);
+							await WaitForCurrentAnimation(entity);
 
 							if (entity.ControlledByPlayer)
 							{
-								await PlayerDeath();
+								PlayerDeath();
 							}
 						}
 						break;
@@ -604,8 +649,11 @@ namespace Game.Core.StateMachines.Game
 							}
 
 							entityAtDestination.Activated = true;
-							entityAtDestination.Animator.SetBool("Active", entityAtDestination.Activated);
-							await CurrentAnimation(entityAtDestination);
+							if (entityAtDestination.HasActiveAnimation)
+							{
+								entityAtDestination.Animator.SetBool("Active", entityAtDestination.Activated);
+							}
+							await WaitForCurrentAnimation(entityAtDestination);
 
 							entityAtDestination.TriggerAction = TriggerActions.Burn;
 						}
@@ -616,24 +664,18 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		private async UniTask NextLevel(bool skipDelay = false)
+		private void NextLevel()
 		{
 			_state.CurrentLevelIndex += 1;
 			_state.Running = false;
 			_ = _audioPlayer.StopMusic();
-			await _ui.FadeIn(Color.black);
-			if (skipDelay == false)
-			{
-				await UniTask.Delay(3000);
-			}
 			_fsm.Fire(GameFSM.Triggers.NextLevel);
 		}
 
-		private async UniTask PlayerDeath()
+		private void PlayerDeath()
 		{
 			_state.Running = false;
 			_ = _audioPlayer.StopMusic();
-			await _ui.FadeIn(Color.black);
 			_fsm.Fire(GameFSM.Triggers.Retry);
 		}
 

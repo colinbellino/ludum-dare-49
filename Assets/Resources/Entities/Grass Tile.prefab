@@ -307,7 +307,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage:
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -355,8 +355,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6caa34a526c050243b29f21524fc2ec1, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Animator: {fileID: 3329524166691032494}
   SpriteRenderer: {fileID: 4825077275387871634}
   AudioSource: {fileID: 3329524165931142306}
@@ -376,6 +376,7 @@ MonoBehaviour:
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
   BreakableProgress: 0
+  HasActiveAnimation: 1
   CanBeActivated: 1
   ActivatesInSpecificAngerState: 0
   ActivatesWhenKeyInLevel: 0

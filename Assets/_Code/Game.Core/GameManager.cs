@@ -41,6 +41,8 @@ namespace Game.Core
 
 		private void Update()
 		{
+			Time.timeScale = Game.State.CurrentTimeScale;
+
 			Game.AudioPlayer.Tick();
 			Game?.GameFSM.Tick();
 		}
