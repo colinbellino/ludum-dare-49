@@ -293,11 +293,14 @@ MonoBehaviour:
   BreakParticle: {fileID: 5772124654905513637, guid: efbfe69234eb75140b4a28d61435c84c, type: 3}
   BreakParticleOffset: {x: 0, y: -0.3, z: 0}
   BreakableProgress: 0
+  HasActiveAnimation: 0
   CanBeActivated: 0
+  ActivatesInSpecificAngerState: 0
   ActivatesWhenKeyInLevel: 0
-  ActivatesWithKeys: 0
+  ActivatesWhenLevelStart: 0
   Activated: 0
   CantMoveAudioClip: {fileID: 8300000, guid: a5e0d09650312df479255816d5651b67, type: 3}
+  BurnAudioClip: {fileID: 8300000, guid: 8ffeca4c9e6565e42b3754bd017e39f2, type: 3}
   FallAudioClip: {fileID: 8300000, guid: 7a5c49693fd462e45a1d0c366b648688, type: 3}
   BreakGroundAudioClips:
   - {fileID: 8300000, guid: 6e34983c01ad876469f5b30aa33330f9, type: 3}

@@ -48,6 +48,7 @@ namespace Game.Core
 
 		[Header("Audio")]
 		[SerializeField] public AudioClip CantMoveAudioClip;
+		[SerializeField] public AudioClip BurnAudioClip;
 		[SerializeField] public AudioClip FallAudioClip;
 		[SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("WalkAudioClips")] public AudioClip[] BreakGroundAudioClips;
 		[SerializeField] public AudioClip TransformationAudioClip;
