@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static Game.Core.Utils;
 
@@ -15,12 +16,15 @@ namespace Game.Core.StateMachines.Game
 			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
 			_ui.PauseButton2.onClick.AddListener(ToggleMusic);
 			_ui.PauseButton3.onClick.AddListener(QuitGame);
-			_ui.PauseButton4.onClick.AddListener(ToggleAssistMode);
 
 			_state.CurrentTimeScale = _state.DefaultTimeScale = 1f;
 
+			_state.Random = new Unity.Mathematics.Random();
+			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
+
 			if (IsDevBuild())
 			{
+				_state.DebugLevels = Resources.LoadAll<Level>("Levels/Debug");
 				_ui.ShowDebug();
 
 				if (_config.LockFPS > 0)
@@ -51,12 +55,6 @@ namespace Game.Core.StateMachines.Game
 			_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0 : 0.1f);
 			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.IsMusicPlaying ? "OFF" : "ON");
 			_state.IsMusicPlaying = !_state.IsMusicPlaying;
-		}
-
-		private void ToggleAssistMode()
-		{
-			_state.AssistMode = !_state.AssistMode;
-			_ui.PauseButton4.GetComponentInChildren<TMPro.TMP_Text>().text = "Assist mode: " + (!_state.AssistMode ? "OFF" : "ON");
 		}
 
 		private void QuitGame()
