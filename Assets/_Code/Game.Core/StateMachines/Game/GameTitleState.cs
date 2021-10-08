@@ -26,7 +26,6 @@ namespace Game.Core.StateMachines.Game
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
 			await _ui.ShowTitle(_cancellationSource.Token);
-			_ = _ui.ShowLevelSelection();
 			for (int i = 0; i < _ui.LevelButtons.Length; i++)
 			{
 				var button = _ui.LevelButtons[i];
@@ -37,6 +36,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels
+- Tab: toggle level selection
 - K: start replay");
 			}
 		}
@@ -53,6 +53,8 @@ namespace Game.Core.StateMachines.Game
 			{
 				Quit();
 			}
+
+			if (Keyboard.current.tabKey.wasReleasedThisFrame) { _ui.ToggleLevelSelection(); }
 
 			if (Utils.IsDevBuild())
 			{
