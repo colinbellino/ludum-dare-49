@@ -9,7 +9,7 @@ namespace Game.Core
 		public Tilemap Ground;
 		public Tilemap Entities;
 
-		[HideInInspector] [SerializeField] public Texture2D Screenshot;
-		[HideInInspector] [SerializeField] public TextAsset InputTrace;
+		[SerializeField] public Texture2D Screenshot;
+		// [HideInInspector] [SerializeField] public InputTrace InputTrace;
 	}
 }
