@@ -13,18 +13,19 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
-			_ui.PauseButton2.onClick.AddListener(ToggleMusic);
-			_ui.PauseButton3.onClick.AddListener(QuitGame);
-
 			_state.CurrentTimeScale = _state.DefaultTimeScale = 1f;
-
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
+			_state.DebugLevels = new Level[0];
+			_state.AllLevels = _config.Levels;
 
 			if (IsDevBuild())
 			{
 				_state.DebugLevels = Resources.LoadAll<Level>("Levels/Debug");
+				_state.AllLevels = new Level[_config.Levels.Length + _state.DebugLevels.Length];
+				_config.Levels.CopyTo(_state.AllLevels, 0);
+				_state.DebugLevels.CopyTo(_state.AllLevels, _config.Levels.Length);
+
 				_ui.ShowDebug();
 
 				if (_config.LockFPS > 0)
@@ -39,6 +40,10 @@ namespace Game.Core.StateMachines.Game
 					QualitySettings.vSyncCount = 0;
 				}
 			}
+
+			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
+			_ui.PauseButton2.onClick.AddListener(ToggleMusic);
+			_ui.PauseButton3.onClick.AddListener(QuitGame);
 
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}

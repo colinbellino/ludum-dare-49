@@ -8,20 +8,16 @@ namespace Game.Core
 	[CreateAssetMenu(menuName = "Game/Game Config")]
 	public class GameConfig : ScriptableObject
 	{
-		[Header("Debug")]
+		[Header("DEBUG")]
 		public bool DebugFSM;
 		public int LockFPS = 60;
-
-		[Header("Replay")]
 		public bool TakeScreenshots;
 
-		[Header("Level")]
-		public Level[] AllLevels;
-
-		[Header("Grid")]
+		[Header("CONTENT")]
+		[UnityEngine.Serialization.FormerlySerializedAs("AllLevels")] public Level[] Levels;
 		public TileToEntity TileToEntity;
 
-		[Header("Audio")]
+		[Header("AUDIO")]
 		public AudioMixer AudioMixer;
 		public AudioMixerGroup MusicAudioMixerGroup;
 		public AudioMixerGroup SoundsAudioMixerGroup;

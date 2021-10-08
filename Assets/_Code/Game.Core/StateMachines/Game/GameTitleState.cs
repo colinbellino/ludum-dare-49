@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -29,7 +28,8 @@ namespace Game.Core.StateMachines.Game
 			for (int i = 0; i < _ui.LevelButtons.Length; i++)
 			{
 				var button = _ui.LevelButtons[i];
-				button.onClick.AddListener(() => LoadLevel(i));
+				int levelIndex = i;
+				button.onClick.AddListener(() => LoadLevel(levelIndex));
 			}
 
 			if (Utils.IsDevBuild())
@@ -39,12 +39,6 @@ namespace Game.Core.StateMachines.Game
 - Tab: toggle level selection
 - K: start replay");
 			}
-		}
-
-		private void LoadLevel(int levelIndex)
-		{
-			_state.CurrentLevelIndex = levelIndex;
-			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
 		public override void Tick()
@@ -71,7 +65,7 @@ namespace Game.Core.StateMachines.Game
 				if (Keyboard.current.f10Key.wasReleasedThisFrame) { LoadLevel(9); }
 				if (Keyboard.current.f11Key.wasReleasedThisFrame) { LoadLevel(10); }
 				if (Keyboard.current.f12Key.wasReleasedThisFrame) { LoadLevel(11); }
-				if (Keyboard.current.lKey.wasReleasedThisFrame) { LoadLevel(_config.AllLevels.Length - 1); }
+				if (Keyboard.current.lKey.wasReleasedThisFrame) { LoadLevel(_config.Levels.Length - 1); }
 
 				if (Keyboard.current.kKey.wasReleasedThisFrame)
 				{
@@ -90,11 +84,6 @@ namespace Game.Core.StateMachines.Game
 			await _audioPlayer.StopMusic(2f);
 
 			_ui.TitleButton1.onClick.RemoveListener(Start);
-			for (int i = 0; i < _ui.LevelButtons.Length; i++)
-			{
-				var button = _ui.LevelButtons[i];
-				button.onClick.RemoveListener(() => LoadLevel(i));
-			}
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
@@ -103,6 +92,20 @@ namespace Game.Core.StateMachines.Game
 			_ui.TitleButton2.onClick.RemoveListener(Quit);
 
 			await _ui.HideTitle();
+			_ = _ui.HideLevelSelection();
+			for (int i = 0; i < _ui.LevelButtons.Length; i++)
+			{
+				var button = _ui.LevelButtons[i];
+				int levelIndex = i;
+				button.onClick.RemoveListener(() => LoadLevel(levelIndex));
+			}
+		}
+
+		private void LoadLevel(int levelIndex)
+		{
+			Debug.Log("LoadLevel " + levelIndex);
+			_state.CurrentLevelIndex = levelIndex;
+			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
 		private void Start()
