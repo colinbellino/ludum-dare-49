@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -9,35 +10,41 @@ namespace Game.Core.StateMachines.Game
 	{
 		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
-		private bool _running;
 		private CancellationTokenSource _cancellationSource;
 
 		public override async UniTask Enter()
 		{
 			await base.Enter();
 
-			// TODO(colin): Do we really need this?
-			_running = true;
 			_cancellationSource = new CancellationTokenSource();
 
 			_ui.TitleButton1.onClick.AddListener(Start);
 			_ui.TitleButton2.onClick.AddListener(Quit);
 
-			if (_running)
+			_ = _audioPlayer.PlayMusic(_config.TitleClip, true, 3f, 1f, false);
+			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
+			_ = _ui.FadeOut(2f);
+			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
+			await _ui.ShowTitle(_cancellationSource.Token);
+			_ = _ui.ShowLevelSelection();
+			for (int i = 0; i < _ui.LevelButtons.Length; i++)
 			{
-				_ = _audioPlayer.PlayMusic(_config.TitleClip, true, 3f, 1f, false);
-				await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
-				_ = _ui.FadeOut(2f);
-				await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
-				await _ui.ShowTitle(_cancellationSource.Token);
+				var button = _ui.LevelButtons[i];
+				button.onClick.AddListener(() => LoadLevel(i));
+			}
 
-				if (Utils.IsDevBuild())
-				{
-					_ui.SetDebugText(@"[DEBUG]
+			if (Utils.IsDevBuild())
+			{
+				_ui.SetDebugText(@"[DEBUG]
 - F1-F12: load levels
 - K: start replay");
-				}
 			}
+		}
+
+		private void LoadLevel(int levelIndex)
+		{
+			_state.CurrentLevelIndex = levelIndex;
+			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
 		public override void Tick()
@@ -49,89 +56,20 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
-				if (Keyboard.current.f1Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 0;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f2Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 1;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f3Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 2;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f4Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 3;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f5Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 4;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f6Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 5;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f7Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 6;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f8Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 7;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f8Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 7;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f9Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 8;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f10Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 9;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f11Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 10;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.f12Key.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = 11;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
-
-				if (Keyboard.current.lKey.wasReleasedThisFrame)
-				{
-					_state.CurrentLevelIndex = _config.AllLevels.Length - 1;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
-				}
+				if (Keyboard.current.f1Key.wasReleasedThisFrame) { LoadLevel(0); }
+				if (Keyboard.current.f2Key.wasReleasedThisFrame) { LoadLevel(1); }
+				if (Keyboard.current.f3Key.wasReleasedThisFrame) { LoadLevel(2); }
+				if (Keyboard.current.f4Key.wasReleasedThisFrame) { LoadLevel(3); }
+				if (Keyboard.current.f5Key.wasReleasedThisFrame) { LoadLevel(4); }
+				if (Keyboard.current.f6Key.wasReleasedThisFrame) { LoadLevel(5); }
+				if (Keyboard.current.f7Key.wasReleasedThisFrame) { LoadLevel(6); }
+				if (Keyboard.current.f8Key.wasReleasedThisFrame) { LoadLevel(7); }
+				if (Keyboard.current.f8Key.wasReleasedThisFrame) { LoadLevel(7); }
+				if (Keyboard.current.f9Key.wasReleasedThisFrame) { LoadLevel(8); }
+				if (Keyboard.current.f10Key.wasReleasedThisFrame) { LoadLevel(9); }
+				if (Keyboard.current.f11Key.wasReleasedThisFrame) { LoadLevel(10); }
+				if (Keyboard.current.f12Key.wasReleasedThisFrame) { LoadLevel(11); }
+				if (Keyboard.current.lKey.wasReleasedThisFrame) { LoadLevel(_config.AllLevels.Length - 1); }
 
 				if (Keyboard.current.kKey.wasReleasedThisFrame)
 				{
@@ -146,12 +84,15 @@ namespace Game.Core.StateMachines.Game
 
 		public override async UniTask Exit()
 		{
-			_running = false;
-
 			_ = _ui.FadeIn(Color.black);
-
 			await _audioPlayer.StopMusic(2f);
+
 			_ui.TitleButton1.onClick.RemoveListener(Start);
+			for (int i = 0; i < _ui.LevelButtons.Length; i++)
+			{
+				var button = _ui.LevelButtons[i];
+				button.onClick.RemoveListener(() => LoadLevel(i));
+			}
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();

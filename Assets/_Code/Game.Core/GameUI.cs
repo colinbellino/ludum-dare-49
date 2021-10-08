@@ -34,6 +34,9 @@ namespace Game.Core
 		[SerializeField] private RectTransform _titleLinks;
 		[SerializeField] public Button TitleButton1;
 		[SerializeField] public Button TitleButton2;
+		[Header("Level Selection")]
+		[SerializeField] public GameObject _levelSelectionRoot;
+		[SerializeField] public Button[] LevelButtons;
 		[Header("Transitions")]
 		[SerializeField] private Image _fadeToBlackImage;
 		[SerializeField] public TMP_Text FadeText;
@@ -48,11 +51,13 @@ namespace Game.Core
 			_config = game.Config;
 		}
 
-		private void Start()
+		private async void Start()
 		{
 			HideDebug();
 			HideGameplay();
 			HidePause();
+			await HideTitle(0);
+			await HideLevelSelection(0);
 
 			PauseButton1.onClick.AddListener(PlayButtonClip);
 			PauseButton2.onClick.AddListener(PlayButtonClip);
@@ -60,6 +65,10 @@ namespace Game.Core
 			PauseButton4.onClick.AddListener(PlayButtonClip);
 			TitleButton1.onClick.AddListener(PlayButtonClip);
 			TitleButton2.onClick.AddListener(PlayButtonClip);
+			foreach (var button in LevelButtons)
+			{
+				button.onClick.AddListener(PlayButtonClip);
+			}
 		}
 
 		private void PlayButtonClip()
@@ -139,6 +148,32 @@ namespace Game.Core
 		public async UniTask HideLevelTitle(float duration = 0.25f)
 		{
 			await FadeText.rectTransform.DOLocalMoveY(-120, duration / Time.timeScale);
+		}
+
+		public async UniTask ShowLevelSelection(float duration = 0.5f)
+		{
+			_levelSelectionRoot.SetActive(true);
+			for (int i = 0; i < LevelButtons.Length; i++)
+			{
+				var button = LevelButtons[i];
+				if (i < _config.AllLevels.Length)
+				{
+					var image = button.GetComponentInChildren<RawImage>();
+					var text = button.GetComponentInChildren<TMP_Text>();
+					var level = _config.AllLevels[i];
+
+					text.text = $"Level {i + 1:D2}";
+					image.texture = level.Screenshot;
+				}
+				else
+				{
+					button.gameObject.SetActive(false);
+				}
+			}
+		}
+		public async UniTask HideLevelSelection(float duration = 0.25f)
+		{
+			_levelSelectionRoot.SetActive(false);
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
