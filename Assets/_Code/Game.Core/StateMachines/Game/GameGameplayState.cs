@@ -34,13 +34,6 @@ namespace Game.Core.StateMachines.Game
 			// TODO: Remove this ?
 			_noTransitionTimestamp = Time.time + 3f;
 
-			// TODO: Why isn't this done in the level loading state ?
-			if (_state.CurrentLevelIndex > _config.AllLevels.Length - 1)
-			{
-				await Victory();
-				return;
-			}
-
 			// Initialize entities
 			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
 			foreach (var entity in _state.Entities)
@@ -111,36 +104,39 @@ namespace Game.Core.StateMachines.Game
 				}
 
 #if UNITY_EDITOR
-				var levelAsset = _config.AllLevels[_state.CurrentLevelIndex];
-				var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
-				var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex + 1:D2}.inputtrace");
-				if (File.Exists(replayPath))
+				if (_state.CurrentLevelIndex <= _config.Levels.Length - 1)
 				{
-					_game.InputRecorder.ClearCapture();
-					_game.InputRecorder.LoadCaptureFromFile(replayPath);
-					_controller = _game.InputRecorder.capture.Replay();
-					_controller.WithAllDevicesMappedToNewInstances();
-
-					var current = default(InputEventPtr);
-					while (_game.InputRecorder.capture.GetNextEvent(ref current))
+					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
+					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
+					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex + 1:D2}.inputtrace");
+					if (File.Exists(replayPath))
 					{
-						if (current == null)
-						{
-							break;
-						}
+						_game.InputRecorder.ClearCapture();
+						_game.InputRecorder.LoadCaptureFromFile(replayPath);
+						_controller = _game.InputRecorder.capture.Replay();
+						_controller.WithAllDevicesMappedToNewInstances();
 
-						if (_controller == null)
+						var current = default(InputEventPtr);
+						while (_game.InputRecorder.capture.GetNextEvent(ref current))
 						{
-							break;
-						}
+							if (current == null)
+							{
+								break;
+							}
 
-						_controller.PlayOneEvent();
-						await UniTask.Delay(300);
+							if (_controller == null)
+							{
+								break;
+							}
+
+							_controller.PlayOneEvent();
+							await UniTask.Delay(300);
+						}
 					}
-				}
-				else
-				{
-					UnityEngine.Debug.LogWarning("Input trace for this level doesn't exist.");
+					else
+					{
+						UnityEngine.Debug.LogWarning("Input trace for this level doesn't exist.");
+					}
 				}
 #endif
 			}
@@ -436,6 +432,7 @@ namespace Game.Core.StateMachines.Game
 
 		private async UniTask Victory()
 		{
+			UnityEngine.Debug.Log("End of the game reached.");
 			await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
@@ -547,7 +544,7 @@ namespace Game.Core.StateMachines.Game
 							{
 								_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
 							}
-							NextLevel();
+							await NextLevel();
 						}
 						break;
 
@@ -660,12 +657,21 @@ namespace Game.Core.StateMachines.Game
 			await WaitForCurrentAnimation(entity);
 		}
 
-		private void NextLevel()
+		private async UniTask NextLevel()
 		{
 			_state.CurrentLevelIndex += 1;
-			_state.Running = false;
-			_ = _audioPlayer.StopMusic();
-			_fsm.Fire(GameFSM.Triggers.NextLevel);
+
+			if (_state.CurrentLevelIndex == _config.Levels.Length - 1)
+			{
+				await Victory();
+				return;
+			}
+			else
+			{
+				_state.Running = false;
+				_ = _audioPlayer.StopMusic();
+				_fsm.Fire(GameFSM.Triggers.NextLevel);
+			}
 		}
 
 		private void ToggleMusic(Entity entity)

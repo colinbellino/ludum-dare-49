@@ -157,21 +157,17 @@ namespace Game.Core
 		{
 			_levelSelectionRoot.SetActive(true);
 
-			var levels = new Level[_config.AllLevels.Length + _state.DebugLevels.Length];
-			_config.AllLevels.CopyTo(levels, 0);
-			_state.DebugLevels.CopyTo(levels, _config.AllLevels.Length);
-
 			for (int i = 0; i < LevelButtons.Length; i++)
 			{
 				var button = LevelButtons[i];
-				if (i < levels.Length)
+				if (i < _state.AllLevels.Length)
 				{
 					var image = button.GetComponentInChildren<RawImage>();
 					var text = button.GetComponentInChildren<TMP_Text>();
-					var level = levels[i];
+					var level = _state.AllLevels[i];
 
 					text.text = $"Level {i + 1:D2}";
-					if (_config.AllLevels.Contains(level) == false)
+					if (_config.Levels.Contains(level) == false)
 					{
 						text.text = level.name;
 					}

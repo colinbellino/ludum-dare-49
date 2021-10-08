@@ -13,6 +13,7 @@ namespace Game.Core
 		public float DefaultTimeScale;
 		public bool IsReplaying;
 		public Level[] DebugLevels;
+		public Level[] AllLevels;
 
 		public int CurrentLevelIndex;
 		public Level Level;
