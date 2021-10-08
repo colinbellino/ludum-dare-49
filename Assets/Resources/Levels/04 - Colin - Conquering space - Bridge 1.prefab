@@ -61,6 +61,7 @@ MonoBehaviour:
   Title: Conquering space
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  Screenshot: {fileID: 2800000, guid: dd5d5b770c9b744c2adbde98b7c2535b, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:
   m_ObjectHideFlags: 0

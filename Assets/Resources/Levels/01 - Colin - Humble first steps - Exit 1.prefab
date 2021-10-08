@@ -61,6 +61,7 @@ MonoBehaviour:
   Title: Humble first steps
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  Screenshot: {fileID: 2800000, guid: ac5b3c68a5c784d50ba20a986f14edb4, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:
   m_ObjectHideFlags: 0
