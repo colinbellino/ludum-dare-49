@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -43,12 +44,14 @@ namespace Game.Core
 
 		private AudioPlayer _audioPlayer;
 		private GameConfig _config;
+		private GameState _state;
 		private TweenerCore<Color, Color, ColorOptions> _fadeTweener;
 
 		public void Inject(GameSingleton game)
 		{
 			_audioPlayer = game.AudioPlayer;
 			_config = game.Config;
+			_state = game.State;
 		}
 
 		private async void Start()
@@ -153,16 +156,25 @@ namespace Game.Core
 		public async UniTask ShowLevelSelection(float duration = 0.5f)
 		{
 			_levelSelectionRoot.SetActive(true);
+
+			var levels = new Level[_config.AllLevels.Length + _state.DebugLevels.Length];
+			_config.AllLevels.CopyTo(levels, 0);
+			_state.DebugLevels.CopyTo(levels, _config.AllLevels.Length);
+
 			for (int i = 0; i < LevelButtons.Length; i++)
 			{
 				var button = LevelButtons[i];
-				if (i < _config.AllLevels.Length)
+				if (i < levels.Length)
 				{
 					var image = button.GetComponentInChildren<RawImage>();
 					var text = button.GetComponentInChildren<TMP_Text>();
-					var level = _config.AllLevels[i];
+					var level = levels[i];
 
 					text.text = $"Level {i + 1:D2}";
+					if (_config.AllLevels.Contains(level) == false)
+					{
+						text.text = level.name;
+					}
 					image.texture = level.Screenshot;
 				}
 				else
