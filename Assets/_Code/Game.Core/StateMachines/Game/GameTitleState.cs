@@ -103,7 +103,7 @@ namespace Game.Core.StateMachines.Game
 
 		private void LoadLevel(int levelIndex)
 		{
-			Debug.Log("LoadLevel " + levelIndex);
+			Debug.Log($"Loading level {levelIndex}.");
 			_state.CurrentLevelIndex = levelIndex;
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
