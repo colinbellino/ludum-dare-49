@@ -4,7 +4,6 @@ using DG.Tweening;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Tilemaps;
 
@@ -77,9 +76,6 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			_state.Random = new Unity.Mathematics.Random();
-			_state.Random.InitState((uint)UnityEngine.Random.Range(0, int.MaxValue));
-
 			// Start or continue music where we left off
 			if (_audioPlayer.IsMusicPlaying() == false)
 			{
@@ -114,8 +110,10 @@ namespace Game.Core.StateMachines.Game
 					_ui.ShowDebug();
 				}
 
-				var replayPath = $"{Application.dataPath}/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.inputtrace";
-				// UnityEngine.Debug.Log("Loading input trace: " + replayPath);
+#if UNITY_EDITOR
+				var levelAsset = _config.AllLevels[_state.CurrentLevelIndex];
+				var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
+				var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex + 1:D2}.inputtrace");
 				if (File.Exists(replayPath))
 				{
 					_game.InputRecorder.ClearCapture();
@@ -142,8 +140,9 @@ namespace Game.Core.StateMachines.Game
 				}
 				else
 				{
-					UnityEngine.Debug.LogWarning("Input trace for this level doesn't exit.");
+					UnityEngine.Debug.LogWarning("Input trace for this level doesn't exist.");
 				}
+#endif
 			}
 		}
 
@@ -176,8 +175,6 @@ namespace Game.Core.StateMachines.Game
 					_state.Running = true;
 					_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
 					_ui.HidePause();
-
-					Time.timeScale = _state.AssistMode ? 0.7f : 1f;
 				}
 				else
 				{
@@ -294,9 +291,6 @@ namespace Game.Core.StateMachines.Game
 
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
-			_state.TriggerExitAt = 0;
-			_state.TriggerRetry = false;
-			_state.PlayerDidAct = false;
 			_state.KeysPickedUp = 0;
 
 			if (_state.Level)
@@ -328,15 +322,15 @@ namespace Game.Core.StateMachines.Game
 			{
 				foreach (var entity in _state.Entities)
 				{
-					// if (entity.MoveTowardsPlayer)
-					// {
-					// 	var path = Pathfinding.FindPath(
-					// 		_state.WalkableGrid,
-					// 		entity.GridPosition, _player.GridPosition,
-					// 		Pathfinding.DistanceType.Manhattan
-					// 	);
-					// 	await Turn(entity, path[0]);
-					// }
+					if (entity.MoveTowardsPlayer)
+					{
+						var path = Pathfinding.FindPath(
+							_state.WalkableGrid,
+							entity.GridPosition, _player.GridPosition,
+							Pathfinding.DistanceType.Manhattan
+						);
+						await Turn(entity, path[0]);
+					}
 
 					if (entity.Dead)
 					{

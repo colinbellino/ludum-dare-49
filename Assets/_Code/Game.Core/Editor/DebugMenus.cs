@@ -18,15 +18,17 @@ namespace Game.Core.Editor
 
 			for (int i = 0; i < config.AllLevels.Length; i++)
 			{
-				var level = config.AllLevels[i];
+				var levelAsset = config.AllLevels[i];
+				var levelPath = AssetDatabase.GetAssetPath(levelAsset);
 
-				var originalScreenshot = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Resources/Levels/{i + 1:D2}.png");
+				var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{i + 1:D2}.png");
+				var originalScreenshot = AssetDatabase.LoadAssetAtPath<Texture2D>(screenshotPath);
 				if (originalScreenshot)
 				{
-					level.Screenshot = originalScreenshot;
+					levelAsset.Screenshot = originalScreenshot;
 				}
 
-				PrefabUtility.SavePrefabAsset(level.gameObject);
+				PrefabUtility.SavePrefabAsset(levelAsset.gameObject);
 			}
 
 			UnityEditor.AssetDatabase.SaveAssets();
