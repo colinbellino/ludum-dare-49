@@ -16,9 +16,9 @@ namespace Game.Core.Editor
 
 			var config = Resources.Load<GameConfig>("Game Config");
 
-			for (int i = 0; i < config.AllLevels.Length; i++)
+			for (int i = 0; i < config.Levels.Length; i++)
 			{
-				var levelAsset = config.AllLevels[i];
+				var levelAsset = config.Levels[i];
 				var levelPath = AssetDatabase.GetAssetPath(levelAsset);
 
 				var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{i + 1:D2}.png");

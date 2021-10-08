@@ -14,9 +14,9 @@ namespace Game.Core.StateMachines.Game
 			await base.Enter();
 
 			// Load current level
-			if (_state.CurrentLevelIndex <= _config.AllLevels.Length - 1)
+			if (_state.CurrentLevelIndex <= _state.AllLevels.Length - 1)
 			{
-				_state.Level = Object.Instantiate(_config.AllLevels[_state.CurrentLevelIndex]);
+				_state.Level = Object.Instantiate(_state.AllLevels[_state.CurrentLevelIndex]);
 				if (Utils.IsDevBuild())
 				{
 					_ = _ui.ShowLevelTitle(_state.Level.Title);
