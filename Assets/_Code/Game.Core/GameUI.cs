@@ -171,9 +171,17 @@ namespace Game.Core
 				}
 			}
 		}
-		public async UniTask HideLevelSelection(float duration = 0.25f)
+		public async UniTask HideLevelSelection(float duration = 0.5f)
 		{
 			_levelSelectionRoot.SetActive(false);
+		}
+		public UniTask ToggleLevelSelection(float duration = 0.5f)
+		{
+			if (_levelSelectionRoot.activeSelf)
+			{
+				return HideLevelSelection(duration);
+			}
+			return ShowLevelSelection(duration);
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
