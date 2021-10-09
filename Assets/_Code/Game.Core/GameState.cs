@@ -7,13 +7,17 @@ namespace Game.Core
 	{
 		public Unity.Mathematics.Random Random;
 		public bool Running;
-		public bool IsMusicPlaying = true;
-		public bool IsSoundPlaying = true;
-		public float CurrentTimeScale;
-		public float DefaultTimeScale;
+		public bool Paused;
+		public float TimeScaleCurrent;
+		public float TiemScaleDefault;
 		public bool IsReplaying;
 		public Level[] DebugLevels;
 		public Level[] AllLevels;
+
+		public float MusicVolume;
+		public bool MusicMuted;
+		public float SoundVolume;
+		public bool SoundMuted;
 
 		public int CurrentLevelIndex;
 		public Level Level;
