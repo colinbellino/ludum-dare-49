@@ -630,6 +630,19 @@ namespace Game.Core.StateMachines.Game
 						}
 						break;
 
+					case TriggerActions.Push:
+						{
+							entityAtDestination.GridPosition += entity.Direction;
+							await DOTween.To(
+								() => entityAtDestination.transform.position,
+								x => entityAtDestination.transform.position = x,
+								entityAtDestination.GridPosition + cellOffset,
+								1 / entity.MoveSpeed / Time.timeScale
+							);
+							UnityEngine.Debug.Log("Push!");
+						}
+						break;
+
 					default: break;
 				}
 			}

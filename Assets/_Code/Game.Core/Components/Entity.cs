@@ -68,5 +68,5 @@ namespace Game.Core
 
 	public enum AngerStates { None, Calm, Angry }
 
-	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn }
+	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn, Push }
 }
