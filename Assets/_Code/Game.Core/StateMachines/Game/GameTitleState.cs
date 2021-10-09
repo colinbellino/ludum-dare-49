@@ -20,7 +20,7 @@ namespace Game.Core.StateMachines.Game
 			_ui.TitleButton1.onClick.AddListener(Start);
 			_ui.TitleButton2.onClick.AddListener(Quit);
 
-			_ = _audioPlayer.PlayMusic(_config.TitleClip, true, 3f, 1f, false);
+			_ = _audioPlayer.PlayTitleMusic(_config.TitleClip);
 			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
@@ -72,7 +72,7 @@ namespace Game.Core.StateMachines.Game
 					UnityEngine.Debug.Log("Starting in replay mode.");
 					_state.CurrentLevelIndex = 0;
 					_state.IsReplaying = true;
-					_state.CurrentTimeScale = 10f;
+					_state.TimeScaleCurrent = 10f;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
@@ -81,7 +81,7 @@ namespace Game.Core.StateMachines.Game
 		public override async UniTask Exit()
 		{
 			_ = _ui.FadeIn(Color.black);
-			await _audioPlayer.StopMusic(2f);
+			await _audioPlayer.StopTitleMusic();
 
 			_ui.TitleButton1.onClick.RemoveListener(Start);
 
@@ -116,7 +116,7 @@ namespace Game.Core.StateMachines.Game
 
 		private async void Quit()
 		{
-			await _audioPlayer.StopMusic(2f);
+			// await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
