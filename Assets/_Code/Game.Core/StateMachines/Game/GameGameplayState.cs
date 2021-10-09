@@ -69,16 +69,6 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			// Start or continue music where we left off
-			if (_audioPlayer.IsMusicPlaying() == false)
-			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 1f);
-			}
-			else
-			{
-				ToggleMusic(_player);
-			}
-
 			_state.Running = true;
 
 			_controls.Gameplay.Enable();
@@ -149,7 +139,7 @@ namespace Game.Core.StateMachines.Game
 				return;
 			}
 
-			if (_state.Running == false)
+			if (_state.Running == false || _state.Paused)
 			{
 				return;
 			}
@@ -165,23 +155,23 @@ namespace Game.Core.StateMachines.Game
 
 			if (_controls.Global.Pause.WasPerformedThisFrame())
 			{
-				if (Time.timeScale == 0f)
+				if (_state.Paused)
 				{
-					Time.timeScale = 1f;
-					_state.Running = true;
-					_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
+					Time.timeScale = _state.TiemScaleDefault;
+					_state.Paused = false;
+					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
 					_ui.HidePause();
 				}
 				else
 				{
 					Time.timeScale = 0f;
-					_state.Running = false;
-					_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
+					_state.Paused = true;
+					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
 					_ui.ShowPause();
 				}
 			}
 
-			if (_state.Running)
+			if (_state.Running && _state.Paused == false)
 			{
 				foreach (var entity in _state.Entities)
 				{
@@ -231,7 +221,7 @@ namespace Game.Core.StateMachines.Game
 					if (Keyboard.current.kKey.wasReleasedThisFrame)
 					{
 						_state.IsReplaying = true;
-						_state.CurrentTimeScale = 5f;
+						_state.TimeScaleCurrent = 5f;
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 				}
@@ -407,7 +397,7 @@ namespace Game.Core.StateMachines.Game
 			if (_player.Dead)
 			{
 				_state.Running = false;
-				_ = _audioPlayer.StopMusic();
+				// _ = _audioPlayer.StopMusic();
 				await UniTask.Delay(500);
 				_fsm.Fire(GameFSM.Triggers.Retry);
 			}
@@ -433,7 +423,7 @@ namespace Game.Core.StateMachines.Game
 		private async UniTask Victory()
 		{
 			UnityEngine.Debug.Log("End of the game reached.");
-			await _audioPlayer.StopMusic(2f);
+			// await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
@@ -669,7 +659,7 @@ namespace Game.Core.StateMachines.Game
 			else
 			{
 				_state.Running = false;
-				_ = _audioPlayer.StopMusic();
+				// _ = _audioPlayer.StopMusic();
 				_fsm.Fire(GameFSM.Triggers.NextLevel);
 			}
 		}
@@ -678,11 +668,13 @@ namespace Game.Core.StateMachines.Game
 		{
 			if (entity.AngerState != AngerStates.Angry)
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicCalmClip, false, 0.3f, 1f, true);
+				// transition to calm
+				// _ = _audioPlayer.PlayMusic(_config.MusicCalmClip, Utils.GetMusicVolume(_state), false, 0.3f, true);
 			}
 			else
 			{
-				_ = _audioPlayer.PlayMusic(_config.MusicAngryClip, false, 0.3f, 1f, true);
+				// transition to angry
+				// _ = _audioPlayer.PlayMusic(_config.MusicAngryClip, Utils.GetMusicVolume(_state), false, 0.3f, true);
 			}
 		}
 

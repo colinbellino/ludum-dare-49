@@ -12,7 +12,9 @@ namespace Game.Core
 
 		private void Start()
 		{
-			var musicAudioSources = GameObject.Find("Music Audio Source").GetComponents<AudioSource>();
+			var musicTitleSource = GameObject.Find("Music/Title").GetComponent<AudioSource>();
+			var musicCalmSource = GameObject.Find("Music/Calm").GetComponent<AudioSource>();
+			var musicAngrySource = GameObject.Find("Music/Angry").GetComponent<AudioSource>();
 			var config = Resources.Load<GameConfig>("Game Config");
 			var camera = Camera.main;
 			var cameraRig = FindObjectOfType<CameraRig>();
@@ -31,7 +33,7 @@ namespace Game.Core
 			Game.CameraRig = cameraRig;
 			Game.UI = ui;
 			Game.State = new GameState();
-			Game.AudioPlayer = new AudioPlayer(config, musicAudioSources[0], musicAudioSources[1]);
+			Game.AudioPlayer = new AudioPlayer(musicTitleSource, musicCalmSource, musicAngrySource, config);
 			Game.GameFSM = new GameFSM(config.DebugFSM, Game);
 			Game.InputRecorder = inputRecorder;
 
@@ -41,7 +43,7 @@ namespace Game.Core
 
 		private void Update()
 		{
-			Time.timeScale = Game.State.CurrentTimeScale;
+			Time.timeScale = Game.State.TimeScaleCurrent;
 			Game.AudioPlayer.Tick();
 			Game?.GameFSM.Tick();
 		}

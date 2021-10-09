@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static Game.Core.Utils;
 
@@ -13,11 +12,13 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_state.CurrentTimeScale = _state.DefaultTimeScale = 1f;
+			_state.TimeScaleCurrent = _state.TiemScaleDefault = 1f;
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
 			_state.DebugLevels = new Level[0];
 			_state.AllLevels = _config.Levels;
+			_state.MusicVolume = 1;
+			_state.SoundVolume = 1;
 
 			if (IsDevBuild())
 			{
@@ -50,16 +51,14 @@ namespace Game.Core.StateMachines.Game
 
 		private void ToggleSounds()
 		{
-			_audioPlayer.SetSoundVolume(_state.IsSoundPlaying ? 0 : 1);
-			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.IsSoundPlaying ? "OFF" : "ON");
-			_state.IsSoundPlaying = !_state.IsSoundPlaying;
+			_state.SoundMuted = !_state.SoundMuted;
+			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.SoundMuted ? "OFF" : "ON");
 		}
 
 		private void ToggleMusic()
 		{
-			_audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0 : 0.1f);
-			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.IsMusicPlaying ? "OFF" : "ON");
-			_state.IsMusicPlaying = !_state.IsMusicPlaying;
+			_state.MusicMuted = !_state.MusicMuted;
+			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.MusicMuted ? "OFF" : "ON");
 		}
 
 		private void QuitGame()
