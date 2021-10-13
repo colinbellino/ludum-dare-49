@@ -8,5 +8,8 @@ namespace Game.Core
 		public string Title;
 		public Tilemap Ground;
 		public Tilemap Entities;
+
+		[SerializeField] public Texture2D Screenshot;
+		// [HideInInspector] [SerializeField] public InputTrace InputTrace;
 	}
 }

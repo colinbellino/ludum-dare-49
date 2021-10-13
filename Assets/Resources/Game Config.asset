@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugFSM: 0
   LockFPS: 60
-  AllLevels:
+  TakeScreenshots: 0
+  Levels:
   - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
   - {fileID: 7894139527700584289, guid: 79f8674885d50644087fbd579aad7809, type: 3}
   - {fileID: 7894139527700584289, guid: e7da43fb74dd4544c83b43287673aa55, type: 3}
@@ -52,6 +53,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 010077eafea9bff4db026fc22d3259f0, type: 2}
     - {fileID: 11400000, guid: cb8b3934261db55428ada09dea95c2d8, type: 2}
     - {fileID: 11400000, guid: 1cc9030ce9a834b999a0982104902d41, type: 2}
+    - {fileID: 11400000, guid: ac394bf2ad0c64208bbdd98d293afb48, type: 2}
+    - {fileID: 11400000, guid: 2179c10ebe45c45d3ab4de1e76cda885, type: 2}
     m_values:
     - {fileID: 3510502540373367279, guid: 59510419692fd415dbc2e3cab5c9b79e, type: 3}
     - {fileID: 3510502540373367279, guid: ebc742d7727cc6f49ab5e4cac30ed175, type: 3}
@@ -72,14 +75,29 @@ MonoBehaviour:
     - {fileID: 3329524165835136575, guid: a04eedd039e30e74e8af11aaf1ddfa68, type: 3}
     - {fileID: 3329524165835136575, guid: b083702a9188f7e44bd5b82887fe1f92, type: 3}
     - {fileID: 3329524165835136575, guid: b0fa32b0953544a66926db1631fb1f8f, type: 3}
-  AudioMixer: {fileID: 24100000, guid: c00711887b3714031932c58a1ac16396, type: 2}
-  MusicAudioMixerGroup: {fileID: -1804572004088458924, guid: c00711887b3714031932c58a1ac16396, type: 2}
-  SoundsAudioMixerGroup: {fileID: 3053297684183750015, guid: c00711887b3714031932c58a1ac16396, type: 2}
-  DefaultAudioSnapshot: {fileID: 24500006, guid: c00711887b3714031932c58a1ac16396, type: 2}
-  PauseAudioSnapshot: {fileID: 6893898828190700123, guid: c00711887b3714031932c58a1ac16396, type: 2}
+    - {fileID: 3510502540373367279, guid: c4564851f74ab4bd689d7d7a34e2ae06, type: 3}
+    - {fileID: 3510502540373367279, guid: 514c6fcbf56134ff2af2ecba28c1b6ca, type: 3}
   MusicCalmClip: {fileID: 8300000, guid: ae3ccf20aa086d74b9e09ac3354db884, type: 3}
   MusicAngryClip: {fileID: 8300000, guid: 4fc1546e3d77cba4198042c61501d67a, type: 3}
   TitleClip: {fileID: 8300000, guid: 0784a679cd9a2f242ab7cde4a1d80464, type: 3}
-  MenuTextAppearClip: {fileID: 8300000, guid: ea617f6da27fb4c67a099b74da43a20e, type: 3}
-  MenuConfirmClip: {fileID: 8300000, guid: 04a6677330bfab44f9a9d53f597c6ff0, type: 3}
-  RestartClip: {fileID: 8300000, guid: 38935b804b3af2f44a2db72e3778d2b4, type: 3}
+  SoundMenuConfirm:
+    Guid:
+      Data1: -1840800105
+      Data2: 1164219590
+      Data3: -1091619938
+      Data4: 1253267948
+    Path: event:/UI/Okay
+  SoundLevelRestart:
+    Guid:
+      Data1: 708724966
+      Data2: 1130599676
+      Data3: -768382828
+      Data4: 8080861
+    Path: event:/UI/Cancel
+  MusicTitle:
+    Guid:
+      Data1: 1958460028
+      Data2: 1217165032
+      Data3: -261621348
+      Data4: -48242944
+    Path: event:/Music/Level 01

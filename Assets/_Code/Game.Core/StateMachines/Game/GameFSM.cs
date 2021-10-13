@@ -7,7 +7,7 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameFSM
 	{
-		public enum States { Init, Title, LoadLevel, Gameplay, Victory, GameOver, Quit }
+		public enum States { Init, Title, LoadLevel, Gameplay, Quit }
 		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, Quit }
 
 		private readonly bool _debug;
@@ -26,8 +26,6 @@ namespace Game.Core.StateMachines.Game
 				{ States.Title, new GameTitleState(this, game) },
 				{ States.LoadLevel, new GameLoadLevelState(this, game) },
 				{ States.Gameplay, new GameGameplayState(this, game) },
-				{ States.Victory, new GameVictoryState(this, game) },
-				{ States.GameOver, new GameOverState(this, game) },
 				{ States.Quit, new GameQuitState(this, game) },
 			};
 
@@ -49,14 +47,6 @@ namespace Game.Core.StateMachines.Game
 				.Permit(Triggers.Quit, States.Quit)
 				.Permit(Triggers.NextLevel, States.LoadLevel)
 				.Permit(Triggers.Retry, States.LoadLevel);
-
-			_machine.Configure(States.Victory)
-				.Permit(Triggers.Retry, States.Gameplay)
-				.Permit(Triggers.Quit, States.Quit);
-
-			_machine.Configure(States.GameOver)
-				.Permit(Triggers.Retry, States.Gameplay)
-				.Permit(Triggers.Quit, States.Quit);
 
 			_currentState = _states[_machine.State];
 		}
