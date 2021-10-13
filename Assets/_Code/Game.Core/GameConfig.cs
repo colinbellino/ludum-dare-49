@@ -1,4 +1,5 @@
 ﻿using System;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
@@ -8,28 +9,24 @@ namespace Game.Core
 	[CreateAssetMenu(menuName = "Game/Game Config")]
 	public class GameConfig : ScriptableObject
 	{
-		[Header("Debug")]
+		[Header("DEBUG")]
 		public bool DebugFSM;
 		public int LockFPS = 60;
+		public bool TakeScreenshots;
 
-		[Header("Level")]
-		public Level[] AllLevels;
-
-		[Header("Grid")]
+		[Header("CONTENT")]
+		[UnityEngine.Serialization.FormerlySerializedAs("AllLevels")] public Level[] Levels;
 		public TileToEntity TileToEntity;
 
-		[Header("Audio")]
-		public AudioMixer AudioMixer;
-		public AudioMixerGroup MusicAudioMixerGroup;
-		public AudioMixerGroup SoundsAudioMixerGroup;
-		public AudioMixerSnapshot DefaultAudioSnapshot;
-		public AudioMixerSnapshot PauseAudioSnapshot;
+		[Header("AUDIO")]
 		public AudioClip MusicCalmClip;
 		public AudioClip MusicAngryClip;
 		public AudioClip TitleClip;
-		public AudioClip MenuTextAppearClip;
-		public AudioClip MenuConfirmClip;
-		public AudioClip RestartClip;
+
+		[Header("FMOD")]
+		public EventReference SoundMenuConfirm;
+		public EventReference SoundLevelRestart;
+		public EventReference MusicTitle;
 	}
 
 	[Serializable]

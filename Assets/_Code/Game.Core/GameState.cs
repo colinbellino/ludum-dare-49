@@ -7,19 +7,23 @@ namespace Game.Core
 	{
 		public Unity.Mathematics.Random Random;
 		public bool Running;
-		public bool AssistMode;
-		public float StepSoundTimestamp;
-		public float NextPlayerInput;
+		public bool Paused;
+		public float TimeScaleCurrent;
+		public float TiemScaleDefault;
+		public bool IsReplaying;
+		public Level[] DebugLevels;
+		public Level[] AllLevels;
+
+		public float MusicVolume;
+		public bool MusicMuted;
+		public float SoundVolume;
+		public bool SoundMuted;
+
 		public int CurrentLevelIndex;
 		public Level Level;
-		public bool PlayerDidAct;
-		public List<Entity> Entities = new List<Entity>(30);
 		public GridData WalkableGrid;
-		public float TriggerExitAt;
-		public bool TriggerRetry;
+		public List<Entity> Entities = new List<Entity>(30);
 		public int KeysPickedUp;
 		public int KeysInLevel;
-		public bool IsMusicPlaying = true;
-		public bool IsSoundPlaying = true;
 	}
 }
