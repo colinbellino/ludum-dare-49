@@ -39,6 +39,7 @@ namespace Game.Core
 		[HideInInspector] public int BreakableProgress;
 
 		[Header("Activation")]
+		[SerializeField] public bool HasActiveAnimation;
 		[SerializeField] public bool CanBeActivated;
 		[SerializeField] public bool ActivatesInSpecificAngerState;
 		[SerializeField] public bool ActivatesWhenKeyInLevel;
@@ -47,6 +48,7 @@ namespace Game.Core
 
 		[Header("Audio")]
 		[SerializeField] public AudioClip CantMoveAudioClip;
+		[SerializeField] public AudioClip BurnAudioClip;
 		[SerializeField] public AudioClip FallAudioClip;
 		[SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("WalkAudioClips")] public AudioClip[] BreakGroundAudioClips;
 		[SerializeField] public AudioClip TransformationAudioClip;
@@ -66,5 +68,5 @@ namespace Game.Core
 
 	public enum AngerStates { None, Calm, Angry }
 
-	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn }
+	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn, Push }
 }

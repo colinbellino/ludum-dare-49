@@ -24,9 +24,13 @@ namespace Game.Core
 #pragma warning restore 162
 		}
 
-		public static ParticleSystem SpawnEffect(ParticleSystem effectPrefab, Vector3 position)
+		public static float GetMusicVolume(GameState state)
 		{
-			return GameObject.Instantiate(effectPrefab, position, Quaternion.identity);
+			if (state.MusicMuted)
+			{
+				return 0;
+			}
+			return state.MusicVolume;
 		}
 	}
 }
