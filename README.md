@@ -11,10 +11,10 @@ Learn the special abilities and master your astral projection to reach the end o
 
 ## Credits:
 
-- **Art:** [Thomas "cyangmou" Feichtmeir](https://twitter.com/cyangmou)
-- **Audio:** [Andrew LiVecchi](https://twitter.com/AndrewLivecchi)
-- **Code:** [Colin Bellino](https://twitter.com/colinbellino)
-- **Paid assets:** No
+- Colin Bellino: programming (https://colinbellino.com | https://twitter.com/colinbellino)
+- Thomas Feichtmeir: Art, animation (https://deviantart.com/cyangmou | https://twitter.com/cyangmou)
+- Andrew LiVecchi: Music, audio (https://andrewlivecchi.com | https://twitter.com/AndrewLivecchi)
+- Design / Leveldesign: Team effort.
 
 ## Controls:
 
@@ -25,13 +25,6 @@ Learn the special abilities and master your astral projection to reach the end o
 | Pause      | Escape                          | Start button           |
 | Restart    | R                               | Select button          |
 | Skip Level | F2                              | n/c (sorry)            |
-
-## Credits:
-
-- Colin Bellino: programming (https://colinbellino.com | https://twitter.com/colinbellino)
-- Thomas Feichtmeir: Art, animation (https://deviantart.com/cyangmou | https://twitter.com/cyangmou)
-- Andrew LiVecchi: Music, audio (https://andrewlivecchi.com | https://twitter.com/AndrewLivecchi)
-- Design / Leveldesign: Team effort.
 
 ## Screenshots:
 
