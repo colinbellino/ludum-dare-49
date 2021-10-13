@@ -13,7 +13,6 @@ namespace Game.Core.StateMachines.Game
 		protected CameraRig _camera => _game.CameraRig;
 		protected GameControls _controls => _game.Controls;
 		protected GameState _state => _game.State;
-		protected AudioPlayer _audioPlayer => _game.AudioPlayer;
 
 		protected BaseGameState(GameFSM fsm, GameSingleton game)
 		{

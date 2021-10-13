@@ -42,14 +42,12 @@ namespace Game.Core
 		[SerializeField] private Image _fadeToBlackImage;
 		[SerializeField] public TMP_Text FadeText;
 
-		private AudioPlayer _audioPlayer;
 		private GameConfig _config;
 		private GameState _state;
 		private TweenerCore<Color, Color, ColorOptions> _fadeTweener;
 
 		public void Inject(GameSingleton game)
 		{
-			_audioPlayer = game.AudioPlayer;
 			_config = game.Config;
 			_state = game.State;
 		}
@@ -76,10 +74,7 @@ namespace Game.Core
 
 		private void PlayButtonClip()
 		{
-			if (_config.MenuConfirmClip)
-			{
-				_audioPlayer.PlaySoundEffect(_config.MenuConfirmClip);
-			}
+			FMODUnity.RuntimeManager.PlayOneShot(_config.SoundMenuConfirm);
 		}
 
 		public void ShowDebug() { _debugRoot.SetActive(true); }
@@ -226,11 +221,6 @@ namespace Game.Core
 			text.maxVisibleCharacters = 0;
 
 			await UniTask.Delay(TimeSpan.FromSeconds(duration));
-
-			if (_config.MenuTextAppearClip)
-			{
-				_ = _audioPlayer.PlaySoundEffect(_config.MenuTextAppearClip);
-			}
 
 			var totalInvisibleCharacters = text.textInfo.characterCount;
 			var counter = 0;

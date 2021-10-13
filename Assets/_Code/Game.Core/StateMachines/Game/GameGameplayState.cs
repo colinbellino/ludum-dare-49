@@ -192,16 +192,13 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (_resetWasPressedThisFrame)
 					{
-						if (_config.RestartClip)
-						{
-							_ = _audioPlayer.PlaySoundEffect(_config.RestartClip);
-						}
+						FMODUnity.RuntimeManager.PlayOneShot(_config.SoundLevelRestart);
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 
 					if (Keyboard.current.f2Key.wasReleasedThisFrame)
 					{
-						NextLevel();
+						_ = NextLevel();
 					}
 				}
 
@@ -261,19 +258,6 @@ namespace Game.Core.StateMachines.Game
 
 			_ = _ui.HideLevelTitle();
 			_ui.HideGameplay();
-
-			// Save the track position
-			if (_player)
-			{
-				if (_player.AngerState == AngerStates.Angry)
-				{
-					_audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()];
-				}
-				else
-				{
-					_audioPlayer.MusicTimes[_config.MusicAngryClip.GetInstanceID()] = _audioPlayer.MusicTimes[_config.MusicCalmClip.GetInstanceID()];
-				}
-			}
 
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
@@ -338,10 +322,11 @@ namespace Game.Core.StateMachines.Game
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
 								entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 
-								if (entity.TransformationAudioClip)
-								{
-									_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
-								}
+								// FIXME: FMOD
+								// if (entity.TransformationAudioClip)
+								// {
+								// 	_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
+								// }
 								entity.Animator.Play("Transform");
 								await WaitForCurrentAnimation(entity);
 
@@ -388,10 +373,11 @@ namespace Game.Core.StateMachines.Game
 			}
 			else
 			{
-				if (_player.CantMoveAudioClip)
-				{
-					_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
-				}
+				// FIXME: FMOD
+				// if (_player.CantMoveAudioClip)
+				// {
+				// 	_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
+				// }
 			}
 
 			if (_player.Dead)
@@ -481,11 +467,12 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			entity.GridPosition = destination;
-			var clips = entity.AngerState == AngerStates.Angry ? entity.WalkAngryAudioClips : entity.WalkCalmAudioClips;
-			if (clips.Length > 0)
-			{
-				_ = _audioPlayer.PlayRandomSoundEffect(clips, entity.GridPosition);
-			}
+			// FIXME: FMOD
+			// var clips = entity.AngerState == AngerStates.Angry ? entity.WalkAngryAudioClips : entity.WalkCalmAudioClips;
+			// if (clips.Length > 0)
+			// {
+			// 	_ = _audioPlayer.PlayRandomSoundEffect(clips, entity.GridPosition);
+			// }
 			entity.Animator.Play("Walk");
 			await DOTween.To(
 				() => entity.transform.position,
@@ -530,10 +517,11 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							if (entityAtDestination.ExitAudioClip)
-							{
-								_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
-							}
+							// FIXME: FMOD
+							// if (entityAtDestination.ExitAudioClip)
+							// {
+							// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
+							// }
 							await NextLevel();
 						}
 						break;
@@ -551,11 +539,12 @@ namespace Game.Core.StateMachines.Game
 							{
 								Object.Instantiate(entity.BreakParticle, entity.GridPosition + cellOffset + entity.BreakParticleOffset, Quaternion.identity);
 							}
-							if (entity.BreakGroundAudioClips.Length > 0)
-							{
-								_ = _audioPlayer.PlayRandomSoundEffect(entity.BreakGroundAudioClips, entity.GridPosition);
-								await UniTask.Delay(300);
-							}
+							// FIXME: FMOD
+							// if (entity.BreakGroundAudioClips.Length > 0)
+							// {
+							// 	_ = _audioPlayer.PlayRandomSoundEffect(entity.BreakGroundAudioClips, entity.GridPosition);
+							// 	await UniTask.Delay(300);
+							// }
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
@@ -563,11 +552,12 @@ namespace Game.Core.StateMachines.Game
 								entityAtDestination.BreakableProgress = 0;
 								entityAtDestination.Animator.Play("Breaking");
 
-								if (entityAtDestination.BreakingAudioClip)
-								{
-									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
-									await UniTask.Delay(500);
-								}
+								// FIXME: FMOD
+								// if (entityAtDestination.BreakingAudioClip)
+								// {
+								// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
+								// 	await UniTask.Delay(500);
+								// }
 								await WaitForCurrentAnimation(entityAtDestination);
 
 								await Fall(entity);
@@ -582,10 +572,11 @@ namespace Game.Core.StateMachines.Game
 								entityAtDestination.Dead = true;
 								_state.KeysPickedUp += 1;
 
-								if (entityAtDestination.KeyAudioClip)
-								{
-									_ = _audioPlayer.PlaySoundEffect(entityAtDestination.KeyAudioClip);
-								}
+								// FIXME: FMOD
+								// if (entityAtDestination.KeyAudioClip)
+								// {
+								// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.KeyAudioClip);
+								// }
 							}
 						}
 						break;
@@ -651,11 +642,12 @@ namespace Game.Core.StateMachines.Game
 		private async UniTask Fall(Entity entity)
 		{
 			entity.Dead = true;
-			var clip = entity.AngerState == AngerStates.Angry ? entity.FallAudioClip : entity.BurnAudioClip;
-			if (clip)
-			{
-				_ = _audioPlayer.PlaySoundEffect(clip);
-			}
+			// FIXME: FMOD
+			// var clip = entity.AngerState == AngerStates.Angry ? entity.FallAudioClip : entity.BurnAudioClip;
+			// if (clip)
+			// {
+			// 	_ = _audioPlayer.PlaySoundEffect(clip);
+			// }
 			entity.Animator.Play("Death");
 			await WaitForCurrentAnimation(entity);
 		}
