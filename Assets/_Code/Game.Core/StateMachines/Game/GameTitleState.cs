@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,7 @@ namespace Game.Core.StateMachines.Game
 		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
 		private CancellationTokenSource _cancellationSource;
+		private EventInstance _music;
 
 		public override async UniTask Enter()
 		{
@@ -20,7 +22,9 @@ namespace Game.Core.StateMachines.Game
 			_ui.TitleButton1.onClick.AddListener(Start);
 			_ui.TitleButton2.onClick.AddListener(Quit);
 
-			_ = _audioPlayer.PlayTitleMusic(_config.TitleClip);
+			_music = FMODUnity.RuntimeManager.CreateInstance(_config.MusicTitle);
+			_music.start();
+
 			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
@@ -81,7 +85,7 @@ namespace Game.Core.StateMachines.Game
 		public override async UniTask Exit()
 		{
 			_ = _ui.FadeIn(Color.black);
-			await _audioPlayer.StopTitleMusic();
+			_music.stop(STOP_MODE.ALLOWFADEOUT);
 
 			_ui.TitleButton1.onClick.RemoveListener(Start);
 

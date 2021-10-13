@@ -1,4 +1,5 @@
 ﻿using System;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
@@ -18,17 +19,14 @@ namespace Game.Core
 		public TileToEntity TileToEntity;
 
 		[Header("AUDIO")]
-		public AudioMixer AudioMixer;
-		public AudioMixerGroup MusicAudioMixerGroup;
-		public AudioMixerGroup SoundsAudioMixerGroup;
-		public AudioMixerSnapshot DefaultAudioSnapshot;
-		public AudioMixerSnapshot PauseAudioSnapshot;
 		public AudioClip MusicCalmClip;
 		public AudioClip MusicAngryClip;
 		public AudioClip TitleClip;
-		public AudioClip MenuTextAppearClip;
-		public AudioClip MenuConfirmClip;
-		public AudioClip RestartClip;
+
+		[Header("FMOD")]
+		public EventReference SoundMenuConfirm;
+		public EventReference SoundLevelRestart;
+		public EventReference MusicTitle;
 	}
 
 	[Serializable]
