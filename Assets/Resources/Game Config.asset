@@ -82,22 +82,22 @@ MonoBehaviour:
   TitleClip: {fileID: 8300000, guid: 0784a679cd9a2f242ab7cde4a1d80464, type: 3}
   SoundMenuConfirm:
     Guid:
-      Data1: -1840800105
-      Data2: 1164219590
-      Data3: -1091619938
-      Data4: 1253267948
-    Path: event:/UI/Okay
+      Data1: -603691573
+      Data2: 1228001271
+      Data3: 1943288496
+      Data4: -1607642793
+    Path: event:/SFX/Menu Confirm
   SoundLevelRestart:
     Guid:
-      Data1: 708724966
-      Data2: 1130599676
-      Data3: -768382828
-      Data4: 8080861
-    Path: event:/UI/Cancel
+      Data1: 2027751445
+      Data2: 1120284829
+      Data3: 1354693562
+      Data4: -1280553667
+    Path: event:/SFX/Level Reset
   MusicTitle:
     Guid:
-      Data1: 1958460028
-      Data2: 1217165032
-      Data3: -261621348
-      Data4: -48242944
-    Path: event:/Music/Level 01
+      Data1: 1070369155
+      Data2: 1238451276
+      Data3: 1858838673
+      Data4: 2092524517
+    Path: event:/Music/Title
