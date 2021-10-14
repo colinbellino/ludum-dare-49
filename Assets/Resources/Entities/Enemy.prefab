@@ -171,16 +171,76 @@ MonoBehaviour:
   ActivatesWhenKeyInLevel: 0
   ActivatesWhenLevelStart: 0
   Activated: 0
-  CantMoveAudioClip: {fileID: 0}
-  BurnAudioClip: {fileID: 0}
-  FallAudioClip: {fileID: 0}
-  BreakGroundAudioClips: []
-  TransformationAudioClip: {fileID: 0}
-  KeyAudioClip: {fileID: 0}
-  ExitAudioClip: {fileID: 0}
-  BreakingAudioClip: {fileID: 0}
-  WalkCalmAudioClips: []
-  WalkAngryAudioClips: []
+  SoundCantMoveAudio:
+    Guid:
+      Data1: -197111287
+      Data2: 1193766861
+      Data3: 1518004104
+      Data4: 65768606
+    Path: event:/SFX/Can't Move
+  SoundBurn:
+    Guid:
+      Data1: 1900059979
+      Data2: 1082122910
+      Data3: 905522602
+      Data4: 71221195
+    Path: event:/SFX/Player Burn
+  SoundFall:
+    Guid:
+      Data1: 667046786
+      Data2: 1184495635
+      Data3: -1796446840
+      Data4: -2134875287
+    Path: event:/SFX/Player Fall
+  SoundBreakGround:
+    Guid:
+      Data1: -572284261
+      Data2: 1302768837
+      Data3: 49798811
+      Data4: 581823205
+    Path: event:/SFX/Break Ground
+  SoundTransformation:
+    Guid:
+      Data1: -284594556
+      Data2: 1125885353
+      Data3: 1136625084
+      Data4: -256593778
+    Path: event:/SFX/Player Transform
+  SoundKey:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundExit:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBreaking:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundWalkCalm:
+    Guid:
+      Data1: 1489173505
+      Data2: 1205120184
+      Data3: -289901410
+      Data4: 835244995
+    Path: event:/SFX/Player Move Calm
+  SoundWalkAngry:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   Dead: 0
   AnimationClipLength:
     m_keys: []

@@ -171,16 +171,76 @@ MonoBehaviour:
   ActivatesWhenKeyInLevel: 0
   ActivatesWhenLevelStart: 0
   Activated: 0
-  CantMoveAudioClip: {fileID: 0}
-  BurnAudioClip: {fileID: 0}
-  FallAudioClip: {fileID: 0}
-  BreakGroundAudioClips: []
-  TransformationAudioClip: {fileID: 0}
-  KeyAudioClip: {fileID: 0}
-  ExitAudioClip: {fileID: 0}
-  BreakingAudioClip: {fileID: 8300000, guid: 3cffe1a6daa36c64b9192c5671d2cb9e, type: 3}
-  WalkCalmAudioClips: []
-  WalkAngryAudioClips: []
+  SoundCantMoveAudio:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBurn:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundFall:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBreakGround:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundTransformation:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundKey:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundExit:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBreaking:
+    Guid:
+      Data1: -283596453
+      Data2: 1301819232
+      Data3: -28486476
+      Data4: -757173148
+    Path: event:/SFX/Tile Break
+  SoundWalkCalm:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundWalkAngry:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   Dead: 0
   AnimationClipLength:
     m_keys: []
