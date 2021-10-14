@@ -322,11 +322,8 @@ namespace Game.Core.StateMachines.Game
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
 								entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 
-								// FIXME: FMOD
-								// if (entity.TransformationAudioClip)
-								// {
-								// 	_ = _audioPlayer.PlaySoundEffect(entity.TransformationAudioClip);
-								// }
+								FMODUnity.RuntimeManager.PlayOneShot(entity.SoundTransformation, entity.GridPosition);
+
 								entity.Animator.Play("Transform");
 								await WaitForCurrentAnimation(entity);
 
@@ -373,11 +370,7 @@ namespace Game.Core.StateMachines.Game
 			}
 			else
 			{
-				// FIXME: FMOD
-				// if (_player.CantMoveAudioClip)
-				// {
-				// 	_ = _audioPlayer.PlaySoundEffect(_player.CantMoveAudioClip);
-				// }
+				FMODUnity.RuntimeManager.PlayOneShot(_player.SoundCantMoveAudio, _player.GridPosition);
 			}
 
 			if (_player.Dead)
@@ -409,6 +402,7 @@ namespace Game.Core.StateMachines.Game
 		private async UniTask Victory()
 		{
 			UnityEngine.Debug.Log("End of the game reached.");
+			// FIXME: Fade the music out
 			// await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
@@ -428,23 +422,6 @@ namespace Game.Core.StateMachines.Game
 
 			var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
 
-			if (destinationTile == null)
-			{
-				// 	if (entityAtDestination == null)
-				// 	{
-				// 		UnityEngine.Debug.Log($"Can't move to {destination} (tile is null).");
-				// 		return false;
-				// 	}
-				// }
-				// else
-				// {
-				// 	if (IsTileWalkable(destinationTile) == false)
-				// 	{
-				// 		UnityEngine.Debug.Log($"Can't move to {destination} (not walkable, {(destinationTile ? destinationTile.name : "null")}).");
-				// 		return false;
-				// 	}
-			}
-
 			if (entityAtDestination)
 			{
 				if (entityAtDestination.Trigger == false)
@@ -452,27 +429,14 @@ namespace Game.Core.StateMachines.Game
 					UnityEngine.Debug.Log($"Can't move to {destination} (occupied).");
 					return false;
 				}
-
-				// if (entityAtDestination.TriggerState != AngerStates.None && entity.AngerState.HasFlag(entityAtDestination.TriggerState) == false)
-				// {
-				// 	UnityEngine.Debug.Log($"Can't move to {destination} (wrong state).");
-				// 	return false;
-				// }
-
-				// if (entityAtDestination.CanBeActivated && entityAtDestination.Activated == false)
-				// {
-				// 	UnityEngine.Debug.Log($"Can't move to {destination} (entity not activated).");
-				// 	return false;
-				// }
 			}
 
+			if (entity.AngerState == AngerStates.Angry)
+				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
+			else
+				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
+
 			entity.GridPosition = destination;
-			// FIXME: FMOD
-			// var clips = entity.AngerState == AngerStates.Angry ? entity.WalkAngryAudioClips : entity.WalkCalmAudioClips;
-			// if (clips.Length > 0)
-			// {
-			// 	_ = _audioPlayer.PlayRandomSoundEffect(clips, entity.GridPosition);
-			// }
 			entity.Animator.Play("Walk");
 			await DOTween.To(
 				() => entity.transform.position,
@@ -517,11 +481,7 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							// FIXME: FMOD
-							// if (entityAtDestination.ExitAudioClip)
-							// {
-							// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.ExitAudioClip);
-							// }
+							FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundExit, entityAtDestination.GridPosition);
 							await NextLevel();
 						}
 						break;
@@ -539,28 +499,20 @@ namespace Game.Core.StateMachines.Game
 							{
 								Object.Instantiate(entity.BreakParticle, entity.GridPosition + cellOffset + entity.BreakParticleOffset, Quaternion.identity);
 							}
-							// FIXME: FMOD
-							// if (entity.BreakGroundAudioClips.Length > 0)
-							// {
-							// 	_ = _audioPlayer.PlayRandomSoundEffect(entity.BreakGroundAudioClips, entity.GridPosition);
-							// 	await UniTask.Delay(300);
-							// }
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
+								FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundBreaking, entityAtDestination.GridPosition);
 								entityAtDestination.Trigger = false;
 								entityAtDestination.BreakableProgress = 0;
 								entityAtDestination.Animator.Play("Breaking");
-
-								// FIXME: FMOD
-								// if (entityAtDestination.BreakingAudioClip)
-								// {
-								// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.BreakingAudioClip);
-								// 	await UniTask.Delay(500);
-								// }
 								await WaitForCurrentAnimation(entityAtDestination);
 
 								await Fall(entity);
+							}
+							else
+							{
+								FMODUnity.RuntimeManager.PlayOneShot(entity.SoundBreakGround, entity.GridPosition);
 							}
 						}
 						break;
@@ -572,11 +524,7 @@ namespace Game.Core.StateMachines.Game
 								entityAtDestination.Dead = true;
 								_state.KeysPickedUp += 1;
 
-								// FIXME: FMOD
-								// if (entityAtDestination.KeyAudioClip)
-								// {
-								// 	_ = _audioPlayer.PlaySoundEffect(entityAtDestination.KeyAudioClip);
-								// }
+								FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundKey, entityAtDestination.GridPosition);
 							}
 						}
 						break;
@@ -642,12 +590,17 @@ namespace Game.Core.StateMachines.Game
 		private async UniTask Fall(Entity entity)
 		{
 			entity.Dead = true;
-			// FIXME: FMOD
-			// var clip = entity.AngerState == AngerStates.Angry ? entity.FallAudioClip : entity.BurnAudioClip;
-			// if (clip)
-			// {
-			// 	_ = _audioPlayer.PlaySoundEffect(clip);
-			// }
+
+			if (entity.AngerState == AngerStates.Angry)
+			{
+				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundFall, entity.GridPosition);
+				await UniTask.Delay(500); // This delay adds a cartoon effect where the entity floats in the air before falling.
+			}
+			else
+			{
+				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundBurn, entity.GridPosition);
+			}
+
 			entity.Animator.Play("Death");
 			await WaitForCurrentAnimation(entity);
 		}

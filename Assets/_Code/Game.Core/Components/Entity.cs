@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using FMODUnity;
 
 namespace Game.Core
 {
@@ -47,19 +48,18 @@ namespace Game.Core
 		[HideInInspector] public bool Activated;
 
 		[Header("Audio")]
-		[SerializeField] public AudioClip CantMoveAudioClip;
-		[SerializeField] public AudioClip BurnAudioClip;
-		[SerializeField] public AudioClip FallAudioClip;
-		[SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("WalkAudioClips")] public AudioClip[] BreakGroundAudioClips;
-		[SerializeField] public AudioClip TransformationAudioClip;
-		[SerializeField] public AudioClip KeyAudioClip;
-		[SerializeField] public AudioClip ExitAudioClip;
-		[SerializeField] public AudioClip BreakingAudioClip;
-		[SerializeField] public AudioClip[] WalkCalmAudioClips;
-		[SerializeField] public AudioClip[] WalkAngryAudioClips;
+		public EventReference SoundCantMoveAudio;
+		public EventReference SoundBurn;
+		public EventReference SoundFall;
+		public EventReference SoundBreakGround;
+		public EventReference SoundTransformation;
+		public EventReference SoundKey;
+		public EventReference SoundExit;
+		public EventReference SoundBreaking;
+		public EventReference SoundWalkCalm;
+		public EventReference SoundWalkAngry;
 
 		[HideInInspector] public bool Dead;
-
 		[HideInInspector] public ClipLength AnimationClipLength;
 	}
 
