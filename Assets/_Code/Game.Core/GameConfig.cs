@@ -22,6 +22,7 @@ namespace Game.Core
 		public EventReference SoundMenuConfirm;
 		public EventReference SoundLevelRestart;
 		public EventReference MusicTitle;
+		public EventReference MusicLevel;
 	}
 
 	[Serializable]

@@ -77,9 +77,6 @@ MonoBehaviour:
     - {fileID: 3329524165835136575, guid: b0fa32b0953544a66926db1631fb1f8f, type: 3}
     - {fileID: 3510502540373367279, guid: c4564851f74ab4bd689d7d7a34e2ae06, type: 3}
     - {fileID: 3510502540373367279, guid: 514c6fcbf56134ff2af2ecba28c1b6ca, type: 3}
-  MusicCalmClip: {fileID: 8300000, guid: ae3ccf20aa086d74b9e09ac3354db884, type: 3}
-  MusicAngryClip: {fileID: 8300000, guid: 4fc1546e3d77cba4198042c61501d67a, type: 3}
-  TitleClip: {fileID: 8300000, guid: 0784a679cd9a2f242ab7cde4a1d80464, type: 3}
   SoundMenuConfirm:
     Guid:
       Data1: -603691573
@@ -101,3 +98,10 @@ MonoBehaviour:
       Data3: 1858838673
       Data4: 2092524517
     Path: event:/Music/Title
+  MusicLevel:
+    Guid:
+      Data1: 1823706198
+      Data2: 1244875693
+      Data3: 1848440708
+      Data4: -472368223
+    Path: event:/Music/Level theme

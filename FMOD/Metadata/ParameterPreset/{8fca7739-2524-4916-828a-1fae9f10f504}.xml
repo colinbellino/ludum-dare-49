@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="ParameterPreset" id="{d2b9fd50-ec16-4604-a5aa-d598b9887dc1}">
+	<object class="ParameterPreset" id="{8fca7739-2524-4916-828a-1fae9f10f504}">
 		<property name="name">
-			<value>Player Anger Progress</value>
+			<value>Player Anger State</value>
 		</property>
 		<relationship name="folder">
 			<destination>{a418e0de-c7d0-05c9-280a-b529dc02e12e}</destination>
 		</relationship>
 		<relationship name="parameter">
-			<destination>{f9e1945a-9f57-446f-b7e9-6adbaf712d7a}</destination>
+			<destination>{ee114dc2-10be-4691-b3e4-5e952b76f684}</destination>
 		</relationship>
 	</object>
-	<object class="GameParameter" id="{f9e1945a-9f57-446f-b7e9-6adbaf712d7a}">
-		<property name="maximum">
-			<value>2</value>
-		</property>
+	<object class="GameParameter" id="{ee114dc2-10be-4691-b3e4-5e952b76f684}">
 		<property name="isGlobal">
 			<value>true</value>
 		</property>

@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NesScripts.Controls.PathFind;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -12,15 +13,18 @@ namespace Game.Core.StateMachines.Game
 	public class GameGameplayState : BaseGameState
 	{
 		private bool _resetWasPressedThisFrame;
-
-		private static Vector3 cellOffset = new Vector3(0.5f, 0.5f);
+		private EventInstance _music;
 		private float _noTransitionTimestamp;
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
 
-		private Entity _player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
+		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
+		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
-		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
+		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game)
+		{
+			_music = FMODUnity.RuntimeManager.CreateInstance(_config.MusicLevel);
+		}
 
 		public override async UniTask Enter()
 		{
@@ -38,14 +42,14 @@ namespace Game.Core.StateMachines.Game
 			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
 			foreach (var entity in _state.Entities)
 			{
-				entity.transform.position = entity.GridPosition + cellOffset;
+				entity.transform.position = entity.GridPosition + CellOffset;
 
 				if (entity.CanBeActivated)
 				{
 					if (entity.ActivatesWhenLevelStart)
 					{
 						if (
-								(entity.ActivatesInSpecificAngerState && entity.TriggerState == _player.AngerState) ||
+								(entity.ActivatesInSpecificAngerState && entity.TriggerState == Player.AngerState) ||
 								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
 							)
 						{
@@ -58,7 +62,7 @@ namespace Game.Core.StateMachines.Game
 						if (_state.KeysInLevel == 0)
 						{
 							if (
-								(entity.ActivatesInSpecificAngerState && entity.TriggerState == _player.AngerState) ||
+								(entity.ActivatesInSpecificAngerState && entity.TriggerState == Player.AngerState) ||
 								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
 							)
 							{
@@ -76,8 +80,14 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Move.performed += OnMovePerformed;
 			_controls.Global.Enable();
 
-			_ui.SetAngerMeter(_player.AngerProgress, _player.AngerState);
+			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerState);
 			_ui.ShowGameplay();
+
+			_music.getPlaybackState(out var state);
+			if (state != PLAYBACK_STATE.PLAYING)
+			{
+				_music.start();
+			}
 
 			_ = _ui.FadeOut(2);
 
@@ -88,7 +98,7 @@ namespace Game.Core.StateMachines.Game
 					await UniTask.Delay(2000);
 
 					_ui.HideDebug();
-					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{_state.CurrentLevelIndex + 1:D2}.png");
+					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{_state.CurrentLevelIndex.ToString() + 1:D2}.png");
 					await UniTask.NextFrame();
 					_ui.ShowDebug();
 				}
@@ -98,7 +108,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
 					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
-					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex + 1:D2}.inputtrace");
+					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex.ToString() + 1:D2}.inputtrace");
 					if (File.Exists(replayPath))
 					{
 						_game.InputRecorder.ClearCapture();
@@ -149,7 +159,7 @@ namespace Game.Core.StateMachines.Game
 			_turnInProgress = false;
 		}
 
-		public override async void Tick()
+		public override void Tick()
 		{
 			base.Tick();
 
@@ -198,7 +208,7 @@ namespace Game.Core.StateMachines.Game
 
 					if (Keyboard.current.f2Key.wasReleasedThisFrame)
 					{
-						_ = NextLevel();
+						NextLevel();
 					}
 				}
 
@@ -206,7 +216,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (Keyboard.current.f1Key.wasReleasedThisFrame)
 					{
-						await Victory();
+						Victory();
 					}
 
 					if (Keyboard.current.tKey.wasReleasedThisFrame)
@@ -280,14 +290,14 @@ namespace Game.Core.StateMachines.Game
 				return;
 			}
 
-			if (_player.Dead)
+			if (Player.Dead)
 			{
 				return;
 			}
 
-			var destination = _player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+			var destination = Player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
 
-			var playerDidMove = await Turn(_player, destination);
+			var playerDidMove = await Turn(Player, destination);
 			if (playerDidMove)
 			{
 				foreach (var entity in _state.Entities)
@@ -296,7 +306,7 @@ namespace Game.Core.StateMachines.Game
 					{
 						var path = Pathfinding.FindPath(
 							_state.WalkableGrid,
-							entity.GridPosition, _player.GridPosition,
+							entity.GridPosition, Player.GridPosition,
 							Pathfinding.DistanceType.Manhattan
 						);
 						await Turn(entity, path[0]);
@@ -312,11 +322,16 @@ namespace Game.Core.StateMachines.Game
 						{
 							entity.AngerProgress += 1;
 
+							if (entity == Player)
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", Player.AngerProgress);
+
 							if (entity.AngerProgress >= 3)
 							{
 								entity.AngerProgress = 0;
 								entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
 								entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+								if (entity == Player)
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
 
 								entity.Direction = Vector3Int.down;
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
@@ -348,7 +363,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (entity.CanBeActivated && entity.ActivatesInSpecificAngerState)
 					{
-						if (entity.Activated == false && _player.AngerState == entity.TriggerState)
+						if (entity.Activated == false && Player.AngerState == entity.TriggerState)
 						{
 							if (
 								(_state.KeysInLevel == 0) ||
@@ -360,7 +375,7 @@ namespace Game.Core.StateMachines.Game
 						}
 						else
 						{
-							if (_player.AngerState != entity.TriggerState)
+							if (Player.AngerState != entity.TriggerState)
 							{
 								entity.Activated = false;
 							}
@@ -370,10 +385,10 @@ namespace Game.Core.StateMachines.Game
 			}
 			else
 			{
-				FMODUnity.RuntimeManager.PlayOneShot(_player.SoundCantMoveAudio, _player.GridPosition);
+				FMODUnity.RuntimeManager.PlayOneShot(Player.SoundCantMoveAudio, Player.GridPosition);
 			}
 
-			if (_player.Dead)
+			if (Player.Dead)
 			{
 				_state.Running = false;
 				// _ = _audioPlayer.StopMusic();
@@ -399,11 +414,10 @@ namespace Game.Core.StateMachines.Game
 			return UniTask.Delay(System.TimeSpan.FromSeconds(length / Time.timeScale));
 		}
 
-		private async UniTask Victory()
+		private void Victory()
 		{
 			UnityEngine.Debug.Log("End of the game reached.");
-			// FIXME: Fade the music out
-			// await _audioPlayer.StopMusic(2f);
+			_music.start();
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
@@ -414,7 +428,7 @@ namespace Game.Core.StateMachines.Game
 			entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 
 			var destinationTile = _state.Level.Ground.GetTile(destination) as Tile;
-			var entitiesAtDestination = _state.Entities.FindAll(entity => entity.GridPosition == destination);
+			var entitiesAtDestination = _state.Entities.FindAll(e => e.GridPosition == destination);
 			if (entitiesAtDestination.Count > 1)
 			{
 				UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
@@ -426,7 +440,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				if (entityAtDestination.Trigger == false)
 				{
-					UnityEngine.Debug.Log($"Can't move to {destination} (occupied).");
+					UnityEngine.Debug.Log($"Can't move to {destination.ToString()} (occupied).");
 					return false;
 				}
 			}
@@ -441,7 +455,7 @@ namespace Game.Core.StateMachines.Game
 			await DOTween.To(
 				() => entity.transform.position,
 				x => entity.transform.position = x,
-				entity.GridPosition + cellOffset,
+				entity.GridPosition + CellOffset,
 				1 / entity.MoveSpeed / Time.timeScale
 			);
 			entity.Animator.Play("Idle");
@@ -482,7 +496,7 @@ namespace Game.Core.StateMachines.Game
 							}
 
 							FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundExit, entityAtDestination.GridPosition);
-							await NextLevel();
+							NextLevel();
 						}
 						break;
 
@@ -497,7 +511,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entity.BreakParticle)
 							{
-								Object.Instantiate(entity.BreakParticle, entity.GridPosition + cellOffset + entity.BreakParticleOffset, Quaternion.identity);
+								Object.Instantiate(entity.BreakParticle, entity.GridPosition + CellOffset + entity.BreakParticleOffset, Quaternion.identity);
 							}
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
@@ -575,7 +589,7 @@ namespace Game.Core.StateMachines.Game
 							await DOTween.To(
 								() => entityAtDestination.transform.position,
 								x => entityAtDestination.transform.position = x,
-								entityAtDestination.GridPosition + cellOffset,
+								entityAtDestination.GridPosition + CellOffset,
 								1 / entity.MoveSpeed / Time.timeScale
 							);
 							UnityEngine.Debug.Log("Push!");
@@ -605,21 +619,18 @@ namespace Game.Core.StateMachines.Game
 			await WaitForCurrentAnimation(entity);
 		}
 
-		private async UniTask NextLevel()
+		private void NextLevel()
 		{
 			_state.CurrentLevelIndex += 1;
 
 			if (_state.CurrentLevelIndex == _config.Levels.Length - 1)
 			{
-				await Victory();
+				Victory();
 				return;
 			}
-			else
-			{
-				_state.Running = false;
-				// _ = _audioPlayer.StopMusic();
-				_fsm.Fire(GameFSM.Triggers.NextLevel);
-			}
+
+			_state.Running = false;
+			_fsm.Fire(GameFSM.Triggers.NextLevel);
 		}
 
 		private void ToggleMusic(Entity entity)

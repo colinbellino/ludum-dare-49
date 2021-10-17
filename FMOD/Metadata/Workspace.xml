@@ -35,10 +35,5 @@
 			<destination>{c9f35dc9-139f-472b-8888-8ad9fad5168c}</destination>
 			<destination>{8d452eed-4519-4e5e-9f8d-5ab4c83b0c2a}</destination>
 		</relationship>
-		<relationship name="locales">
-			<destination>{257d5ec6-3b22-4b51-8f79-e9d463ab102a}</destination>
-			<destination>{4c47f2c8-26a5-4542-b59e-7c28c629ba48}</destination>
-			<destination>{6c4f00a8-d2d3-431e-af63-1615148089df}</destination>
-		</relationship>
 	</object>
 </objects>
