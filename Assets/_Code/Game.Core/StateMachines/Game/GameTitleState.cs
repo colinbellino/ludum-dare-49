@@ -122,7 +122,6 @@ namespace Game.Core.StateMachines.Game
 
 		private async void Quit()
 		{
-			// await _audioPlayer.StopMusic(2f);
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}
 	}
