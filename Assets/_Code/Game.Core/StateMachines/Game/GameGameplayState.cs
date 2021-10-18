@@ -167,7 +167,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				if (_state.Paused)
 				{
-					Time.timeScale = _state.TimeScaleDefault;
+					_state.TimeScaleCurrent = _state.TimeScaleDefault;
 					_state.Paused = false;
 					// FIXME: FMOD
 					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
@@ -175,7 +175,7 @@ namespace Game.Core.StateMachines.Game
 				}
 				else
 				{
-					Time.timeScale = 0f;
+					_state.TimeScaleCurrent = 0f;
 					_state.Paused = true;
 					// FIXME: FMOD
 					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
