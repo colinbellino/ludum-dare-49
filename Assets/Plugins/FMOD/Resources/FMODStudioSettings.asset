@@ -348,7 +348,7 @@ MonoBehaviour:
   TargetAssetPath: FMODBanks
   TargetBankFolder: 
   EventLinkage: 0
-  LoggingLevel: 4
+  LoggingLevel: 2
   SpeakerModeSettings: []
   SampleRateSettings: []
   LiveUpdateSettings: []
