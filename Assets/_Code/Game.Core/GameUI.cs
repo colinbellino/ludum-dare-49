@@ -12,6 +12,7 @@ using UnityEngine.UI;
 
 namespace Game.Core
 {
+
 	// FIXME: Make every timing in here use  Time.timeScale
 	public class GameUI : MonoBehaviour
 	{
@@ -22,12 +23,6 @@ namespace Game.Core
 		[SerializeField] private GameObject _gameplayRoot;
 		[SerializeField] private Animator _angerMeterAnimator;
 		[SerializeField] private RectTransform _angerMeterCache;
-		[Header("Pause")]
-		[SerializeField] private GameObject _pauseRoot;
-		[SerializeField] public Button PauseButton1;
-		[SerializeField] public Button PauseButton2;
-		[SerializeField] public Button PauseButton3;
-		[SerializeField] public Button PauseButton4;
 		[Header("Title")]
 		[SerializeField] private GameObject _titleRoot;
 		[SerializeField] private RectTransform _titleName;
@@ -39,6 +34,7 @@ namespace Game.Core
 		[SerializeField] public GameObject _levelSelectionRoot;
 		[SerializeField] public Button[] LevelButtons;
 		[Header("Transitions")]
+		[SerializeField] private GameObject _fadeRoot;
 		[SerializeField] private Image _fadeToBlackImage;
 		[SerializeField] public TMP_Text FadeText;
 
@@ -56,14 +52,9 @@ namespace Game.Core
 		{
 			HideDebug();
 			HideGameplay();
-			HidePause();
 			await HideTitle(0);
 			await HideLevelSelection(0);
 
-			PauseButton1.onClick.AddListener(PlayButtonClip);
-			PauseButton2.onClick.AddListener(PlayButtonClip);
-			PauseButton3.onClick.AddListener(PlayButtonClip);
-			PauseButton4.onClick.AddListener(PlayButtonClip);
 			TitleButton1.onClick.AddListener(PlayButtonClip);
 			TitleButton2.onClick.AddListener(PlayButtonClip);
 			foreach (var button in LevelButtons)
@@ -110,16 +101,6 @@ namespace Game.Core
 
 			_angerMeterCache.sizeDelta = cacheSize;
 		}
-
-		public async void ShowPause()
-		{
-			_pauseRoot.SetActive(true);
-
-			EventSystem.current.SetSelectedGameObject(null);
-			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(PauseButton2.gameObject);
-		}
-		public void HidePause() { _pauseRoot.SetActive(false); }
 
 		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
 		{
@@ -189,6 +170,7 @@ namespace Game.Core
 
 		public async UniTask FadeIn(Color color, float duration = 1f)
 		{
+			_fadeRoot.SetActive(true);
 			if (_fadeTweener != null)
 			{
 				_fadeTweener.Rewind(false);
@@ -205,6 +187,7 @@ namespace Game.Core
 			}
 			_fadeTweener = _fadeToBlackImage.DOColor(Color.clear, duration / Time.timeScale);
 			await _fadeTweener;
+			_fadeRoot.SetActive(false);
 		}
 
 		private async UniTask FadeInPanel(Image panel, TMP_Text text, float duration)

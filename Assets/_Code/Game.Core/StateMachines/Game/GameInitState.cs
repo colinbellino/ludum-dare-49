@@ -12,7 +12,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			_state.TimeScaleCurrent = _state.TiemScaleDefault = 1f;
+			_state.TimeScaleCurrent = _state.TimeScaleDefault = 1f;
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
 			_state.DebugLevels = new Level[0];
@@ -42,9 +42,11 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			_ui.PauseButton1.onClick.AddListener(ToggleSounds);
-			_ui.PauseButton2.onClick.AddListener(ToggleMusic);
-			_ui.PauseButton3.onClick.AddListener(QuitGame);
+			_game.Pause.PauseButton1.onClick.AddListener(ToggleSounds);
+			_game.Pause.PauseButton2.onClick.AddListener(ToggleMusic);
+			_game.Pause.PauseButton3.onClick.AddListener(QuitGame);
+
+			_ = _ui.FadeIn(Color.black, 0);
 
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}
@@ -52,13 +54,13 @@ namespace Game.Core.StateMachines.Game
 		private void ToggleSounds()
 		{
 			_state.SoundMuted = !_state.SoundMuted;
-			_ui.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.SoundMuted ? "OFF" : "ON");
+			_game.Pause.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.SoundMuted ? "OFF" : "ON");
 		}
 
 		private void ToggleMusic()
 		{
 			_state.MusicMuted = !_state.MusicMuted;
-			_ui.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.MusicMuted ? "OFF" : "ON");
+			_game.Pause.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.MusicMuted ? "OFF" : "ON");
 		}
 
 		private void QuitGame()
