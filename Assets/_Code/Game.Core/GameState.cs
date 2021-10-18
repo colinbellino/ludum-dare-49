@@ -9,7 +9,7 @@ namespace Game.Core
 		public bool Running;
 		public bool Paused;
 		public float TimeScaleCurrent;
-		public float TiemScaleDefault;
+		public float TimeScaleDefault;
 		public bool IsReplaying;
 		public Level[] DebugLevels;
 		public Level[] AllLevels;
