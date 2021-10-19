@@ -21,7 +21,7 @@ namespace Game.Core.Editor
 				var levelAsset = config.Levels[i];
 				var levelPath = AssetDatabase.GetAssetPath(levelAsset);
 
-				var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{i + 1:D2}.png");
+				var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(i)}.png");
 				var originalScreenshot = AssetDatabase.LoadAssetAtPath<Texture2D>(screenshotPath);
 				if (originalScreenshot)
 				{

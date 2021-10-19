@@ -33,7 +33,8 @@ namespace Game.Core.StateMachines.Game
 			if (Utils.IsDevBuild())
 			{
 				_ui.SetDebugText(@"
-- F1: trigger victory
+- F1: load next level
+- F2: trigger end
 - T: start record
 - K: toggle replay
 - R: restart
@@ -103,7 +104,7 @@ namespace Game.Core.StateMachines.Game
 					await UniTask.Delay(2000);
 
 					_ui.HideDebug();
-					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{_state.CurrentLevelIndex.ToString() + 1:D2}.png");
+					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.png");
 					await UniTask.NextFrame();
 					_ui.ShowDebug();
 				}
@@ -113,7 +114,8 @@ namespace Game.Core.StateMachines.Game
 				{
 					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
 					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
-					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{_state.CurrentLevelIndex.ToString() + 1:D2}.inputtrace");
+					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.inputtrace");
+					UnityEngine.Debug.Log("Loading input trace from: " + replayPath);
 					if (File.Exists(replayPath))
 					{
 						_game.InputRecorder.ClearCapture();
@@ -212,16 +214,16 @@ namespace Game.Core.StateMachines.Game
 						FMODUnity.RuntimeManager.PlayOneShot(_config.SoundLevelRestart);
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
-
-					if (Keyboard.current.f2Key.wasReleasedThisFrame)
-					{
-						NextLevel();
-					}
 				}
 
 				if (Utils.IsDevBuild())
 				{
 					if (Keyboard.current.f1Key.wasReleasedThisFrame)
+					{
+						NextLevel();
+					}
+
+					if (Keyboard.current.f2Key.wasReleasedThisFrame)
 					{
 						Victory();
 					}
@@ -358,11 +360,6 @@ namespace Game.Core.StateMachines.Game
 								entity.Animator.Play("Transform");
 								await WaitForCurrentAnimation(entity);
 
-								if (entity.ControlledByPlayer)
-								{
-									ToggleMusic(entity);
-								}
-
 								var otherEntityAtPosition = _state.Entities.Find(e => e.GridPosition == entity.GridPosition && e != entity);
 								if (_state.Running && otherEntityAtPosition)
 								{
@@ -407,7 +404,6 @@ namespace Game.Core.StateMachines.Game
 			if (Player.Dead)
 			{
 				_state.Running = false;
-				// _ = _audioPlayer.StopMusic();
 				await UniTask.Delay(500);
 				_fsm.Fire(GameFSM.Triggers.Retry);
 			}
@@ -624,7 +620,7 @@ namespace Game.Core.StateMachines.Game
 			if (entity.AngerState == AngerStates.Angry)
 			{
 				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundFall, entity.GridPosition);
-				await UniTask.Delay(500); // This delay adds a cartoon effect where the entity floats in the air before falling.
+				await UniTask.Delay(400); // This delay adds a cartoon effect where the entity floats in the air before falling.
 			}
 			else
 			{
@@ -647,20 +643,6 @@ namespace Game.Core.StateMachines.Game
 
 			_state.Running = false;
 			_fsm.Fire(GameFSM.Triggers.NextLevel);
-		}
-
-		private void ToggleMusic(Entity entity)
-		{
-			if (entity.AngerState != AngerStates.Angry)
-			{
-				// transition to calm
-				// _ = _audioPlayer.PlayMusic(_config.MusicCalmClip, Utils.GetMusicVolume(_state), false, 0.3f, true);
-			}
-			else
-			{
-				// transition to angry
-				// _ = _audioPlayer.PlayMusic(_config.MusicAngryClip, Utils.GetMusicVolume(_state), false, 0.3f, true);
-			}
 		}
 
 		public static bool IsTileWalkable(Tile tile)
