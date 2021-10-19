@@ -22,7 +22,7 @@ namespace Game.Core.StateMachines.Game
 
 			_cancellationSource = new CancellationTokenSource();
 
-			_ui.StartButton.onClick.AddListener(Start);
+			_ui.StartButton.onClick.AddListener(StartGame);
 			_ui.OptionsButton.onClick.AddListener(ToggleOptions);
 			_ui.QuitButton.onClick.AddListener(Quit);
 
@@ -84,7 +84,7 @@ namespace Game.Core.StateMachines.Game
 					UnityEngine.Debug.Log("Starting in replay mode.");
 					_state.CurrentLevelIndex = 0;
 					_state.IsReplaying = true;
-					_state.TimeScaleCurrent = 10f;
+					Time.timeScale = 10f;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}
@@ -92,13 +92,12 @@ namespace Game.Core.StateMachines.Game
 
 		public override async UniTask Exit()
 		{
-			await _ui.FadeIn(Color.black);
 			_music.stop(STOP_MODE.ALLOWFADEOUT);
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
 
-			_ui.StartButton.onClick.RemoveListener(Start);
+			_ui.StartButton.onClick.RemoveListener(StartGame);
 			_ui.OptionsButton.onClick.RemoveListener(ToggleOptions);
 			_ui.QuitButton.onClick.RemoveListener(Quit);
 
@@ -112,16 +111,18 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		private void LoadLevel(int levelIndex)
+		private async void LoadLevel(int levelIndex)
 		{
 			Debug.Log($"Loading level {levelIndex}.");
 			_state.CurrentLevelIndex = levelIndex;
+			await _ui.FadeIn(Color.black, 0);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private void Start()
+		private async void StartGame()
 		{
 			_state.CurrentLevelIndex = 0;
+			await _ui.FadeIn(Color.black);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 

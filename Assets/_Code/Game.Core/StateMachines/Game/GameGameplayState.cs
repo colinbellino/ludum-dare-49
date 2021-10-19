@@ -176,7 +176,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (_state.Paused)
 					{
-						_state.TimeScaleCurrent = _state.TimeScaleDefault;
+						Time.timeScale = _state.TimeScaleDefault;
 						_state.Paused = false;
 						// FIXME: FMOD
 						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
@@ -184,7 +184,7 @@ namespace Game.Core.StateMachines.Game
 					}
 					else
 					{
-						_state.TimeScaleCurrent = 0f;
+						Time.timeScale = 0f;
 						_state.Paused = true;
 						// FIXME: FMOD
 						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
@@ -239,13 +239,13 @@ namespace Game.Core.StateMachines.Game
 						if (_state.IsReplaying == false)
 						{
 							_state.IsReplaying = true;
-							_state.TimeScaleCurrent = 5f;
+							Time.timeScale = 5f;
 							_fsm.Fire(GameFSM.Triggers.Retry);
 						}
 						else
 						{
 							_state.IsReplaying = false;
-							_state.TimeScaleCurrent = _state.TimeScaleDefault;
+							Time.timeScale = _state.TimeScaleDefault;
 							_fsm.Fire(GameFSM.Triggers.Retry);
 						}
 					}
@@ -259,7 +259,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Exit();
 
-			_state.TimeScaleCurrent = _state.TimeScaleDefault;
+			Time.timeScale = _state.TimeScaleDefault;
 			_state.Running = false;
 
 			if (_controller != null)
@@ -268,15 +268,14 @@ namespace Game.Core.StateMachines.Game
 				_controller = null;
 			}
 
-			if (Utils.IsDevBuild())
+#if UNITY_EDITOR
+			if (_game.InputRecorder.captureIsRunning)
 			{
-				if (_game.InputRecorder.captureIsRunning)
-				{
-					_game.InputRecorder.StopCapture();
-					UnityEngine.Debug.LogWarning("Pausing the game to save the level inputs!");
-					Debug.Break();
-				}
+				_game.InputRecorder.StopCapture();
+				UnityEngine.Debug.LogWarning("Pausing the game to save the level inputs!");
+				Debug.Break();
 			}
+#endif
 
 			_controls.Gameplay.Disable();
 			_controls.Gameplay.Reset.started -= ResetStarted;

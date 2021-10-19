@@ -11,23 +11,21 @@ namespace Game.Core
 	public class Pause : MonoBehaviour
 	{
 		[SerializeField] private GameObject _pauseRoot;
-		[UnityEngine.Serialization.FormerlySerializedAs("GameSlider")] [SerializeField] private Slider _gameSlider;
-		[UnityEngine.Serialization.FormerlySerializedAs("SoundSlider")] [SerializeField] private Slider _soundSlider;
-		[UnityEngine.Serialization.FormerlySerializedAs("MusicSlider")] [SerializeField] private Slider _musicSlider;
-		[UnityEngine.Serialization.FormerlySerializedAs("FullscreenToggle")] [SerializeField] private Toggle _fullscreenToggle;
-		[UnityEngine.Serialization.FormerlySerializedAs("ResolutionsDropdown")] [SerializeField] private TMP_Dropdown _resolutionsDropdown;
-		[UnityEngine.Serialization.FormerlySerializedAs("QuitButton")] [SerializeField] private Button _quitButton;
+		[SerializeField] private Slider _gameSlider;
+		[SerializeField] private Slider _soundSlider;
+		[SerializeField] private Slider _musicSlider;
+		[SerializeField] private Toggle _fullscreenToggle;
+		[SerializeField] private TMP_Dropdown _resolutionsDropdown;
+		[SerializeField] private Button _quitButton;
 
 		private List<Resolution> _resolutions;
-		private GameSingleton _game;
+		private GameSingleton _game => GameManager.Game;
 
 		public bool IsOpened => _pauseRoot.activeSelf;
 
 		private void Start()
 		{
 			Hide();
-
-			_game = GameManager.Game;
 
 			_resolutions = Screen.resolutions/* .Where(r => r.refreshRate == 60) */.ToList();
 			_resolutionsDropdown.options = _resolutions.Select(r => new TMP_Dropdown.OptionData($"{r.width}x{r.height} {r.refreshRate}Hz")).ToList();
@@ -43,6 +41,14 @@ namespace Game.Core
 		public async void Show(bool showQuitButton = true)
 		{
 			_pauseRoot.SetActive(true);
+			_fullscreenToggle.isOn = Screen.fullScreen;
+			float volume;
+			_game.State.GameBus.getVolume(out volume);
+			_gameSlider.value = volume;
+			_game.State.SoundBus.getVolume(out volume);
+			_soundSlider.value = volume;
+			_game.State.MusicBus.getVolume(out volume);
+			_musicSlider.value = volume;
 			_fullscreenToggle.isOn = Screen.fullScreen;
 			_quitButton.gameObject.SetActive(showQuitButton);
 
