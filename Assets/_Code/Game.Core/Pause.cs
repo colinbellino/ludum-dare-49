@@ -11,9 +11,9 @@ namespace Game.Core
 	public class Pause : MonoBehaviour
 	{
 		[SerializeField] private GameObject _pauseRoot;
-		[SerializeField] public Button SoundButton;
-		[SerializeField] public Button MusicButton;
-		[SerializeField] public Button FullscreenButton;
+		[SerializeField] public Toggle SoundToggle;
+		[SerializeField] public Toggle MusicToggle;
+		[SerializeField] public Toggle FullscreenToggle;
 		[SerializeField] public TMP_Dropdown ResolutionsDropdown;
 		[SerializeField] public Button QuitButton;
 
@@ -44,7 +44,7 @@ namespace Game.Core
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(SoundButton.gameObject);
+			EventSystem.current.SetSelectedGameObject(SoundToggle.gameObject);
 		}
 
 		public void Hide()
