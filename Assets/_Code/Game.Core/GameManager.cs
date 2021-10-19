@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Game.Core.StateMachines.Game;
 using Game.Inputs;
 using UnityEngine;
@@ -10,7 +12,7 @@ namespace Game.Core
 	{
 		public static GameSingleton Game { get; private set; }
 
-		private void Start()
+		private async UniTask Start()
 		{
 			var config = Resources.Load<GameConfig>("Game Config");
 			var camera = Camera.main;
@@ -37,7 +39,7 @@ namespace Game.Core
 			Game.InputRecorder = inputRecorder;
 
 			Game.UI.Inject(Game);
-			Game.GameFSM.Start();
+			await Game.GameFSM.Start();
 		}
 
 		private void Update()

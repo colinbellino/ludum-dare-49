@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Stateless;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -51,10 +52,7 @@ namespace Game.Core.StateMachines.Game
 			_currentState = _states[_machine.State];
 		}
 
-		public async void Start()
-		{
-			await _currentState.Enter();
-		}
+		public UniTask Start() => _currentState.Enter();
 
 		public void Tick() => _currentState?.Tick();
 
@@ -63,37 +61,43 @@ namespace Game.Core.StateMachines.Game
 		public void Fire(Triggers trigger)
 		{
 			if (_machine.CanFire(trigger))
-			{
 				_machine.Fire(trigger);
-			}
 			else
-			{
 				Debug.LogWarning("Invalid transition " + _machine.State + " -> " + trigger);
-			}
 		}
 
 		private async void OnTransitioned(StateMachine<States, Triggers>.Transition transition)
 		{
 			if (_currentState != null)
 			{
+				Log($"GameFSM: {transition.Source}.Exit (before)");
 				await _currentState.Exit();
+				Log($"GameFSM: {transition.Source}.Exit (after)");
 			}
 
-			if (_debug)
-			{
-				if (_states.ContainsKey(transition.Destination) == false)
-				{
-					UnityEngine.Debug.LogError("Missing state class for: " + transition.Destination);
-				}
-			}
+			if (_states.ContainsKey(transition.Destination) == false)
+				LogError("Missing state class for: " + transition.Destination);
 
 			_currentState = _states[transition.Destination];
-			if (_debug)
-			{
-				UnityEngine.Debug.Log($"GameFSM: {transition.Source} -> {transition.Destination}");
-			}
+			// Log($"GameFSM: {transition.Source} -> {transition.Destination}");
 
+			Log($"GameFSM: {transition.Destination}.Enter (before)");
 			await _currentState.Enter();
+			Log($"GameFSM: {transition.Destination}.Enter (after)");
+		}
+
+		private void Log(object message)
+		{
+			if (_debug == false)
+				return;
+			UnityEngine.Debug.Log(message);
+		}
+
+		private void LogError(object message)
+		{
+			if (_debug == false)
+				return;
+			UnityEngine.Debug.LogError(message);
 		}
 	}
 }
