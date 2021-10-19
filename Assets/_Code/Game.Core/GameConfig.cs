@@ -19,7 +19,7 @@ namespace Game.Core
 		[UnityEngine.Serialization.FormerlySerializedAs("AllLevels")] public Level[] Levels;
 		public TileToEntity TileToEntity;
 
-		[Header("Audio")]
+		[Header("AUDIO")]
 		public EventReference SoundMenuConfirm;
 		public EventReference SoundLevelRestart;
 		public EventReference MusicTitle;

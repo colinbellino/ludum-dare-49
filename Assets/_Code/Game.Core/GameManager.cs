@@ -44,7 +44,6 @@ namespace Game.Core
 
 		private void Update()
 		{
-			Time.timeScale = Game.State.TimeScaleCurrent;
 			Game?.GameFSM.Tick();
 		}
 	}
