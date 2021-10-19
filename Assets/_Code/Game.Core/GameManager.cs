@@ -37,7 +37,6 @@ namespace Game.Core
 			Game.InputRecorder = inputRecorder;
 
 			Game.UI.Inject(Game);
-			Game.Pause.Inject(Game);
 			Game.GameFSM.Start();
 		}
 
