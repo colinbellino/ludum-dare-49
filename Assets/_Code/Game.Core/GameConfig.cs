@@ -1,4 +1,5 @@
 ﻿using System;
+using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
 using UnityEngine.Audio;

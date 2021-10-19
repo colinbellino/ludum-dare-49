@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using NesScripts.Controls.PathFind;
 using FMOD.Studio;
+using NesScripts.Controls.PathFind;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -170,28 +170,28 @@ namespace Game.Core.StateMachines.Game
 		{
 			base.Tick();
 
-			if (_controls.Global.Pause.WasPerformedThisFrame())
+			if (_state.Running)
 			{
-				if (_state.Paused)
+				if (_controls.Global.Pause.WasPerformedThisFrame())
 				{
-					_state.TimeScaleCurrent = _state.TimeScaleDefault;
-					_state.Paused = false;
-					// FIXME: FMOD
-					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
-					_game.Pause.Hide();
+					if (_state.Paused)
+					{
+						_state.TimeScaleCurrent = _state.TimeScaleDefault;
+						_state.Paused = false;
+						// FIXME: FMOD
+						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
+						_game.Pause.Hide();
+					}
+					else
+					{
+						_state.TimeScaleCurrent = 0f;
+						_state.Paused = true;
+						// FIXME: FMOD
+						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
+						_game.Pause.Show();
+					}
 				}
-				else
-				{
-					_state.TimeScaleCurrent = 0f;
-					_state.Paused = true;
-					// FIXME: FMOD
-					// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
-					_game.Pause.Show();
-				}
-			}
 
-			if (_state.Running && _state.Paused == false)
-			{
 				foreach (var entity in _state.Entities)
 				{
 					if (entity.BreakableProgress > 0)
@@ -259,6 +259,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Exit();
 
+			_state.TimeScaleCurrent = _state.TimeScaleDefault;
 			_state.Running = false;
 
 			if (_controller != null)
@@ -648,9 +649,7 @@ namespace Game.Core.StateMachines.Game
 		public static bool IsTileWalkable(Tile tile)
 		{
 			if (tile.colliderType == Tile.ColliderType.None)
-			{
 				return false;
-			}
 
 			return true;
 		}
