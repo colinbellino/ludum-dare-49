@@ -19,6 +19,8 @@ namespace Game.Core
 
 		private List<Resolution> _resolutions;
 
+		public bool IsOpened => _pauseRoot.activeSelf;
+
 		private void Start()
 		{
 			Hide();
@@ -35,9 +37,10 @@ namespace Game.Core
 			Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreenMode, resolution.refreshRate);
 		}
 
-		public async void Show()
+		public async void Show(bool showQuitButton = true)
 		{
 			_pauseRoot.SetActive(true);
+			QuitButton.gameObject.SetActive(showQuitButton);
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();

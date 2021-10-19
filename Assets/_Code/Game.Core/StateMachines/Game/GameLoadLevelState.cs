@@ -17,11 +17,7 @@ namespace Game.Core.StateMachines.Game
 			if (_state.CurrentLevelIndex <= _state.AllLevels.Length - 1)
 			{
 				_state.Level = Object.Instantiate(_state.AllLevels[_state.CurrentLevelIndex]);
-				if (Utils.IsDevBuild())
-				{
-					_ = _ui.ShowLevelTitle(_state.Level.Title);
-				}
-				_ = _ui.ShowLevelTitle($"{_state.CurrentLevelIndex + 1:D2} - {_state.Level.Title}");
+				_ = _ui.ShowLevelName($"{_state.CurrentLevelIndex + 1:D2} - {_state.Level.Title}");
 
 				// Generate grid for walkable tiles
 				var tilemap = _state.Level.Ground;
