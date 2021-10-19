@@ -19,13 +19,15 @@ namespace Game.Core
 		[SerializeField] private Button _quitButton;
 
 		private List<Resolution> _resolutions;
-		private GameSingleton _game => GameManager.Game;
+		private GameSingleton _game;
 
 		public bool IsOpened => _pauseRoot.activeSelf;
 
-		private void Start()
+		public async UniTask Init(GameSingleton game)
 		{
-			Hide();
+			_game = game;
+
+			await Hide();
 
 			_resolutions = Screen.resolutions/* .Where(r => r.refreshRate == 60) */.ToList();
 			_resolutionsDropdown.options = _resolutions.Select(r => new TMP_Dropdown.OptionData($"{r.width}x{r.height} {r.refreshRate}Hz")).ToList();
@@ -38,7 +40,7 @@ namespace Game.Core
 			_quitButton.onClick.AddListener(QuitGame);
 		}
 
-		public async void Show(bool showQuitButton = true)
+		public async UniTask Show(bool showQuitButton = true)
 		{
 			_pauseRoot.SetActive(true);
 			_fullscreenToggle.isOn = Screen.fullScreen;
@@ -57,9 +59,10 @@ namespace Game.Core
 			EventSystem.current.SetSelectedGameObject(_gameSlider.gameObject);
 		}
 
-		public void Hide()
+		public UniTask Hide()
 		{
 			_pauseRoot.SetActive(false);
+			return default;
 		}
 
 		private void OnResolutionChanged(int index)

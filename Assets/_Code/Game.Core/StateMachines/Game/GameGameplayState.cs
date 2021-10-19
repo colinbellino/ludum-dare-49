@@ -99,6 +99,8 @@ namespace Game.Core.StateMachines.Game
 
 			if (_state.IsReplaying)
 			{
+				_state.TimeScaleCurrent = 10f;
+
 				if (_config.TakeScreenshots)
 				{
 					await UniTask.Delay(2000);
@@ -176,7 +178,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (_state.Paused)
 					{
-						Time.timeScale = _state.TimeScaleDefault;
+						_state.TimeScaleCurrent = _state.TimeScaleDefault;
 						_state.Paused = false;
 						// FIXME: FMOD
 						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
@@ -184,11 +186,11 @@ namespace Game.Core.StateMachines.Game
 					}
 					else
 					{
-						Time.timeScale = 0f;
+						_state.TimeScaleCurrent = 0f;
 						_state.Paused = true;
 						// FIXME: FMOD
 						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
-						_game.Pause.Show();
+						_ = _game.Pause.Show();
 					}
 				}
 
@@ -239,13 +241,11 @@ namespace Game.Core.StateMachines.Game
 						if (_state.IsReplaying == false)
 						{
 							_state.IsReplaying = true;
-							Time.timeScale = 5f;
 							_fsm.Fire(GameFSM.Triggers.Retry);
 						}
 						else
 						{
 							_state.IsReplaying = false;
-							Time.timeScale = _state.TimeScaleDefault;
 							_fsm.Fire(GameFSM.Triggers.Retry);
 						}
 					}
@@ -259,7 +259,6 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Exit();
 
-			Time.timeScale = _state.TimeScaleDefault;
 			_state.Running = false;
 
 			if (_controller != null)
@@ -413,17 +412,14 @@ namespace Game.Core.StateMachines.Game
 		{
 			var infos = entity.Animator.GetCurrentAnimatorClipInfo(0);
 			if (infos.Length == 0)
-			{
 				return default;
-			}
+
 			var clipName = entity.Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 			if (entity.AnimationClipLength.ContainsKey(clipName) == false)
-			{
 				return default;
-			}
 
 			var length = entity.AnimationClipLength[clipName];
-			return UniTask.Delay(System.TimeSpan.FromSeconds(length / Time.timeScale));
+			return UniTask.Delay(System.TimeSpan.FromSeconds(length / _state.TimeScaleCurrent));
 		}
 
 		private void Victory()
@@ -442,9 +438,7 @@ namespace Game.Core.StateMachines.Game
 			var destinationTile = _state.Level.Ground.GetTile(destination) as Tile;
 			var entitiesAtDestination = _state.Entities.FindAll(e => e.GridPosition == destination);
 			if (entitiesAtDestination.Count > 1)
-			{
 				UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
-			}
 
 			var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
 
@@ -468,13 +462,14 @@ namespace Game.Core.StateMachines.Game
 				() => entity.transform.position,
 				x => entity.transform.position = x,
 				entity.GridPosition + CellOffset,
-				1 / entity.MoveSpeed / Time.timeScale
+				1 / entity.MoveSpeed / _state.TimeScaleCurrent
 			);
 			entity.Animator.Play("Idle");
 
 			if (
 				(destinationTile == null && entityAtDestination == null) ||
-				(destinationTile != null && IsTileWalkable(destinationTile) == false))
+				(destinationTile != null && IsTileWalkable(destinationTile) == false)
+			)
 			{
 				await Fall(entity);
 			}
@@ -602,7 +597,7 @@ namespace Game.Core.StateMachines.Game
 								() => entityAtDestination.transform.position,
 								x => entityAtDestination.transform.position = x,
 								entityAtDestination.GridPosition + CellOffset,
-								1 / entity.MoveSpeed / Time.timeScale
+								1 / entity.MoveSpeed / _state.TimeScaleCurrent
 							);
 							UnityEngine.Debug.Log("Push!");
 						}

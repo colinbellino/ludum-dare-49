@@ -84,7 +84,6 @@ namespace Game.Core.StateMachines.Game
 					UnityEngine.Debug.Log("Starting in replay mode.");
 					_state.CurrentLevelIndex = 0;
 					_state.IsReplaying = true;
-					Time.timeScale = 10f;
 					_fsm.Fire(GameFSM.Triggers.LevelSelected);
 				}
 			}

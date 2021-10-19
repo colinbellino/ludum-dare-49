@@ -38,12 +38,12 @@ namespace Game.Core
 			Game.GameFSM = new GameFSM(config.DebugFSM, Game);
 			Game.InputRecorder = inputRecorder;
 
-			Game.UI.Inject(Game);
 			await Game.GameFSM.Start();
 		}
 
 		private void Update()
 		{
+			Time.timeScale = Game.State.TimeScaleCurrent;
 			Game?.GameFSM.Tick();
 		}
 	}

@@ -9,7 +9,8 @@ namespace Game.Core
 		public Unity.Mathematics.Random Random;
 		public bool Running;
 		public bool Paused;
-		public float TimeScaleDefault = 1;
+		public float TimeScaleCurrent;
+		public float TimeScaleDefault;
 		public bool IsReplaying;
 		public Level[] DebugLevels;
 		public Level[] AllLevels;
