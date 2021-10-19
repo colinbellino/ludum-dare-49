@@ -32,7 +32,12 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
-				_ui.SetDebugText("[DEBUG]\n- F1: trigger victory\n- K: start replay");
+				_ui.SetDebugText(@"
+- F1: trigger victory
+- T: start record
+- K: toggle replay
+- R: restart
+");
 			}
 
 			// TODO: Remove this ?
@@ -229,9 +234,18 @@ namespace Game.Core.StateMachines.Game
 
 					if (Keyboard.current.kKey.wasReleasedThisFrame)
 					{
-						_state.IsReplaying = true;
-						_state.TimeScaleCurrent = 5f;
-						_fsm.Fire(GameFSM.Triggers.Retry);
+						if (_state.IsReplaying == false)
+						{
+							_state.IsReplaying = true;
+							_state.TimeScaleCurrent = 5f;
+							_fsm.Fire(GameFSM.Triggers.Retry);
+						}
+						else
+						{
+							_state.IsReplaying = false;
+							_state.TimeScaleCurrent = _state.TimeScaleDefault;
+							_fsm.Fire(GameFSM.Triggers.Retry);
+						}
 					}
 				}
 			}

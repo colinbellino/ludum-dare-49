@@ -41,10 +41,12 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
-				_ui.SetDebugText(@"[DEBUG]
+				_ui.SetDebugText(@"
 - F1-F12: load levels
-- Tab: toggle level selection
-- K: start replay");
+- L: load last level
+- K: start replay
+- Tab: level selection
+");
 			}
 		}
 

@@ -47,7 +47,7 @@ namespace Game.Core.StateMachines.Game
 			_game.Pause.FullscreenButton.onClick.AddListener(ToggleFullscreen);
 			_game.Pause.QuitButton.onClick.AddListener(QuitGame);
 
-			_ = _ui.FadeIn(Color.black, 0);
+			await _ui.FadeIn(Color.black, 0);
 
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}
