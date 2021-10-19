@@ -42,9 +42,10 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			_game.Pause.PauseButton1.onClick.AddListener(ToggleSounds);
-			_game.Pause.PauseButton2.onClick.AddListener(ToggleMusic);
-			_game.Pause.PauseButton3.onClick.AddListener(QuitGame);
+			_game.Pause.SoundButton.onClick.AddListener(ToggleSounds);
+			_game.Pause.MusicButton.onClick.AddListener(ToggleMusic);
+			_game.Pause.FullscreenButton.onClick.AddListener(ToggleFullscreen);
+			_game.Pause.QuitButton.onClick.AddListener(QuitGame);
 
 			_ = _ui.FadeIn(Color.black, 0);
 
@@ -54,13 +55,19 @@ namespace Game.Core.StateMachines.Game
 		private void ToggleSounds()
 		{
 			_state.SoundMuted = !_state.SoundMuted;
-			_game.Pause.PauseButton1.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.SoundMuted ? "OFF" : "ON");
+			_game.Pause.SoundButton.GetComponentInChildren<TMPro.TMP_Text>().text = "Sound:" + (_state.SoundMuted ? "OFF" : "ON");
 		}
 
 		private void ToggleMusic()
 		{
 			_state.MusicMuted = !_state.MusicMuted;
-			_game.Pause.PauseButton2.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.MusicMuted ? "OFF" : "ON");
+			_game.Pause.MusicButton.GetComponentInChildren<TMPro.TMP_Text>().text = "Music:" + (_state.MusicMuted ? "OFF" : "ON");
+		}
+
+		private void ToggleFullscreen()
+		{
+			Screen.fullScreen = !Screen.fullScreen;
+			_game.Pause.FullscreenButton.GetComponentInChildren<TMPro.TMP_Text>().text = "Fullscreen:" + (Screen.fullScreen ? "OFF" : "ON");
 		}
 
 		private void QuitGame()
