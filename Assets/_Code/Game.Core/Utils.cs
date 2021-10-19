@@ -24,16 +24,8 @@ namespace Game.Core
 #pragma warning restore 162
 		}
 
-		public static float GetMusicVolume(GameState state)
+		public static string GetLevelIndex(int index)
 		{
-			if (state.MusicMuted)
-			{
-				return 0;
-			}
-			return state.MusicVolume;
-		}
-
-		public static string GetLevelIndex(int index) {
 			return $"{index + 1:D2}";
 		}
 	}

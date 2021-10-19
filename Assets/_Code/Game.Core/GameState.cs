@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FMOD.Studio;
 using NesScripts.Controls.PathFind;
 
 namespace Game.Core
@@ -14,10 +15,9 @@ namespace Game.Core
 		public Level[] DebugLevels;
 		public Level[] AllLevels;
 
-		public float MusicVolume;
-		public bool MusicMuted;
-		public float SoundVolume;
-		public bool SoundMuted;
+		public Bus GameBus;
+		public Bus MusicBus;
+		public Bus SoundBus;
 
 		public int CurrentLevelIndex;
 		public Level Level;

@@ -12,13 +12,14 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			_state.GameBus = FMODUnity.RuntimeManager.GetBus("bus:/");
+			_state.MusicBus = FMODUnity.RuntimeManager.GetBus("bus:/Music");
+			_state.SoundBus = FMODUnity.RuntimeManager.GetBus("bus:/SFX");
 			_state.TimeScaleCurrent = _state.TimeScaleDefault = 1f;
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
 			_state.DebugLevels = new Level[0];
 			_state.AllLevels = _config.Levels;
-			_state.MusicVolume = 1;
-			_state.SoundVolume = 1;
 
 			if (IsDevBuild())
 			{
@@ -44,36 +45,7 @@ namespace Game.Core.StateMachines.Game
 
 			await _ui.FadeIn(Color.black, 0);
 
-			_game.Pause.SoundToggle.onValueChanged.AddListener(ToggleSounds);
-			_game.Pause.MusicToggle.onValueChanged.AddListener(ToggleMusic);
-			_game.Pause.FullscreenToggle.onValueChanged.AddListener(ToggleFullscreen);
-			_game.Pause.QuitButton.onClick.AddListener(QuitGame);
-
 			_fsm.Fire(GameFSM.Triggers.Done);
-		}
-
-		private void ToggleSounds(bool value)
-		{
-			_state.SoundMuted = value;
-		}
-
-		private void ToggleMusic(bool value)
-		{
-			_state.MusicMuted = value;
-		}
-
-		private void ToggleFullscreen(bool value)
-		{
-			Screen.fullScreen = value;
-		}
-
-		private void QuitGame()
-		{
-#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
-#else
-			UnityEngine.Application.Quit();
-#endif
 		}
 	}
 }
