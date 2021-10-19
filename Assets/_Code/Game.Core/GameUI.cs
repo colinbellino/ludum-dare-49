@@ -142,7 +142,7 @@ namespace Game.Core
 					var text = button.GetComponentInChildren<TMP_Text>();
 					var level = _state.AllLevels[i];
 
-					text.text = $"Level {i + 1:D2}";
+					text.text = $"Level {Utils.GetLevelIndex(i)}";
 					if (_config.Levels.Contains(level) == false)
 					{
 						text.text = level.name;

@@ -32,5 +32,9 @@ namespace Game.Core
 			}
 			return state.MusicVolume;
 		}
+
+		public static string GetLevelIndex(int index) {
+			return $"{index + 1:D2}";
+		}
 	}
 }

@@ -68,7 +68,7 @@ namespace Game.Core.StateMachines.Game
 			}
 			else
 			{
-				Debug.LogWarning("Invalid transition " + _currentState + " -> " + trigger);
+				Debug.LogWarning("Invalid transition " + _machine.State + " -> " + trigger);
 			}
 		}
 

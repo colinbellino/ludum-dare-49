@@ -42,12 +42,12 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
+			await _ui.FadeIn(Color.black, 0);
+
 			_game.Pause.SoundButton.onClick.AddListener(ToggleSounds);
 			_game.Pause.MusicButton.onClick.AddListener(ToggleMusic);
 			_game.Pause.FullscreenButton.onClick.AddListener(ToggleFullscreen);
 			_game.Pause.QuitButton.onClick.AddListener(QuitGame);
-
-			await _ui.FadeIn(Color.black, 0);
 
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}
