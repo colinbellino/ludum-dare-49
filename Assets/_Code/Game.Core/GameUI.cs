@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace Game.Core
 {
-	// FIXME: Make every timing in here use  Time.timeScale
+	// FIXME: Make every timing in here use _game.State.TimeScaleCurrent
 	public class GameUI : MonoBehaviour
 	{
 		[Header("Debug")]
@@ -38,18 +38,13 @@ namespace Game.Core
 		[SerializeField] private GameObject _levelNameRoot;
 		[SerializeField] public TMP_Text _levelNameText;
 
-		private GameConfig _config;
-		private GameState _state;
+		private GameSingleton _game;
 		private TweenerCore<Color, Color, ColorOptions> _fadeTweener;
 
-		public void Inject(GameSingleton game)
+		public async UniTask Init(GameSingleton game)
 		{
-			_config = game.Config;
-			_state = game.State;
-		}
+			_game = game;
 
-		private async void Start()
-		{
 			HideDebug();
 			HideGameplay();
 			await HideTitle(0);
@@ -65,7 +60,7 @@ namespace Game.Core
 
 		private void PlayButtonClip()
 		{
-			FMODUnity.RuntimeManager.PlayOneShot(_config.SoundMenuConfirm);
+			FMODUnity.RuntimeManager.PlayOneShot(_game.Config.SoundMenuConfirm);
 		}
 
 		public void ShowDebug() { _debugRoot.SetActive(true); }
@@ -109,11 +104,11 @@ namespace Game.Core
 			EventSystem.current.SetSelectedGameObject(StartButton.gameObject);
 
 			_titleRoot.SetActive(true);
-			await _titleWrapper.DOLocalMoveY(0, duration / Time.timeScale).WithCancellation(cancellationToken);
+			await _titleWrapper.DOLocalMoveY(0, duration / _game.State.TimeScaleCurrent).WithCancellation(cancellationToken);
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
-			await _titleWrapper.DOLocalMoveY(128, duration / Time.timeScale);
+			await _titleWrapper.DOLocalMoveY(128, duration / _game.State.TimeScaleCurrent);
 			_titleRoot.SetActive(false);
 		}
 
@@ -121,11 +116,11 @@ namespace Game.Core
 		{
 			_levelNameRoot.SetActive(true);
 			_levelNameText.text = title;
-			await _levelNameText.rectTransform.DOLocalMoveY(-80, duration / Time.timeScale);
+			await _levelNameText.rectTransform.DOLocalMoveY(-80, duration / _game.State.TimeScaleCurrent);
 		}
 		public async UniTask HideLevelName(float duration = 0.25f)
 		{
-			await _levelNameText.rectTransform.DOLocalMoveY(-130, duration / Time.timeScale);
+			await _levelNameText.rectTransform.DOLocalMoveY(-130, duration / _game.State.TimeScaleCurrent);
 			_levelNameRoot.SetActive(false);
 		}
 
@@ -136,14 +131,14 @@ namespace Game.Core
 			for (int i = 0; i < LevelButtons.Length; i++)
 			{
 				var button = LevelButtons[i];
-				if (i < _state.AllLevels.Length)
+				if (i < _game.State.AllLevels.Length)
 				{
 					var image = button.GetComponentInChildren<RawImage>();
 					var text = button.GetComponentInChildren<TMP_Text>();
-					var level = _state.AllLevels[i];
+					var level = _game.State.AllLevels[i];
 
 					text.text = $"Level {Utils.GetLevelIndex(i)}";
-					if (_config.Levels.Contains(level) == false)
+					if (_game.Config.Levels.Contains(level) == false)
 					{
 						text.text = level.name;
 					}
@@ -175,7 +170,7 @@ namespace Game.Core
 			{
 				_fadeTweener.Rewind(false);
 			}
-			_fadeTweener = _fadeToBlackImage.DOColor(color, duration / Time.timeScale);
+			_fadeTweener = _fadeToBlackImage.DOColor(color, duration / _game.State.TimeScaleCurrent);
 			await _fadeTweener;
 		}
 
@@ -185,7 +180,7 @@ namespace Game.Core
 			{
 				_fadeTweener.Rewind(false);
 			}
-			_fadeTweener = _fadeToBlackImage.DOColor(Color.clear, duration / Time.timeScale);
+			_fadeTweener = _fadeToBlackImage.DOColor(Color.clear, duration / _game.State.TimeScaleCurrent);
 			await _fadeTweener;
 			_fadeRoot.SetActive(false);
 		}
