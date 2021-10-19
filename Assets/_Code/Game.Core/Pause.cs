@@ -40,6 +40,7 @@ namespace Game.Core
 		public async void Show(bool showQuitButton = true)
 		{
 			_pauseRoot.SetActive(true);
+			FullscreenToggle.isOn = Screen.fullScreen;
 			QuitButton.gameObject.SetActive(showQuitButton);
 
 			EventSystem.current.SetSelectedGameObject(null);
