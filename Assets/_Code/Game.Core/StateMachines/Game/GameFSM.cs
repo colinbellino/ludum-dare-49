@@ -63,27 +63,31 @@ namespace Game.Core.StateMachines.Game
 			if (_machine.CanFire(trigger))
 				_machine.Fire(trigger);
 			else
-				Debug.LogWarning("Invalid transition " + _machine.State + " -> " + trigger);
+				Debug.LogWarning("GameFSM: Invalid transition " + _machine.State + " -> " + trigger);
 		}
 
 		private async void OnTransitioned(StateMachine<States, Triggers>.Transition transition)
 		{
 			if (_currentState != null)
 			{
-				Log($"GameFSM: {transition.Source}.Exit (before)");
+				// Log($"GameFSM: {transition.Source}.Exit (before)");
 				await _currentState.Exit();
-				Log($"GameFSM: {transition.Source}.Exit (after)");
+				// Log($"GameFSM: {transition.Source}.Exit (after)");
 			}
 
 			if (_states.ContainsKey(transition.Destination) == false)
-				LogError("Missing state class for: " + transition.Destination);
+				LogError("GameFSM: Missing state class for: " + transition.Destination);
 
 			_currentState = _states[transition.Destination];
-			// Log($"GameFSM: {transition.Source} -> {transition.Destination}");
+			Log($"GameFSM: {transition.Source} -> {transition.Destination}");
 
-			Log($"GameFSM: {transition.Destination}.Enter (before)");
-			await _currentState.Enter();
-			Log($"GameFSM: {transition.Destination}.Enter (after)");
+			// Log($"GameFSM: {transition.Destination}.Enter (before)");
+			try
+			{
+				await _currentState.Enter();
+			}
+			catch { }
+			// Log($"GameFSM: {transition.Destination}.Enter (after)");
 		}
 
 		private void Log(object message)
