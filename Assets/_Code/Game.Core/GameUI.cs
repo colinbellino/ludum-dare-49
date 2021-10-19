@@ -12,7 +12,6 @@ using UnityEngine.UI;
 
 namespace Game.Core
 {
-
 	// FIXME: Make every timing in here use  Time.timeScale
 	public class GameUI : MonoBehaviour
 	{
@@ -25,18 +24,19 @@ namespace Game.Core
 		[SerializeField] private RectTransform _angerMeterCache;
 		[Header("Title")]
 		[SerializeField] private GameObject _titleRoot;
-		[SerializeField] private RectTransform _titleName;
-		[SerializeField] private RectTransform _titleMenu;
-		[SerializeField] private RectTransform _titleLinks;
-		[SerializeField] public Button TitleButton1;
-		[SerializeField] public Button TitleButton2;
+		[SerializeField] private RectTransform _titleWrapper;
+		[SerializeField] public Button StartButton;
+		[SerializeField] public Button OptionsButton;
+		[SerializeField] public Button QuitButton;
 		[Header("Level Selection")]
 		[SerializeField] public GameObject _levelSelectionRoot;
 		[SerializeField] public Button[] LevelButtons;
 		[Header("Transitions")]
 		[SerializeField] private GameObject _fadeRoot;
 		[SerializeField] private Image _fadeToBlackImage;
-		[SerializeField] public TMP_Text FadeText;
+		[Header("Level Name")]
+		[SerializeField] private GameObject _levelNameRoot;
+		[SerializeField] public TMP_Text _levelNameText;
 
 		private GameConfig _config;
 		private GameState _state;
@@ -55,8 +55,8 @@ namespace Game.Core
 			await HideTitle(0);
 			await HideLevelSelection(0);
 
-			TitleButton1.onClick.AddListener(PlayButtonClip);
-			TitleButton2.onClick.AddListener(PlayButtonClip);
+			StartButton.onClick.AddListener(PlayButtonClip);
+			QuitButton.onClick.AddListener(PlayButtonClip);
 			foreach (var button in LevelButtons)
 			{
 				button.onClick.AddListener(PlayButtonClip);
@@ -106,27 +106,29 @@ namespace Game.Core
 		{
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(TitleButton1.gameObject);
+			EventSystem.current.SetSelectedGameObject(StartButton.gameObject);
 
 			_titleRoot.SetActive(true);
-			await _titleName.DOLocalMoveY(20, duration / Time.timeScale).WithCancellation(cancellationToken);
-			await _titleLinks.DOLocalMoveY(-330, duration / Time.timeScale).WithCancellation(cancellationToken);
+			await _titleWrapper.DOLocalMoveY(0, duration / Time.timeScale).WithCancellation(cancellationToken);
 		}
 		public async UniTask HideTitle(float duration = 0.5f)
 		{
-			await _titleName.DOLocalMoveY(128, duration / Time.timeScale);
-			await _titleLinks.DOLocalMoveY(-330, duration / Time.timeScale);
+			await _titleWrapper.DOLocalMoveY(128, duration / Time.timeScale);
 			_titleRoot.SetActive(false);
 		}
 
-		public async UniTask ShowLevelTitle(string title, float duration = 0.5f)
+		public async UniTask ShowLevelName(string title, float duration = 0.5f)
 		{
-			FadeText.text = title;
-			await FadeText.rectTransform.DOLocalMoveY(-87, duration / Time.timeScale);
+			UnityEngine.Debug.Log("ShowLevelName");
+			_levelNameRoot.SetActive(true);
+			_levelNameText.text = title;
+			await _levelNameText.rectTransform.DOLocalMoveY(-80, duration / Time.timeScale);
 		}
-		public async UniTask HideLevelTitle(float duration = 0.25f)
+		public async UniTask HideLevelName(float duration = 0.25f)
 		{
-			await FadeText.rectTransform.DOLocalMoveY(-120, duration / Time.timeScale);
+			UnityEngine.Debug.Log("HideLevelName");
+			await _levelNameText.rectTransform.DOLocalMoveY(-130, duration / Time.timeScale);
+			_levelNameRoot.SetActive(false);
 		}
 
 		public async UniTask ShowLevelSelection(float duration = 0.5f)

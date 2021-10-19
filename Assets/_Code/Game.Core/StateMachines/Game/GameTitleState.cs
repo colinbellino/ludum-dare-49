@@ -22,8 +22,9 @@ namespace Game.Core.StateMachines.Game
 
 			_cancellationSource = new CancellationTokenSource();
 
-			_ui.TitleButton1.onClick.AddListener(Start);
-			_ui.TitleButton2.onClick.AddListener(Quit);
+			_ui.StartButton.onClick.AddListener(Start);
+			_ui.OptionsButton.onClick.AddListener(ToggleOptions);
+			_ui.QuitButton.onClick.AddListener(Quit);
 
 			_music.start();
 
@@ -51,7 +52,10 @@ namespace Game.Core.StateMachines.Game
 		{
 			if (Keyboard.current.escapeKey.wasReleasedThisFrame)
 			{
-				Quit();
+				if (_game.Pause.IsOpened)
+					_game.Pause.Hide();
+				else
+					Quit();
 			}
 
 			if (Keyboard.current.tabKey.wasReleasedThisFrame) { _ui.ToggleLevelSelection(); }
@@ -86,16 +90,15 @@ namespace Game.Core.StateMachines.Game
 
 		public override async UniTask Exit()
 		{
-			_ = _ui.FadeIn(Color.black);
+			await _ui.FadeIn(Color.black);
 			_music.stop(STOP_MODE.ALLOWFADEOUT);
-
-			_ui.TitleButton1.onClick.RemoveListener(Start);
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
 
-			_ui.TitleButton1.onClick.RemoveListener(Start);
-			_ui.TitleButton2.onClick.RemoveListener(Quit);
+			_ui.StartButton.onClick.RemoveListener(Start);
+			_ui.OptionsButton.onClick.RemoveListener(ToggleOptions);
+			_ui.QuitButton.onClick.RemoveListener(Quit);
 
 			await _ui.HideTitle();
 			_ = _ui.HideLevelSelection();
@@ -120,7 +123,15 @@ namespace Game.Core.StateMachines.Game
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private async void Quit()
+		private void ToggleOptions()
+		{
+			if (_game.Pause.IsOpened)
+				_game.Pause.Hide();
+			else
+				_game.Pause.Show(false);
+		}
+
+		private void Quit()
 		{
 			_fsm.Fire(GameFSM.Triggers.Quit);
 		}

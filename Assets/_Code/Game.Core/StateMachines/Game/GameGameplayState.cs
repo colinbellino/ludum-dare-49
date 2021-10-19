@@ -268,7 +268,7 @@ namespace Game.Core.StateMachines.Game
 
 			await _ui.FadeIn(Color.black);
 
-			_ = _ui.HideLevelTitle();
+			await _ui.HideLevelName(0);
 			_ui.HideGameplay();
 
 			_state.Entities.Clear();
