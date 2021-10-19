@@ -119,14 +119,12 @@ namespace Game.Core
 
 		public async UniTask ShowLevelName(string title, float duration = 0.5f)
 		{
-			UnityEngine.Debug.Log("ShowLevelName");
 			_levelNameRoot.SetActive(true);
 			_levelNameText.text = title;
 			await _levelNameText.rectTransform.DOLocalMoveY(-80, duration / Time.timeScale);
 		}
 		public async UniTask HideLevelName(float duration = 0.25f)
 		{
-			UnityEngine.Debug.Log("HideLevelName");
 			await _levelNameText.rectTransform.DOLocalMoveY(-130, duration / Time.timeScale);
 			_levelNameRoot.SetActive(false);
 		}
