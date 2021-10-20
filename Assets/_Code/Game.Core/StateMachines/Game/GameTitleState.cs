@@ -130,7 +130,7 @@ namespace Game.Core.StateMachines.Game
 			if (_game.Pause.IsOpened)
 				_game.Pause.Hide();
 			else
-				_game.Pause.Show(false);
+				_ = _game.Pause.Show(false);
 		}
 
 		private void Quit()
