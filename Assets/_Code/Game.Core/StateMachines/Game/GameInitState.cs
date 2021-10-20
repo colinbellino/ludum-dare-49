@@ -12,6 +12,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			FMODUnity.RuntimeManager.LoadBank("SFX", loadSamples: true);
+
 			_state.GameBus = FMODUnity.RuntimeManager.GetBus("bus:/");
 			_state.MusicBus = FMODUnity.RuntimeManager.GetBus("bus:/Music");
 			_state.SoundBus = FMODUnity.RuntimeManager.GetBus("bus:/SFX");
