@@ -30,17 +30,6 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
-			if (Utils.IsDevBuild())
-			{
-				_ui.SetDebugText(@"
-- F1: load next level
-- F2: trigger end
-- T: start record
-- K: toggle replay
-- R: restart
-");
-			}
-
 			// Initialize entities
 			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
 			foreach (var entity in _state.Entities)
@@ -171,6 +160,20 @@ namespace Game.Core.StateMachines.Game
 		public override void Tick()
 		{
 			base.Tick();
+
+			if (Utils.IsDevBuild())
+			{
+				_ui.SetDebugText($@"
+- F1: load next level
+- F2: trigger end
+- T: start record
+- K: toggle replay
+- R: restart
+
+State: {(Player.AngerState == AngerStates.Calm ? 0 : 1)}
+Progress: {Player.AngerProgress}
+");
+			}
 
 			if (_state.Running)
 			{

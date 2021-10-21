@@ -33,6 +33,12 @@ namespace Game.Core
 		[Header("Transitions")]
 		[SerializeField] private GameObject _fadeRoot;
 		[SerializeField] private Image _fadeToBlackImage;
+
+		internal void SetDebugText(object baseUIText)
+		{
+			throw new NotImplementedException();
+		}
+
 		[Header("Level Name")]
 		[SerializeField] private GameObject _levelNameRoot;
 		[SerializeField] public TMP_Text _levelNameText;
