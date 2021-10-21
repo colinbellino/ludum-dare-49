@@ -1,4 +1,4 @@
-# Ludum Dare 49
+# Alteration
 
 This is the postjam version of the game.
 
@@ -17,7 +17,6 @@ This is the postjam version of the game.
 | Confirm    | Space, Enter or Up arrow        | X or Square button (▢) |
 | Pause      | Escape                          | Start button           |
 | Restart    | R                               | Select button          |
-| Skip Level | F2                              | n/c (sorry)            |
 
 ## Screenshots:
 

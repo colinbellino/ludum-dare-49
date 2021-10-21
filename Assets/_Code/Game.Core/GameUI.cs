@@ -12,7 +12,6 @@ using UnityEngine.UI;
 
 namespace Game.Core
 {
-	// FIXME: Make every timing in here use _game.State.TimeScaleCurrent
 	public class GameUI : MonoBehaviour
 	{
 		[Header("Debug")]
@@ -198,7 +197,7 @@ namespace Game.Core
 
 			text.maxVisibleCharacters = 0;
 
-			await UniTask.Delay(TimeSpan.FromSeconds(duration));
+			await UniTask.Delay(TimeSpan.FromSeconds(duration / _game.State.TimeScaleCurrent));
 
 			var totalInvisibleCharacters = text.textInfo.characterCount;
 			var counter = 0;
@@ -214,26 +213,26 @@ namespace Game.Core
 
 				counter += 1;
 
-				await UniTask.Delay(10);
+				await UniTask.Delay(TimeSpan.FromMilliseconds(10 / _game.State.TimeScaleCurrent));
 			}
 
 			var buttons = panel.GetComponentsInChildren<Button>();
 			for (int i = 0; i < buttons.Length; i++)
 			{
-				_ = buttons[i].image.DOFade(1f, duration);
+				_ = buttons[i].image.DOFade(1f, duration / _game.State.TimeScaleCurrent);
 			}
 		}
 
 		private async UniTask FadeOutPanel(Image panel, float duration)
 		{
-			_ = panel.DOFade(0f, duration);
+			_ = panel.DOFade(0f, duration / _game.State.TimeScaleCurrent);
 
 			foreach (var graphic in panel.GetComponentsInChildren<Graphic>())
 			{
-				_ = graphic.DOFade(0f, duration);
+				_ = graphic.DOFade(0f, duration / _game.State.TimeScaleCurrent);
 			}
 
-			await UniTask.Delay(TimeSpan.FromSeconds(duration));
+			await UniTask.Delay(TimeSpan.FromSeconds(duration / _game.State.TimeScaleCurrent));
 			panel.gameObject.SetActive(false);
 		}
 	}
