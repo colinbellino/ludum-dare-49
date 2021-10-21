@@ -72,7 +72,6 @@ namespace Game.Core.StateMachines.Game
 
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Move.performed += OnMovePerformed;
-			_controls.Global.Enable();
 
 			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerState);
 			_ui.ShowGameplay();
@@ -177,21 +176,29 @@ AngerProgress: {GetAngerParam(Player)}
 
 			if (_state.Running)
 			{
-				if (_controls.Global.Pause.WasPerformedThisFrame())
+				if (_controls.Global.Cancel.WasPerformedThisFrame())
 				{
 					if (_state.Paused)
 					{
-						_state.TimeScaleCurrent = _state.TimeScaleDefault;
-						_state.Paused = false;
-						_game.Pause.Hide();
-						_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
-						_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
+						if (_game.OptionsUI.IsOpened)
+						{
+							_game.OptionsUI.Hide();
+							_game.PauseUI.SelectOptionsGameObject();
+							_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
+						}
+						else
+						{
+							_state.TimeScaleCurrent = _state.TimeScaleDefault;
+							_state.Paused = false;
+							_game.PauseUI.Hide();
+							_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
+						}
 					}
 					else
 					{
 						_state.TimeScaleCurrent = 0f;
 						_state.Paused = true;
-						_ = _game.Pause.Show("Pause");
+						_ = _game.PauseUI.Show("Pause");
 						_pauseSnapshot.start();
 					}
 				}
@@ -273,7 +280,6 @@ AngerProgress: {GetAngerParam(Player)}
 
 			_controls.Gameplay.Disable();
 			_controls.Gameplay.Move.performed -= OnMovePerformed;
-			_controls.Global.Disable();
 
 			await _ui.FadeIn(Color.black);
 
