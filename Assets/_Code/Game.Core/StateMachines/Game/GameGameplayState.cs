@@ -12,10 +12,8 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameGameplayState : BaseGameState
 	{
-		private bool _resetWasPressedThisFrame;
 		private EventInstance _music;
 		private EventInstance _pauseSnapshot;
-		private float _noTransitionTimestamp;
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
 
@@ -42,9 +40,6 @@ namespace Game.Core.StateMachines.Game
 - R: restart
 ");
 			}
-
-			// TODO: Remove this ?
-			_noTransitionTimestamp = Time.time + 3f;
 
 			// Initialize entities
 			_state.KeysInLevel = _state.Entities.FindAll(e => e.TriggerAction == TriggerActions.Key).Count;
@@ -81,10 +76,12 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", Player.AngerProgress);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
+
 			_state.Running = true;
 
 			_controls.Gameplay.Enable();
-			_controls.Gameplay.Reset.started += ResetStarted;
 			_controls.Gameplay.Move.performed += OnMovePerformed;
 			_controls.Global.Enable();
 
@@ -208,15 +205,10 @@ namespace Game.Core.StateMachines.Game
 					}
 				}
 
-				// TODO: Clean this up
-				// Quick and dirty fix just to prevent spamming gamebreaking stuff
-				if (Time.time >= _noTransitionTimestamp)
+				if (_controls.Gameplay.Reset.WasPerformedThisFrame())
 				{
-					if (_resetWasPressedThisFrame)
-					{
-						AudioHelpers.PlayOneShot(_config.SoundLevelRestart);
-						_fsm.Fire(GameFSM.Triggers.Retry);
-					}
+					AudioHelpers.PlayOneShot(_config.SoundLevelRestart);
+					_fsm.Fire(GameFSM.Triggers.Retry);
 				}
 
 				if (Utils.IsDevBuild())
@@ -252,8 +244,6 @@ namespace Game.Core.StateMachines.Game
 					}
 				}
 			}
-
-			_resetWasPressedThisFrame = false;
 		}
 
 		public override async UniTask Exit()
@@ -278,7 +268,6 @@ namespace Game.Core.StateMachines.Game
 #endif
 
 			_controls.Gameplay.Disable();
-			_controls.Gameplay.Reset.started -= ResetStarted;
 			_controls.Gameplay.Move.performed -= OnMovePerformed;
 			_controls.Global.Disable();
 
@@ -298,8 +287,6 @@ namespace Game.Core.StateMachines.Game
 				_state.Level = null;
 			}
 		}
-
-		private void ResetStarted(InputAction.CallbackContext context) => _resetWasPressedThisFrame = true;
 
 		private async UniTask Loop(Vector2 moveInput)
 		{
