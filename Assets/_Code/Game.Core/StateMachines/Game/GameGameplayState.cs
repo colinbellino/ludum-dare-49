@@ -91,12 +91,6 @@ namespace Game.Core.StateMachines.Game
 			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerState);
 			_ui.ShowGameplay();
 
-			_music.getPlaybackState(out var state);
-			if (state != PLAYBACK_STATE.PLAYING)
-			{
-				_music.start();
-			}
-
 			_ = _ui.FadeOut(2);
 
 			if (_state.IsReplaying)
@@ -151,6 +145,13 @@ namespace Game.Core.StateMachines.Game
 				}
 #endif
 			}
+
+			_music.getPlaybackState(out var state);
+			if (state != PLAYBACK_STATE.PLAYING)
+			{
+				_music.start();
+			}
+			_music.setPitch(_state.TimeScaleCurrent);
 		}
 
 		private async void OnMovePerformed(InputAction.CallbackContext context)
@@ -213,7 +214,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					if (_resetWasPressedThisFrame)
 					{
-						FMODUnity.RuntimeManager.PlayOneShot(_config.SoundLevelRestart);
+						AudioHelpers.PlayOneShot(_config.SoundLevelRestart);
 						_fsm.Fire(GameFSM.Triggers.Retry);
 					}
 				}
@@ -354,7 +355,7 @@ namespace Game.Core.StateMachines.Game
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
 								entity.Animator.SetFloat("DirectionY", entity.Direction.y);
 
-								FMODUnity.RuntimeManager.PlayOneShot(entity.SoundTransformation, entity.GridPosition);
+								AudioHelpers.PlayOneShot(entity.SoundTransformation, entity.GridPosition);
 
 								entity.Animator.Play("Transform");
 								await WaitForCurrentAnimation(entity);
@@ -397,7 +398,7 @@ namespace Game.Core.StateMachines.Game
 			}
 			else
 			{
-				FMODUnity.RuntimeManager.PlayOneShot(Player.SoundCantMoveAudio, Player.GridPosition);
+				AudioHelpers.PlayOneShot(Player.SoundCantMoveAudio, Player.GridPosition);
 			}
 
 			if (Player.Dead)
@@ -452,9 +453,9 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			if (entity.AngerState == AngerStates.Angry)
-				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
+				AudioHelpers.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
 			else
-				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
+				AudioHelpers.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
 
 			entity.GridPosition = destination;
 			entity.Animator.Play("Walk");
@@ -502,7 +503,7 @@ namespace Game.Core.StateMachines.Game
 								break;
 							}
 
-							FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundExit, entityAtDestination.GridPosition);
+							AudioHelpers.PlayOneShot(entityAtDestination.SoundExit, entityAtDestination.GridPosition);
 							NextLevel();
 						}
 						break;
@@ -523,7 +524,7 @@ namespace Game.Core.StateMachines.Game
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
 							{
-								FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundBreaking, entityAtDestination.GridPosition);
+								AudioHelpers.PlayOneShot(entityAtDestination.SoundBreaking, entityAtDestination.GridPosition);
 								entityAtDestination.Trigger = false;
 								entityAtDestination.BreakableProgress = 0;
 								entityAtDestination.Animator.Play("Breaking");
@@ -533,7 +534,7 @@ namespace Game.Core.StateMachines.Game
 							}
 							else
 							{
-								FMODUnity.RuntimeManager.PlayOneShot(entity.SoundBreakGround, entity.GridPosition);
+								AudioHelpers.PlayOneShot(entity.SoundBreakGround, entity.GridPosition);
 							}
 						}
 						break;
@@ -545,7 +546,7 @@ namespace Game.Core.StateMachines.Game
 								entityAtDestination.Dead = true;
 								_state.KeysPickedUp += 1;
 
-								FMODUnity.RuntimeManager.PlayOneShot(entityAtDestination.SoundKey, entityAtDestination.GridPosition);
+								AudioHelpers.PlayOneShot(entityAtDestination.SoundKey, entityAtDestination.GridPosition);
 							}
 						}
 						break;
@@ -614,12 +615,12 @@ namespace Game.Core.StateMachines.Game
 
 			if (entity.AngerState == AngerStates.Angry)
 			{
-				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundFall, entity.GridPosition);
+				AudioHelpers.PlayOneShot(entity.SoundFall, entity.GridPosition);
 				await UniTask.Delay(400); // This delay adds a cartoon effect where the entity floats in the air before falling.
 			}
 			else
 			{
-				FMODUnity.RuntimeManager.PlayOneShot(entity.SoundBurn, entity.GridPosition);
+				AudioHelpers.PlayOneShot(entity.SoundBurn, entity.GridPosition);
 			}
 
 			entity.Animator.Play("Death");

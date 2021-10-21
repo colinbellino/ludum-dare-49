@@ -59,7 +59,7 @@ namespace Game.Core
 
 		private void PlayButtonClip()
 		{
-			FMODUnity.RuntimeManager.PlayOneShot(_game.Config.SoundMenuConfirm);
+			AudioHelpers.PlayOneShot(_game.Config.SoundMenuConfirm);
 		}
 
 		public void ShowDebug() { _debugRoot.SetActive(true); }
