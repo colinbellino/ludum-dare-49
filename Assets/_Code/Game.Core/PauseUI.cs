@@ -27,7 +27,7 @@ namespace Game.Core
 			await Hide();
 		}
 
-		public async UniTask Show(string title, bool showQuitButton = true)
+		public async UniTask Show(float duration = 0.5f)
 		{
 			_pauseRoot.SetActive(true);
 
@@ -36,7 +36,7 @@ namespace Game.Core
 			EventSystem.current.SetSelectedGameObject(_levelSelectButton.gameObject);
 		}
 
-		public UniTask Hide()
+		public UniTask Hide(float duration = 0.5f)
 		{
 			_pauseRoot.SetActive(false);
 			return default;

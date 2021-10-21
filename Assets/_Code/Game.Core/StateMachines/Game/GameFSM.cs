@@ -53,6 +53,7 @@ namespace Game.Core.StateMachines.Game
 				.Permit(Triggers.Won, States.Title)
 				.Permit(Triggers.Quit, States.Quit)
 				.Permit(Triggers.NextLevel, States.LoadLevel)
+				.Permit(Triggers.LevelSelectionRequested, States.SelectLevel)
 				.Permit(Triggers.Retry, States.LoadLevel);
 
 			_currentState = _states[_machine.State];
