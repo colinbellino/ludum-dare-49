@@ -1,8 +1,6 @@
 ﻿using System;
-using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.Tilemaps;
 
 namespace Game.Core
@@ -20,6 +18,7 @@ namespace Game.Core
 		public TileToEntity TileToEntity;
 
 		[Header("AUDIO")]
+		public EventReference SnapshotPause;
 		public EventReference SoundMenuConfirm;
 		public EventReference SoundLevelRestart;
 		public EventReference MusicTitle;

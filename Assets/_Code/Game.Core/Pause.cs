@@ -11,6 +11,7 @@ namespace Game.Core
 	public class Pause : MonoBehaviour
 	{
 		[SerializeField] private GameObject _pauseRoot;
+		[SerializeField] private TMP_Text _titleText;
 		[SerializeField] private Slider _gameSlider;
 		[SerializeField] private Slider _soundSlider;
 		[SerializeField] private Slider _musicSlider;
@@ -40,8 +41,9 @@ namespace Game.Core
 			_quitButton.onClick.AddListener(QuitGame);
 		}
 
-		public async UniTask Show(bool showQuitButton = true)
+		public async UniTask Show(string title, bool showQuitButton = true)
 		{
+			_titleText.text = title;
 			_pauseRoot.SetActive(true);
 			_fullscreenToggle.isOn = Screen.fullScreen;
 			float volume;

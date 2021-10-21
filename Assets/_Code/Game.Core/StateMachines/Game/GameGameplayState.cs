@@ -14,6 +14,7 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _resetWasPressedThisFrame;
 		private EventInstance _music;
+		private EventInstance _pauseSnapshot;
 		private float _noTransitionTimestamp;
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
@@ -24,6 +25,7 @@ namespace Game.Core.StateMachines.Game
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game)
 		{
 			_music = FMODUnity.RuntimeManager.CreateInstance(_config.MusicLevel);
+			_pauseSnapshot = FMODUnity.RuntimeManager.CreateInstance(_config.SnapshotPause);
 		}
 
 		public override async UniTask Enter()
@@ -180,17 +182,15 @@ namespace Game.Core.StateMachines.Game
 					{
 						_state.TimeScaleCurrent = _state.TimeScaleDefault;
 						_state.Paused = false;
-						// FIXME: FMOD
-						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 1 : 0);
 						_game.Pause.Hide();
+						_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
 					}
 					else
 					{
 						_state.TimeScaleCurrent = 0f;
 						_state.Paused = true;
-						// FIXME: FMOD
-						// _audioPlayer.SetMusicVolume(_state.IsMusicPlaying ? 0.1f : 0);
-						_ = _game.Pause.Show();
+						_ = _game.Pause.Show("Pause");
+						_pauseSnapshot.start();
 					}
 				}
 
