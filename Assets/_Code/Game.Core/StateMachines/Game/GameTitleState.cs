@@ -55,7 +55,10 @@ namespace Game.Core.StateMachines.Game
 			if (Keyboard.current.escapeKey.wasReleasedThisFrame)
 			{
 				if (_game.Pause.IsOpened)
+				{
 					_game.Pause.Hide();
+					_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
+				}
 				else
 					Quit();
 			}
@@ -128,7 +131,10 @@ namespace Game.Core.StateMachines.Game
 		private void ToggleOptions()
 		{
 			if (_game.Pause.IsOpened)
+			{
 				_game.Pause.Hide();
+				_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
+			}
 			else
 				_ = _game.Pause.Show("Options", false);
 		}

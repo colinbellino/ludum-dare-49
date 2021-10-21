@@ -35,6 +35,7 @@ namespace Game.Core
 			Game.Pause = pause;
 			Game.State = new GameState();
 			Game.GameFSM = new GameFSM(config.DebugFSM, Game);
+			Game.Save = new Save();
 			Game.InputRecorder = inputRecorder;
 
 			await Game.GameFSM.Start();
