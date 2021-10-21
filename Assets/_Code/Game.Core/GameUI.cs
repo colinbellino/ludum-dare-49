@@ -106,6 +106,10 @@ namespace Game.Core
 			await _titleWrapper.DOLocalMoveY(128, duration / _game.State.TimeScaleCurrent);
 			_titleRoot.SetActive(false);
 		}
+		public void SelectTitleOptionsGameObject()
+		{
+			EventSystem.current.SetSelectedGameObject(OptionsButton.gameObject);
+		}
 
 		public async UniTask ShowLevelName(string title, float duration = 0.5f)
 		{

@@ -2,6 +2,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using FMOD.Studio;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Game.Core.StateMachines.Game
@@ -44,13 +45,14 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		public override void Tick()
+		public override async void Tick()
 		{
 			if (_controls.Global.Cancel.WasPerformedThisFrame())
 			{
-				if (_game.Pause.IsOpened)
+				if (_game.OptionsUI.IsOpened)
 				{
-					_game.Pause.Hide();
+					await _game.OptionsUI.Hide();
+					_game.UI.SelectTitleOptionsGameObject();
 					_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
 				}
 				else
@@ -84,19 +86,18 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		public override async UniTask Exit()
+		public override UniTask Exit()
 		{
 			_music.stop(STOP_MODE.ALLOWFADEOUT);
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
 
-			await _ui.HideTitle();
-			await _ui.FadeIn(Color.black);
-
 			_ui.StartButton.onClick.RemoveListener(StartGame);
 			_ui.OptionsButton.onClick.RemoveListener(ToggleOptions);
 			_ui.QuitButton.onClick.RemoveListener(Quit);
+
+			return default;
 		}
 
 		private async void LoadLevel(int levelIndex)
@@ -104,11 +105,16 @@ namespace Game.Core.StateMachines.Game
 			Debug.Log($"Loading level {levelIndex}.");
 			_state.CurrentLevelIndex = levelIndex;
 			await _ui.FadeIn(Color.black, 0);
+			await _ui.HideTitle(0);
+			await _game.OptionsUI.Hide(0);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private void StartGame()
+		private async void StartGame()
 		{
+			await _ui.HideTitle();
+			await _ui.FadeIn(Color.black);
+
 			if (_state.PlayerSaveData.ClearedLevels.Count == 0)
 			{
 				_state.CurrentLevelIndex = 0;
@@ -117,18 +123,12 @@ namespace Game.Core.StateMachines.Game
 				return;
 			}
 
-			_fsm.Fire(GameFSM.Triggers.Continue);
+			_fsm.Fire(GameFSM.Triggers.LevelSelectionRequested);
 		}
 
 		private void ToggleOptions()
 		{
-			if (_game.Pause.IsOpened)
-			{
-				_game.Pause.Hide();
-				_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
-			}
-			else
-				_ = _game.Pause.Show("Options", false);
+			_ = _game.OptionsUI.Show();
 		}
 
 		private void Quit()
