@@ -148,7 +148,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &3245541951630198499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1030,10 +1030,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Options Button
       objectReference: {fileID: 0}
-    - target: {fileID: 7141564959778247296, guid: e8047d3628dec0f4aa9cc7f851d2ef9c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.47000122
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8047d3628dec0f4aa9cc7f851d2ef9c, type: 3}
 --- !u!224 &6493999780043467351 stripped
@@ -1139,10 +1135,6 @@ PrefabInstance:
     - target: {fileID: 6574256695883982307, guid: e8047d3628dec0f4aa9cc7f851d2ef9c, type: 3}
       propertyPath: m_Name
       value: Start Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 7141564959778247296, guid: e8047d3628dec0f4aa9cc7f851d2ef9c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.47000122
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8047d3628dec0f4aa9cc7f851d2ef9c, type: 3}
