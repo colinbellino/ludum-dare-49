@@ -631,6 +631,9 @@ AngerProgress: {GetAngerParam(Player)}
 
 		private void NextLevel()
 		{
+			_game.State.PlayerSaveData.ClearedLevels.Add(_state.CurrentLevelIndex);
+			_game.Save.SavePlayerSaveData(_game.State.PlayerSaveData);
+
 			_state.CurrentLevelIndex += 1;
 
 			if (_state.CurrentLevelIndex == _config.Levels.Length - 1)

@@ -54,18 +54,6 @@ namespace Game.Core
 			HideGameplay();
 			await HideTitle(0);
 			await HideLevelSelection(0);
-
-			StartButton.onClick.AddListener(PlayButtonClip);
-			QuitButton.onClick.AddListener(PlayButtonClip);
-			foreach (var button in LevelButtons)
-			{
-				button.onClick.AddListener(PlayButtonClip);
-			}
-		}
-
-		private void PlayButtonClip()
-		{
-			AudioHelpers.PlayOneShot(_game.Config.SoundMenuConfirm);
 		}
 
 		public void ShowDebug() { _debugRoot.SetActive(true); }
@@ -102,8 +90,10 @@ namespace Game.Core
 			_angerMeterCache.sizeDelta = cacheSize;
 		}
 
-		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
+		public async UniTask ShowTitle(string startButtonText, CancellationToken cancellationToken, float duration = 0.5f)
 		{
+			StartButton.GetComponentInChildren<TMP_Text>().text = startButtonText;
+
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
 			EventSystem.current.SetSelectedGameObject(StartButton.gameObject);
