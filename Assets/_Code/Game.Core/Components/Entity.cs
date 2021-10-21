@@ -26,6 +26,7 @@ namespace Game.Core
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;
 		[HideInInspector] public int AngerProgress;
+		[SerializeField] public int AngerMax = 2;
 		[SerializeField] public AngerStates AngerState;
 
 		[Header("Triggers")]
