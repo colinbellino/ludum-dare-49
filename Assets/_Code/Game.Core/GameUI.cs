@@ -119,7 +119,7 @@ namespace Game.Core
 			_levelNameRoot.SetActive(false);
 		}
 
-		public UniTask ShowLevelSelection(float duration = 0.5f)
+		public async UniTask ShowLevelSelection(float duration = 0.5f)
 		{
 			_levelSelectionRoot.SetActive(true);
 
@@ -145,7 +145,9 @@ namespace Game.Core
 				}
 			}
 
-			return default;
+			EventSystem.current.SetSelectedGameObject(null);
+			await UniTask.NextFrame();
+			EventSystem.current.SetSelectedGameObject(LevelButtons[0].gameObject);
 		}
 		public UniTask HideLevelSelection(float duration = 0.5f)
 		{

@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static Game.Core.Utils;
 
@@ -25,6 +26,7 @@ namespace Game.Core.StateMachines.Game
 
 			_state.PlayerSettings = _game.Save.LoadPlayerSettings();
 			_state.PlayerSaveData = _game.Save.LoadPlayerSaveData();
+			UnityEngine.Debug.Log("Level cleared: " + _state.PlayerSaveData.ClearedLevels.Count);
 
 			await _game.UI.Init(_game);
 			await _game.Pause.Init(_game);
