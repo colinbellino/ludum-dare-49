@@ -31,7 +31,7 @@ namespace Game.Core.StateMachines.Game
 			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
-			await _ui.ShowTitle(_cancellationSource.Token);
+			await _ui.ShowTitle(_state.PlayerSaveData.ClearedLevels.Count == 0 ? "Start" : "Continue", _cancellationSource.Token);
 			for (int i = 0; i < _ui.LevelButtons.Length; i++)
 			{
 				var button = _ui.LevelButtons[i];
@@ -52,7 +52,7 @@ namespace Game.Core.StateMachines.Game
 
 		public override void Tick()
 		{
-			if (Keyboard.current.escapeKey.wasReleasedThisFrame)
+			if (_controls.Global.Cancel.WasPerformedThisFrame())
 			{
 				if (_game.Pause.IsOpened)
 				{
@@ -62,8 +62,6 @@ namespace Game.Core.StateMachines.Game
 				else
 					Quit();
 			}
-
-			if (Keyboard.current.tabKey.wasReleasedThisFrame) { _ui.ToggleLevelSelection(); }
 
 			if (Utils.IsDevBuild())
 			{
@@ -92,7 +90,7 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		public override async UniTask Exit()
+		public override UniTask Exit()
 		{
 			_music.stop(STOP_MODE.ALLOWFADEOUT);
 
@@ -103,14 +101,14 @@ namespace Game.Core.StateMachines.Game
 			_ui.OptionsButton.onClick.RemoveListener(ToggleOptions);
 			_ui.QuitButton.onClick.RemoveListener(Quit);
 
-			await _ui.HideTitle();
-			_ = _ui.HideLevelSelection();
 			for (int i = 0; i < _ui.LevelButtons.Length; i++)
 			{
 				var button = _ui.LevelButtons[i];
 				int levelIndex = i;
 				button.onClick.RemoveListener(() => LoadLevel(levelIndex));
 			}
+
+			return default;
 		}
 
 		private async void LoadLevel(int levelIndex)
@@ -123,9 +121,22 @@ namespace Game.Core.StateMachines.Game
 
 		private async void StartGame()
 		{
-			_state.CurrentLevelIndex = 0;
+			_cancellationSource.Cancel();
+
+			await _ui.HideTitle();
 			await _ui.FadeIn(Color.black);
-			_fsm.Fire(GameFSM.Triggers.LevelSelected);
+
+			if (_state.PlayerSaveData.ClearedLevels.Count == 0)
+			{
+				_state.CurrentLevelIndex = 0;
+				await _ui.FadeOut();
+				_fsm.Fire(GameFSM.Triggers.LevelSelected);
+
+				return;
+			}
+
+			await _ui.ShowLevelSelection();
+			await _ui.FadeOut();
 		}
 
 		private void ToggleOptions()

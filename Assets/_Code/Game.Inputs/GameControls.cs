@@ -37,6 +37,15 @@ namespace Game.Inputs
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=1)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""a3e8f8db-fef2-4336-a587-d99b6dc3e268"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -61,6 +70,28 @@ namespace Game.Inputs
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d40badd4-b709-4cd7-8d48-eacbfe027691"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""babb51fe-c801-4151-b741-69670c17cd0c"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -81,15 +112,6 @@ namespace Game.Inputs
                     ""name"": ""Confirm"",
                     ""type"": ""Button"",
                     ""id"": ""59e2b5e2-a2c3-4160-9526-b74d6651644b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Press(behavior=1)"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Cancel"",
-                    ""type"": ""Button"",
-                    ""id"": ""c34bc2a5-f988-403c-a49c-63a70f076efa"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=1)"",
@@ -262,28 +284,6 @@ namespace Game.Inputs
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fa0bc75b-21a3-47a1-a01c-283b43ed7bd3"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Cancel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2a47b54e-ee1b-4115-9528-9334cdc65f5c"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Cancel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""dc5751be-1447-4cd4-94b1-21972a5591e3"",
                     ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
@@ -312,11 +312,11 @@ namespace Game.Inputs
             // Global
             m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
             m_Global_Pause = m_Global.FindAction("Pause", throwIfNotFound: true);
+            m_Global_Cancel = m_Global.FindAction("Cancel", throwIfNotFound: true);
             // Gameplay
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
             m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
             m_Gameplay_Confirm = m_Gameplay.FindAction("Confirm", throwIfNotFound: true);
-            m_Gameplay_Cancel = m_Gameplay.FindAction("Cancel", throwIfNotFound: true);
             m_Gameplay_Reset = m_Gameplay.FindAction("Reset", throwIfNotFound: true);
         }
 
@@ -378,11 +378,13 @@ namespace Game.Inputs
         private readonly InputActionMap m_Global;
         private IGlobalActions m_GlobalActionsCallbackInterface;
         private readonly InputAction m_Global_Pause;
+        private readonly InputAction m_Global_Cancel;
         public struct GlobalActions
         {
             private @GameControls m_Wrapper;
             public GlobalActions(@GameControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Pause => m_Wrapper.m_Global_Pause;
+            public InputAction @Cancel => m_Wrapper.m_Global_Cancel;
             public InputActionMap Get() { return m_Wrapper.m_Global; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -395,6 +397,9 @@ namespace Game.Inputs
                     @Pause.started -= m_Wrapper.m_GlobalActionsCallbackInterface.OnPause;
                     @Pause.performed -= m_Wrapper.m_GlobalActionsCallbackInterface.OnPause;
                     @Pause.canceled -= m_Wrapper.m_GlobalActionsCallbackInterface.OnPause;
+                    @Cancel.started -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
+                    @Cancel.performed -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
+                    @Cancel.canceled -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
                 }
                 m_Wrapper.m_GlobalActionsCallbackInterface = instance;
                 if (instance != null)
@@ -402,6 +407,9 @@ namespace Game.Inputs
                     @Pause.started += instance.OnPause;
                     @Pause.performed += instance.OnPause;
                     @Pause.canceled += instance.OnPause;
+                    @Cancel.started += instance.OnCancel;
+                    @Cancel.performed += instance.OnCancel;
+                    @Cancel.canceled += instance.OnCancel;
                 }
             }
         }
@@ -412,7 +420,6 @@ namespace Game.Inputs
         private IGameplayActions m_GameplayActionsCallbackInterface;
         private readonly InputAction m_Gameplay_Move;
         private readonly InputAction m_Gameplay_Confirm;
-        private readonly InputAction m_Gameplay_Cancel;
         private readonly InputAction m_Gameplay_Reset;
         public struct GameplayActions
         {
@@ -420,7 +427,6 @@ namespace Game.Inputs
             public GameplayActions(@GameControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Move => m_Wrapper.m_Gameplay_Move;
             public InputAction @Confirm => m_Wrapper.m_Gameplay_Confirm;
-            public InputAction @Cancel => m_Wrapper.m_Gameplay_Cancel;
             public InputAction @Reset => m_Wrapper.m_Gameplay_Reset;
             public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
             public void Enable() { Get().Enable(); }
@@ -437,9 +443,6 @@ namespace Game.Inputs
                     @Confirm.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnConfirm;
                     @Confirm.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnConfirm;
                     @Confirm.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnConfirm;
-                    @Cancel.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCancel;
-                    @Cancel.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCancel;
-                    @Cancel.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnCancel;
                     @Reset.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReset;
                     @Reset.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReset;
                     @Reset.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnReset;
@@ -453,9 +456,6 @@ namespace Game.Inputs
                     @Confirm.started += instance.OnConfirm;
                     @Confirm.performed += instance.OnConfirm;
                     @Confirm.canceled += instance.OnConfirm;
-                    @Cancel.started += instance.OnCancel;
-                    @Cancel.performed += instance.OnCancel;
-                    @Cancel.canceled += instance.OnCancel;
                     @Reset.started += instance.OnReset;
                     @Reset.performed += instance.OnReset;
                     @Reset.canceled += instance.OnReset;
@@ -466,12 +466,12 @@ namespace Game.Inputs
         public interface IGlobalActions
         {
             void OnPause(InputAction.CallbackContext context);
+            void OnCancel(InputAction.CallbackContext context);
         }
         public interface IGameplayActions
         {
             void OnMove(InputAction.CallbackContext context);
             void OnConfirm(InputAction.CallbackContext context);
-            void OnCancel(InputAction.CallbackContext context);
             void OnReset(InputAction.CallbackContext context);
         }
     }
