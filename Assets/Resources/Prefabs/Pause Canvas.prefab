@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pauseRoot: {fileID: 6021203254701797623}
-  _titleText: {fileID: 0}
+  _titleText: {fileID: 3000558159477462978}
   _gameSlider: {fileID: 1752597864710838910}
   _soundSlider: {fileID: 3059272667863987247}
   _musicSlider: {fileID: 1738740466161821528}
@@ -453,11 +453,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5221080431964512358, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5221080431964512358, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5221080431964512358, guid: ebf591776193c904b9ee98500089364c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5221080432031357200, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_Name
@@ -549,23 +553,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5221080432091648153, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5221080432189105891, guid: ebf591776193c904b9ee98500089364c, type: 3}
-      propertyPath: m_Size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5221080432869143306, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5221080432869143306, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5221080432869143306, guid: ebf591776193c904b9ee98500089364c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5221080433553210167, guid: ebf591776193c904b9ee98500089364c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5221080433553210167, guid: ebf591776193c904b9ee98500089364c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebf591776193c904b9ee98500089364c, type: 3}

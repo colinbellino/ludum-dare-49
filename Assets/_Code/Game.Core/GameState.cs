@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using FMOD.Studio;
 using NesScripts.Controls.PathFind;
+using UnityEngine;
+using System;
 
 namespace Game.Core
 {
@@ -25,5 +27,20 @@ namespace Game.Core
 		public List<Entity> Entities = new List<Entity>(30);
 		public int KeysPickedUp;
 		public int KeysInLevel;
+
+		public PlayerSettings PlayerSettings;
+	}
+
+	[Serializable]
+	public struct PlayerSettings
+	{
+		public float GameVolume;
+		public float SoundVolume;
+		public float MusicVolume;
+
+		public bool FullScreen;
+		public int ResolutionWidth;
+		public int ResolutionHeight;
+		public int ResolutionRefreshRate;
 	}
 }

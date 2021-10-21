@@ -23,6 +23,8 @@ namespace Game.Core.StateMachines.Game
 			_state.DebugLevels = new Level[0];
 			_state.AllLevels = _config.Levels;
 
+			_state.PlayerSettings = _game.Save.LoadPlayerSettings();
+
 			await _game.UI.Init(_game);
 			await _game.Pause.Init(_game);
 

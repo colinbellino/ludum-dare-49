@@ -45,15 +45,10 @@ namespace Game.Core
 		{
 			_titleText.text = title;
 			_pauseRoot.SetActive(true);
-			_fullscreenToggle.isOn = Screen.fullScreen;
-			float volume;
-			_game.State.GameBus.getVolume(out volume);
-			_gameSlider.value = volume;
-			_game.State.SoundBus.getVolume(out volume);
-			_soundSlider.value = volume;
-			_game.State.MusicBus.getVolume(out volume);
-			_musicSlider.value = volume;
-			_fullscreenToggle.isOn = Screen.fullScreen;
+			_gameSlider.value = _game.State.PlayerSettings.GameVolume;
+			_soundSlider.value = _game.State.PlayerSettings.SoundVolume;
+			_musicSlider.value = _game.State.PlayerSettings.MusicVolume;
+			_fullscreenToggle.isOn = _game.State.PlayerSettings.FullScreen;
 			_quitButton.gameObject.SetActive(showQuitButton);
 
 			EventSystem.current.SetSelectedGameObject(null);
@@ -67,19 +62,38 @@ namespace Game.Core
 			return default;
 		}
 
+		private void SetGameVolume(float value)
+		{
+			_game.State.GameBus.setVolume(value);
+			_game.State.PlayerSettings.GameVolume = value;
+		}
+
+		private void SetSoundVolume(float value)
+		{
+			_game.State.SoundBus.setVolume(value);
+			_game.State.PlayerSettings.SoundVolume = value;
+		}
+
+		private void SetMusicVolume(float value)
+		{
+			_game.State.MusicBus.setVolume(value);
+			_game.State.PlayerSettings.MusicVolume = value;
+		}
+
+		private void ToggleFullscreen(bool value)
+		{
+			Screen.fullScreen = value;
+			_game.State.PlayerSettings.FullScreen = value;
+		}
+
 		private void OnResolutionChanged(int index)
 		{
 			var resolution = _resolutions[index];
 			Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreenMode, resolution.refreshRate);
+			_game.State.PlayerSettings.ResolutionWidth = resolution.width;
+			_game.State.PlayerSettings.ResolutionHeight = resolution.height;
+			_game.State.PlayerSettings.ResolutionRefreshRate = resolution.refreshRate;
 		}
-
-		private void SetGameVolume(float value) => _game.State.GameBus.setVolume(value);
-
-		private void SetSoundVolume(float value) => _game.State.SoundBus.setVolume(value);
-
-		private void SetMusicVolume(float value) => _game.State.MusicBus.setVolume(value);
-
-		private void ToggleFullscreen(bool value) => Screen.fullScreen = value;
 
 		private void QuitGame() => _game.GameFSM.Fire(StateMachines.Game.GameFSM.Triggers.Quit);
 	}
