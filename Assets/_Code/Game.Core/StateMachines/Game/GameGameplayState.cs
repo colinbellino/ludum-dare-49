@@ -65,8 +65,8 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", Player.AngerProgress);
 			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
 
 			_state.Running = true;
 
@@ -170,8 +170,8 @@ namespace Game.Core.StateMachines.Game
 - K: toggle replay
 - R: restart
 
-State: {(Player.AngerState == AngerStates.Calm ? 0 : 1)}
-Progress: {Player.AngerProgress}
+AngerState: {(Player.AngerState == AngerStates.Calm ? 0 : 1)}
+AngerProgress: {GetAngerParam(Player)}
 ");
 			}
 
@@ -332,15 +332,18 @@ Progress: {Player.AngerProgress}
 							entity.AngerProgress += 1;
 
 							if (entity == Player)
-								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", Player.AngerProgress);
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
 
-							if (entity.AngerProgress >= 3)
+							if (entity.AngerProgress > entity.AngerMax)
 							{
 								entity.AngerProgress = 0;
 								entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
 								entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
 								if (entity == Player)
+								{
 									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
+								}
 
 								entity.Direction = Vector3Int.down;
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
@@ -412,6 +415,14 @@ Progress: {Player.AngerProgress}
 
 			var length = entity.AnimationClipLength[clipName];
 			return UniTask.Delay(System.TimeSpan.FromSeconds(length / _state.TimeScaleCurrent));
+		}
+
+
+		private static int GetAngerParam(Entity entity)
+		{
+			if (entity.AngerState == AngerStates.Calm)
+				return -entity.AngerMax + entity.AngerProgress;
+			return entity.AngerMax - entity.AngerProgress;
 		}
 
 		private void Victory()
