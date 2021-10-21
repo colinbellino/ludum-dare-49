@@ -8,8 +8,8 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameFSM
 	{
-		public enum States { Init, Title, LoadLevel, Gameplay, Quit }
-		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, Quit }
+		public enum States { Init, Title, SelectLevel, LoadLevel, Gameplay, Quit }
+		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, Continue, Quit }
 
 		private readonly bool _debug;
 		private readonly Dictionary<States, IState> _states;
@@ -25,6 +25,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				{ States.Init, new GameInitState(this, game) },
 				{ States.Title, new GameTitleState(this, game) },
+				{ States.SelectLevel, new GameSelectLevelState(this, game) },
 				{ States.LoadLevel, new GameLoadLevelState(this, game) },
 				{ States.Gameplay, new GameGameplayState(this, game) },
 				{ States.Quit, new GameQuitState(this, game) },
@@ -37,6 +38,11 @@ namespace Game.Core.StateMachines.Game
 				.Permit(Triggers.Done, States.Title);
 
 			_machine.Configure(States.Title)
+				.Permit(Triggers.LevelSelected, States.LoadLevel)
+				.Permit(Triggers.Continue, States.SelectLevel)
+				.Permit(Triggers.Quit, States.Quit);
+
+			_machine.Configure(States.SelectLevel)
 				.Permit(Triggers.LevelSelected, States.LoadLevel)
 				.Permit(Triggers.Quit, States.Quit);
 

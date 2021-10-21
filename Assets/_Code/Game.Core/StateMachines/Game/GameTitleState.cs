@@ -32,12 +32,6 @@ namespace Game.Core.StateMachines.Game
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
 			await _ui.ShowTitle(_state.PlayerSaveData.ClearedLevels.Count == 0 ? "Start" : "Continue", _cancellationSource.Token);
-			for (int i = 0; i < _ui.LevelButtons.Length; i++)
-			{
-				var button = _ui.LevelButtons[i];
-				int levelIndex = i;
-				button.onClick.AddListener(() => LoadLevel(levelIndex));
-			}
 
 			if (Utils.IsDevBuild())
 			{
@@ -90,25 +84,19 @@ namespace Game.Core.StateMachines.Game
 			}
 		}
 
-		public override UniTask Exit()
+		public override async UniTask Exit()
 		{
 			_music.stop(STOP_MODE.ALLOWFADEOUT);
 
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
 
+			await _ui.HideTitle();
+			await _ui.FadeIn(Color.black);
+
 			_ui.StartButton.onClick.RemoveListener(StartGame);
 			_ui.OptionsButton.onClick.RemoveListener(ToggleOptions);
 			_ui.QuitButton.onClick.RemoveListener(Quit);
-
-			for (int i = 0; i < _ui.LevelButtons.Length; i++)
-			{
-				var button = _ui.LevelButtons[i];
-				int levelIndex = i;
-				button.onClick.RemoveListener(() => LoadLevel(levelIndex));
-			}
-
-			return default;
 		}
 
 		private async void LoadLevel(int levelIndex)
@@ -119,24 +107,17 @@ namespace Game.Core.StateMachines.Game
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}
 
-		private async void StartGame()
+		private void StartGame()
 		{
-			_cancellationSource.Cancel();
-
-			await _ui.HideTitle();
-			await _ui.FadeIn(Color.black);
-
 			if (_state.PlayerSaveData.ClearedLevels.Count == 0)
 			{
 				_state.CurrentLevelIndex = 0;
-				await _ui.FadeOut();
 				_fsm.Fire(GameFSM.Triggers.LevelSelected);
 
 				return;
 			}
 
-			await _ui.ShowLevelSelection();
-			await _ui.FadeOut();
+			_fsm.Fire(GameFSM.Triggers.Continue);
 		}
 
 		private void ToggleOptions()
