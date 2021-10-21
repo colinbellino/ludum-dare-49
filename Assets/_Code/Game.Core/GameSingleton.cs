@@ -8,7 +8,8 @@ namespace Game.Core
 	{
 		public GameConfig Config;
 		public GameUI UI;
-		public Pause Pause;
+		public PauseUI PauseUI;
+		public OptionsUI OptionsUI;
 		public CameraRig CameraRig;
 		public GameControls Controls;
 		public GameState State;

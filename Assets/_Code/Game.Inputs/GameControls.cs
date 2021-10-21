@@ -85,7 +85,7 @@ namespace Game.Inputs
                 {
                     ""name"": """",
                     ""id"": ""babb51fe-c801-4151-b741-69670c17cd0c"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
