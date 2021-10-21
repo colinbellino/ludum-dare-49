@@ -7,7 +7,7 @@ namespace Game.Core
 	{
 		public static void PlayButtonClip()
 		{
-			FMODUnity.RuntimeManager.PlayOneShot(GameManager.Game.Config.SoundMenuConfirm);
+			AudioHelpers.PlayOneShot(GameManager.Game.Config.SoundMenuConfirm);
 		}
 
 		public void SetSelectedGameObject()
