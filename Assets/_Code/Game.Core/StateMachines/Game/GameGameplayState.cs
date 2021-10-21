@@ -176,30 +176,31 @@ AngerProgress: {GetAngerParam(Player)}
 
 			if (_state.Running)
 			{
-				if (_controls.Global.Cancel.WasPerformedThisFrame())
+				if (_controls.Global.Pause.WasPerformedThisFrame())
 				{
 					if (_state.Paused)
 					{
-						if (_game.OptionsUI.IsOpened)
-						{
-							_game.OptionsUI.Hide();
-							_game.PauseUI.SelectOptionsGameObject();
-							_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
-						}
-						else
-						{
-							_state.TimeScaleCurrent = _state.TimeScaleDefault;
-							_state.Paused = false;
-							_game.PauseUI.Hide();
-							_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
-						}
+						_state.TimeScaleCurrent = _state.TimeScaleDefault;
+						_state.Paused = false;
+						_game.PauseUI.Hide();
+						_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
 					}
 					else
 					{
 						_state.TimeScaleCurrent = 0f;
 						_state.Paused = true;
-						_ = _game.PauseUI.Show("Pause");
+						_ = _game.PauseUI.Show();
 						_pauseSnapshot.start();
+					}
+				}
+
+				if (_controls.Global.Cancel.WasPerformedThisFrame())
+				{
+					if (_game.OptionsUI.IsOpened)
+					{
+						_game.OptionsUI.Hide();
+						_game.PauseUI.SelectOptionsGameObject();
+						_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
 					}
 				}
 
@@ -261,6 +262,7 @@ AngerProgress: {GetAngerParam(Player)}
 		{
 			await base.Exit();
 
+			_state.TimeScaleCurrent = _state.TimeScaleDefault;
 			_state.Running = false;
 
 			if (_controller != null)
@@ -285,6 +287,9 @@ AngerProgress: {GetAngerParam(Player)}
 
 			await _ui.HideLevelName(0);
 			_ui.HideGameplay();
+
+			await _game.PauseUI.Hide(0);
+			await _game.OptionsUI.Hide(0);
 
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
