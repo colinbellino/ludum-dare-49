@@ -82,11 +82,7 @@ namespace Game.Core.StateMachines.Game
 			Log($"GameFSM: {transition.Source} -> {transition.Destination}");
 
 			// Log($"GameFSM: {transition.Destination}.Enter (before)");
-			try
-			{
-				await _currentState.Enter();
-			}
-			catch { }
+			await _currentState.Enter();
 			// Log($"GameFSM: {transition.Destination}.Enter (after)");
 		}
 

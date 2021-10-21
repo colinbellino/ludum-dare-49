@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FMOD.Studio;
 using NesScripts.Controls.PathFind;
 using UnityEngine;
-using System;
 
 namespace Game.Core
 {
@@ -29,6 +29,7 @@ namespace Game.Core
 		public int KeysInLevel;
 
 		public PlayerSettings PlayerSettings;
+		public PlayerSaveData PlayerSaveData;
 	}
 
 	[Serializable]
@@ -42,5 +43,11 @@ namespace Game.Core
 		public int ResolutionWidth;
 		public int ResolutionHeight;
 		public int ResolutionRefreshRate;
+	}
+
+	[Serializable]
+	public struct PlayerSaveData
+	{
+		public HashSet<int> ClearedLevels;
 	}
 }
