@@ -181,6 +181,7 @@ namespace Game.Core.StateMachines.Game
 						_state.TimeScaleCurrent = _state.TimeScaleDefault;
 						_state.Paused = false;
 						_game.Pause.Hide();
+						_game.Save.SavePlayerSettings(_game.State.PlayerSettings);
 						_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
 					}
 					else
