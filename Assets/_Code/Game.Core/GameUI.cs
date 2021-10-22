@@ -127,21 +127,28 @@ namespace Game.Core
 		{
 			_levelSelectionRoot.SetActive(true);
 
-			for (int i = 0; i < LevelButtons.Length; i++)
+			for (int levelIndex = 0; levelIndex < LevelButtons.Length; levelIndex++)
 			{
-				var button = LevelButtons[i];
-				if (i < _game.State.AllLevels.Length)
-				{
-					var image = button.GetComponentInChildren<RawImage>();
-					var text = button.GetComponentInChildren<TMP_Text>();
-					var level = _game.State.AllLevels[i];
+				var button = LevelButtons[levelIndex];
+				var image = button.GetComponentInChildren<RawImage>();
 
-					text.text = $"Level {Utils.GetLevelIndex(i)}";
-					if (_game.Config.Levels.Contains(level) == false)
+				if (levelIndex < _game.State.AllLevels.Length)
+				{
+					var text = button.GetComponentInChildren<TMP_Text>();
+
+					if (levelIndex == 0 || _game.State.PlayerSaveData.ClearedLevels.Contains(levelIndex - 1))
 					{
-						text.text = level.name;
+						var level = _game.State.AllLevels[levelIndex];
+						button.interactable = true;
+						text.text = $"Level {Utils.GetLevelIndex(levelIndex)}";
+						image.texture = level.Screenshot;
 					}
-					image.texture = level.Screenshot;
+					else
+					{
+						button.interactable = false;
+						text.text = "???";
+						image.texture = null;
+					}
 				}
 				else
 				{
@@ -151,7 +158,8 @@ namespace Game.Core
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(LevelButtons[0].gameObject);
+			var nextLevelIndex = Math.Min(_game.State.PlayerSaveData.ClearedLevels.LastOrDefault() + 1, _game.State.AllLevels.Length - 1);
+			EventSystem.current.SetSelectedGameObject(LevelButtons[nextLevelIndex].gameObject);
 		}
 		public UniTask HideLevelSelection(float duration = 0.5f)
 		{

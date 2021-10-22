@@ -262,6 +262,9 @@ AngerProgress: {GetAngerParam(Player)}
 		{
 			await base.Exit();
 
+			_controls.Gameplay.Disable();
+			_controls.Gameplay.Move.performed -= OnMovePerformed;
+
 			_state.TimeScaleCurrent = _state.TimeScaleDefault;
 			_state.Running = false;
 
@@ -280,14 +283,9 @@ AngerProgress: {GetAngerParam(Player)}
 			}
 #endif
 
-			_controls.Gameplay.Disable();
-			_controls.Gameplay.Move.performed -= OnMovePerformed;
-
 			await _ui.FadeIn(Color.black);
-
 			await _ui.HideLevelName(0);
 			_ui.HideGameplay();
-
 			await _game.PauseUI.Hide(0);
 			await _game.OptionsUI.Hide(0);
 
