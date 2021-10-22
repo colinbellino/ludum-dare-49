@@ -25,7 +25,6 @@ namespace Game.Core.StateMachines.Game
 
 			_state.PlayerSettings = _game.Save.LoadPlayerSettings();
 			_state.PlayerSaveData = _game.Save.LoadPlayerSaveData();
-			UnityEngine.Debug.Log("Level cleared: " + _state.PlayerSaveData.ClearedLevels.Count);
 
 			_controls.Global.Enable();
 
@@ -35,10 +34,13 @@ namespace Game.Core.StateMachines.Game
 
 			if (IsDevBuild())
 			{
-				_state.DebugLevels = Resources.LoadAll<Level>("Levels/Debug");
-				_state.AllLevels = new Level[_config.Levels.Length + _state.DebugLevels.Length];
-				_config.Levels.CopyTo(_state.AllLevels, 0);
-				_state.DebugLevels.CopyTo(_state.AllLevels, _config.Levels.Length);
+				if (_config.DebugLevels)
+				{
+					_state.DebugLevels = Resources.LoadAll<Level>("Levels/Debug");
+					_state.AllLevels = new Level[_config.Levels.Length + _state.DebugLevels.Length];
+					_config.Levels.CopyTo(_state.AllLevels, 0);
+					_state.DebugLevels.CopyTo(_state.AllLevels, _config.Levels.Length);
+				}
 
 				_ui.ShowDebug();
 

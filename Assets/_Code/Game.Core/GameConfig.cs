@@ -10,11 +10,12 @@ namespace Game.Core
 	{
 		[Header("DEBUG")]
 		public bool DebugFSM;
+		public bool DebugLevels;
 		public int LockFPS = 60;
 		public bool TakeScreenshots;
 
 		[Header("CONTENT")]
-		[UnityEngine.Serialization.FormerlySerializedAs("AllLevels")] public Level[] Levels;
+		public Level[] Levels;
 		public TileToEntity TileToEntity;
 
 		[Header("AUDIO")]
