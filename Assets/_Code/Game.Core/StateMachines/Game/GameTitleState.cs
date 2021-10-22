@@ -78,9 +78,8 @@ namespace Game.Core.StateMachines.Game
 				if (Keyboard.current.kKey.wasReleasedThisFrame)
 				{
 					UnityEngine.Debug.Log("Starting in replay mode.");
-					_state.CurrentLevelIndex = 0;
 					_state.IsReplaying = true;
-					_fsm.Fire(GameFSM.Triggers.LevelSelected);
+					LoadLevel(0);
 				}
 			}
 		}
