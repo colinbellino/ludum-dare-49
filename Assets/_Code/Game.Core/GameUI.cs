@@ -29,16 +29,10 @@ namespace Game.Core
 		[SerializeField] public Button QuitButton;
 		[Header("Level Selection")]
 		[SerializeField] public GameObject _levelSelectionRoot;
-		[SerializeField] public Button[] LevelButtons;
+		[SerializeField] public LevelButton[] LevelButtons;
 		[Header("Transitions")]
 		[SerializeField] private GameObject _fadeRoot;
 		[SerializeField] private Image _fadeToBlackImage;
-
-		internal void SetDebugText(object baseUIText)
-		{
-			throw new NotImplementedException();
-		}
-
 		[Header("Level Name")]
 		[SerializeField] private GameObject _levelNameRoot;
 		[SerializeField] public TMP_Text _levelNameText;
@@ -130,35 +124,37 @@ namespace Game.Core
 			for (int levelIndex = 0; levelIndex < LevelButtons.Length; levelIndex++)
 			{
 				var button = LevelButtons[levelIndex];
-				var image = button.GetComponentInChildren<RawImage>();
 
 				if (levelIndex < _game.State.AllLevels.Length)
 				{
-					var text = button.GetComponentInChildren<TMP_Text>();
-
 					if (levelIndex == 0 || _game.State.PlayerSaveData.ClearedLevels.Contains(levelIndex - 1))
 					{
 						var level = _game.State.AllLevels[levelIndex];
-						button.interactable = true;
-						text.text = $"Level {Utils.GetLevelIndex(levelIndex)}";
-						image.texture = level.Screenshot;
+						button.Button.interactable = true;
+						// button.Text.text = $"Level {Utils.GetLevelIndex(levelIndex)}";
+						button.Text.text = level.Title;
+						button.Thumbnail.gameObject.SetActive(true);
+						button.Thumbnail.texture = level.Screenshot;
 					}
 					else
 					{
-						button.interactable = false;
-						text.text = "???";
-						image.texture = null;
+						button.Button.interactable = false;
+						button.Text.text = "???";
+						button.Thumbnail.gameObject.SetActive(false);
 					}
 				}
 				else
 				{
+					button.Button.interactable = false;
 					button.gameObject.SetActive(false);
 				}
 			}
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			var nextLevelIndex = Math.Min(_game.State.PlayerSaveData.ClearedLevels.LastOrDefault() + 1, _game.State.AllLevels.Length - 1);
+			var nextLevelIndex = 0;
+			if (_game.State.PlayerSaveData.ClearedLevels.Count > 0)
+				nextLevelIndex = Math.Min(_game.State.PlayerSaveData.ClearedLevels.LastOrDefault() + 1, _game.State.AllLevels.Length - 1);
 			EventSystem.current.SetSelectedGameObject(LevelButtons[nextLevelIndex].gameObject);
 		}
 		public UniTask HideLevelSelection(float duration = 0.5f)

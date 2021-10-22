@@ -26,6 +26,8 @@ namespace Game.Core.StateMachines.Game
 			_state.PlayerSettings = _game.Save.LoadPlayerSettings();
 			_state.PlayerSaveData = _game.Save.LoadPlayerSaveData();
 
+			_game.LevelWalls.SetActive(false);
+
 			_controls.Global.Enable();
 
 			await _game.UI.Init(_game);

@@ -1,5 +1,6 @@
 ﻿using Game.Core.StateMachines.Game;
 using Game.Inputs;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Game.Core
@@ -16,5 +17,6 @@ namespace Game.Core
 		public GameFSM GameFSM;
 		public Save Save;
 		public InputRecorder InputRecorder;
+		public GameObject LevelWalls;
 	}
 }
