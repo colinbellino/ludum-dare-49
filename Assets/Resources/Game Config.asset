@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Game Config
   m_EditorClassIdentifier: 
   DebugFSM: 0
+  DebugLevels: 0
   LockFPS: 60
   TakeScreenshots: 0
   Levels:

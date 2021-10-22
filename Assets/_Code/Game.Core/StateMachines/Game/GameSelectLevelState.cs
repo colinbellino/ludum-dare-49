@@ -16,7 +16,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				var button = _ui.LevelButtons[i];
 				int levelIndex = i;
-				button.onClick.AddListener(() => LoadLevel(levelIndex));
+				button.Button.onClick.AddListener(() => LoadLevel(levelIndex));
 			}
 
 			await _ui.FadeOut();
@@ -36,7 +36,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				var button = _ui.LevelButtons[i];
 				int levelIndex = i;
-				button.onClick.RemoveListener(() => LoadLevel(levelIndex));
+				button.Button.onClick.RemoveListener(() => LoadLevel(levelIndex));
 			}
 
 			await _ui.FadeIn(Color.black);

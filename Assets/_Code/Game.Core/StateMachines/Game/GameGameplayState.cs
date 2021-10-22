@@ -76,8 +76,11 @@ namespace Game.Core.StateMachines.Game
 			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerState);
 			_ui.ShowGameplay();
 
+			_game.LevelWalls.SetActive(true);
+
 			_ = _ui.FadeOut(2);
 
+#if UNITY_EDITOR
 			if (_state.IsReplaying)
 			{
 				_state.TimeScaleCurrent = 10f;
@@ -87,12 +90,20 @@ namespace Game.Core.StateMachines.Game
 					await UniTask.Delay(2000);
 
 					_ui.HideDebug();
-					ScreenCapture.CaptureScreenshot($"Assets/Resources/Levels/{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.png");
+					_ui.HideGameplay();
+					await _ui.HideLevelName(0);
+					_game.LevelWalls.SetActive(false);
+					var levelDecoration = GameObject.Find("Decoration");
+					if (levelDecoration != null)
+						levelDecoration.SetActive(false);
+
+					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
+					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
+					var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.png");
+					ScreenCapture.CaptureScreenshot(screenshotPath);
 					await UniTask.NextFrame();
-					_ui.ShowDebug();
 				}
 
-#if UNITY_EDITOR
 				if (_state.CurrentLevelIndex <= _config.Levels.Length - 1)
 				{
 					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
@@ -128,8 +139,8 @@ namespace Game.Core.StateMachines.Game
 						UnityEngine.Debug.LogWarning("Input trace for this level doesn't exist.");
 					}
 				}
-#endif
 			}
+#endif
 
 			_music.getPlaybackState(out var state);
 			if (state != PLAYBACK_STATE.PLAYING)
@@ -289,6 +300,8 @@ AngerProgress: {GetAngerParam(Player)}
 			_ui.HideGameplay();
 			await _game.PauseUI.Hide(0);
 			await _game.OptionsUI.Hide(0);
+
+			_game.LevelWalls.SetActive(false);
 
 			_state.Entities.Clear();
 			_state.WalkableGrid = null;
@@ -646,7 +659,7 @@ AngerProgress: {GetAngerParam(Player)}
 
 			_state.CurrentLevelIndex += 1;
 
-			if (_state.CurrentLevelIndex == _config.Levels.Length - 1)
+			if (_state.CurrentLevelIndex >= _config.Levels.Length)
 			{
 				Victory();
 				return;
