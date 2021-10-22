@@ -267,6 +267,7 @@ AngerProgress: {GetAngerParam(Player)}
 
 			_state.TimeScaleCurrent = _state.TimeScaleDefault;
 			_state.Running = false;
+			_state.Paused = false;
 
 			if (_controller != null)
 			{
