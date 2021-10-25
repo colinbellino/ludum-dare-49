@@ -9,12 +9,8 @@ namespace Game.Core.StateMachines.Game
 	public class GameTitleState : BaseGameState
 	{
 		private CancellationTokenSource _cancellationSource;
-		private EventInstance _music;
 
-		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game)
-		{
-			_music = FMODUnity.RuntimeManager.CreateInstance(_config.MusicTitle);
-		}
+		public GameTitleState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
 		public override async UniTask Enter()
 		{
@@ -26,7 +22,11 @@ namespace Game.Core.StateMachines.Game
 			_ui.OptionsButton.onClick.AddListener(ToggleOptions);
 			_ui.QuitButton.onClick.AddListener(Quit);
 
-			_music.start();
+			_state.TitleMusic.getPlaybackState(out var state);
+			if (state != PLAYBACK_STATE.PLAYING)
+			{
+				_state.TitleMusic.start();
+			}
 
 			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 			_ = _ui.FadeOut(2f);
@@ -86,8 +86,6 @@ namespace Game.Core.StateMachines.Game
 
 		public override UniTask Exit()
 		{
-			_music.stop(STOP_MODE.ALLOWFADEOUT);
-
 			_cancellationSource.Cancel();
 			_cancellationSource.Dispose();
 
@@ -102,6 +100,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			Debug.Log($"Loading level {levelIndex}.");
 			_state.CurrentLevelIndex = levelIndex;
+			_state.TitleMusic.stop(STOP_MODE.ALLOWFADEOUT);
 			await _ui.FadeIn(Color.black, 0);
 			await _ui.HideTitle(0);
 			await _game.OptionsUI.Hide(0);
@@ -116,6 +115,7 @@ namespace Game.Core.StateMachines.Game
 			if (_state.PlayerSaveData.ClearedLevels.Count == 0)
 			{
 				_state.CurrentLevelIndex = 0;
+				_state.TitleMusic.stop(STOP_MODE.ALLOWFADEOUT);
 				_fsm.Fire(GameFSM.Triggers.LevelSelected);
 
 				return;

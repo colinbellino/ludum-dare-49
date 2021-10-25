@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using FMOD.Studio;
 using UnityEngine;
 
 namespace Game.Core.StateMachines.Game
@@ -27,6 +28,7 @@ namespace Game.Core.StateMachines.Game
 			if (_controls.Global.Cancel.WasPerformedThisFrame())
 			{
 				_fsm.Fire(GameFSM.Triggers.Quit);
+				_state.LevelMusic.stop(STOP_MODE.ALLOWFADEOUT);
 			}
 		}
 
@@ -47,6 +49,7 @@ namespace Game.Core.StateMachines.Game
 		{
 			Debug.Log($"Loading level {levelIndex}.");
 			_state.CurrentLevelIndex = levelIndex;
+			_state.TitleMusic.stop(STOP_MODE.ALLOWFADEOUT);
 			await _ui.FadeIn(Color.black);
 			_fsm.Fire(GameFSM.Triggers.LevelSelected);
 		}

@@ -17,6 +17,9 @@ namespace Game.Core.StateMachines.Game
 			_state.GameBus = FMODUnity.RuntimeManager.GetBus("bus:/Game");
 			_state.MusicBus = FMODUnity.RuntimeManager.GetBus("bus:/Game/Music");
 			_state.SoundBus = FMODUnity.RuntimeManager.GetBus("bus:/Game/SFX");
+			_state.TitleMusic = FMODUnity.RuntimeManager.CreateInstance(_config.MusicTitle);
+			_state.LevelMusic = FMODUnity.RuntimeManager.CreateInstance(_config.MusicLevel);
+			_state.PauseSnapshot = FMODUnity.RuntimeManager.CreateInstance(_config.SnapshotPause);
 			_state.TimeScaleCurrent = _state.TimeScaleDefault = 1f;
 			_state.Random = new Unity.Mathematics.Random();
 			_state.Random.InitState((uint)Random.Range(0, int.MaxValue));
