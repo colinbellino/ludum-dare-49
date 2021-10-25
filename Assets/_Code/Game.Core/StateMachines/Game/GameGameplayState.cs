@@ -60,7 +60,8 @@ namespace Game.Core.StateMachines.Game
 			}
 
 			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? 0 : Player.AngerProgress);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? 0 : Player.AngerProgress);
 
 			_state.Running = true;
 
@@ -167,6 +168,8 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName("Player Anger Progress (Angry)", out var angryProgress);
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName("Player Anger Progress (Calm)", out var calmProgress);
 				_ui.SetDebugText($@"
 - F1: load next level
 - F2: trigger end
@@ -175,7 +178,9 @@ namespace Game.Core.StateMachines.Game
 - R: restart
 
 AngerState: {(Player.AngerState == AngerStates.Calm ? 0 : 1)}
-AngerProgress: {GetAngerParam(Player)}
+AngerProgress(raw): {Player.AngerProgress}
+AngerProgress(calm): {calmProgress}
+AngerProgress(angry): {angryProgress}
 ");
 			}
 
@@ -297,7 +302,8 @@ AngerProgress: {GetAngerParam(Player)}
 			await _game.OptionsUI.Hide(0);
 
 			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", 0);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", -2);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", 0);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", 0);
 
 			_game.LevelWalls.SetActive(false);
 
@@ -353,17 +359,22 @@ AngerProgress: {GetAngerParam(Player)}
 							entity.AngerProgress += 1;
 
 							if (entity == Player)
-								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
+							{
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? 0 : Player.AngerProgress);
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? 0 : Player.AngerProgress);
+							}
 
 							if (entity.AngerProgress > entity.AngerMax)
 							{
 								entity.AngerProgress = 0;
 								entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
 								entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+
 								if (entity == Player)
 								{
 									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
-									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", GetAngerParam(Player));
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? 0 : Player.AngerProgress);
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? 0 : Player.AngerProgress);
 								}
 
 								entity.Direction = Vector3Int.down;
@@ -436,14 +447,6 @@ AngerProgress: {GetAngerParam(Player)}
 
 			var length = entity.AnimationClipLength[clipName];
 			return UniTask.Delay(System.TimeSpan.FromSeconds(length / _state.TimeScaleCurrent));
-		}
-
-
-		private static int GetAngerParam(Entity entity)
-		{
-			if (entity.AngerState == AngerStates.Calm)
-				return -entity.AngerMax + entity.AngerProgress;
-			return entity.AngerMax - entity.AngerProgress;
 		}
 
 		private void Victory()
