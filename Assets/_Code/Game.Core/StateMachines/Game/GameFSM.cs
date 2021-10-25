@@ -8,7 +8,7 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameFSM
 	{
-		public enum States { Init, Title, SelectLevel, LoadLevel, Gameplay, Quit }
+		public enum States { Init, Title, SelectLevel, LoadLevel, Gameplay, Credits, Quit }
 		public enum Triggers { Done, Won, Lost, Retry, NextLevel, LevelSelected, LevelSelectionRequested, Quit }
 
 		private readonly bool _debug;
@@ -28,6 +28,7 @@ namespace Game.Core.StateMachines.Game
 				{ States.SelectLevel, new GameSelectLevelState(this, game) },
 				{ States.LoadLevel, new GameLoadLevelState(this, game) },
 				{ States.Gameplay, new GameGameplayState(this, game) },
+				{ States.Credits, new GameCreditsState(this, game) },
 				{ States.Quit, new GameQuitState(this, game) },
 			};
 
@@ -50,11 +51,14 @@ namespace Game.Core.StateMachines.Game
 				.Permit(Triggers.Done, States.Gameplay);
 
 			_machine.Configure(States.Gameplay)
-				.Permit(Triggers.Won, States.Title)
+				.Permit(Triggers.Won, States.Credits)
 				.Permit(Triggers.Quit, States.Quit)
 				.Permit(Triggers.NextLevel, States.LoadLevel)
 				.Permit(Triggers.LevelSelectionRequested, States.SelectLevel)
 				.Permit(Triggers.Retry, States.LoadLevel);
+
+			_machine.Configure(States.Credits)
+				.Permit(Triggers.Done, States.Title);
 
 			_currentState = _states[_machine.State];
 		}
