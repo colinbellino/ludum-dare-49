@@ -44,7 +44,7 @@ namespace Game.Core.StateMachines.Game
 
 			_machine.Configure(States.SelectLevel)
 				.Permit(Triggers.LevelSelected, States.LoadLevel)
-				.Permit(Triggers.Quit, States.Quit);
+				.Permit(Triggers.Quit, States.Title);
 
 			_machine.Configure(States.LoadLevel)
 				.Permit(Triggers.Done, States.Gameplay);
