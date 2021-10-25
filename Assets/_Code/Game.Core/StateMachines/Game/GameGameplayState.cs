@@ -12,19 +12,13 @@ namespace Game.Core.StateMachines.Game
 {
 	public class GameGameplayState : BaseGameState
 	{
-		private EventInstance _music;
-		private EventInstance _pauseSnapshot;
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
 
 		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
 		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
-		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game)
-		{
-			_music = FMODUnity.RuntimeManager.CreateInstance(_config.MusicLevel);
-			_pauseSnapshot = FMODUnity.RuntimeManager.CreateInstance(_config.SnapshotPause);
-		}
+		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
 		public override async UniTask Enter()
 		{
@@ -142,12 +136,12 @@ namespace Game.Core.StateMachines.Game
 			}
 #endif
 
-			_music.getPlaybackState(out var state);
+			_state.LevelMusic.getPlaybackState(out var state);
 			if (state != PLAYBACK_STATE.PLAYING)
 			{
-				_music.start();
+				_state.LevelMusic.start();
 			}
-			_music.setPitch(_state.TimeScaleCurrent);
+			_state.LevelMusic.setPitch(_state.TimeScaleCurrent);
 		}
 
 		private async void OnMovePerformed(InputAction.CallbackContext context)
@@ -194,14 +188,14 @@ AngerProgress: {GetAngerParam(Player)}
 						_state.TimeScaleCurrent = _state.TimeScaleDefault;
 						_state.Paused = false;
 						_game.PauseUI.Hide();
-						_pauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
+						_state.PauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
 					}
 					else
 					{
 						_state.TimeScaleCurrent = 0f;
 						_state.Paused = true;
 						_ = _game.PauseUI.Show();
-						_pauseSnapshot.start();
+						_state.PauseSnapshot.start();
 					}
 				}
 
@@ -279,6 +273,7 @@ AngerProgress: {GetAngerParam(Player)}
 			_state.TimeScaleCurrent = _state.TimeScaleDefault;
 			_state.Running = false;
 			_state.Paused = false;
+			_state.PauseSnapshot.stop(STOP_MODE.ALLOWFADEOUT);
 
 			if (_controller != null)
 			{
@@ -300,6 +295,9 @@ AngerProgress: {GetAngerParam(Player)}
 			_ui.HideGameplay();
 			await _game.PauseUI.Hide(0);
 			await _game.OptionsUI.Hide(0);
+
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", 0);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress", -2);
 
 			_game.LevelWalls.SetActive(false);
 
@@ -451,7 +449,7 @@ AngerProgress: {GetAngerParam(Player)}
 		private void Victory()
 		{
 			UnityEngine.Debug.Log("End of the game reached.");
-			_music.start();
+			_state.LevelMusic.start();
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 

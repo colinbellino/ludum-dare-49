@@ -20,6 +20,9 @@ namespace Game.Core
 		public Bus GameBus;
 		public Bus MusicBus;
 		public Bus SoundBus;
+		public EventInstance TitleMusic;
+		public EventInstance LevelMusic;
+		public EventInstance PauseSnapshot;
 
 		public int CurrentLevelIndex;
 		public Level Level;
