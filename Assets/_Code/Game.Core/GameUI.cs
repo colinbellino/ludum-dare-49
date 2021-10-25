@@ -30,6 +30,8 @@ namespace Game.Core
 		[Header("Level Selection")]
 		[SerializeField] public GameObject _levelSelectionRoot;
 		[SerializeField] public LevelButton[] LevelButtons;
+		[Header("Credits")]
+		[SerializeField] public GameObject _creditsRoot;
 		[Header("Transitions")]
 		[SerializeField] private GameObject _fadeRoot;
 		[SerializeField] private Image _fadeToBlackImage;
@@ -46,6 +48,7 @@ namespace Game.Core
 
 			HideDebug();
 			HideGameplay();
+			await HideCredits(0);
 			await HideTitle(0);
 			await HideLevelSelection(0);
 		}
@@ -169,6 +172,17 @@ namespace Game.Core
 				return HideLevelSelection(duration);
 			}
 			return ShowLevelSelection(duration);
+		}
+
+		public UniTask ShowCredits(float duration = 0.5f)
+		{
+			_creditsRoot.SetActive(true);
+			return default;
+		}
+		public UniTask HideCredits(float duration = 0.5f)
+		{
+			_creditsRoot.SetActive(false);
+			return default;
 		}
 
 		public async UniTask FadeIn(Color color, float duration = 1f)

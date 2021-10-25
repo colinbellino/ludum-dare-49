@@ -46,6 +46,15 @@ namespace Game.Inputs
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=1)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Confirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""4fa6220e-4015-42d4-990c-c3249c2f01ea"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -90,6 +99,28 @@ namespace Game.Inputs
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3f87249a-6884-4b2e-8d17-d49f9f7d62e6"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3adc6850-fa38-407f-bc34-156fecef6ff3"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -313,6 +344,7 @@ namespace Game.Inputs
             m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
             m_Global_Pause = m_Global.FindAction("Pause", throwIfNotFound: true);
             m_Global_Cancel = m_Global.FindAction("Cancel", throwIfNotFound: true);
+            m_Global_Confirm = m_Global.FindAction("Confirm", throwIfNotFound: true);
             // Gameplay
             m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
             m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
@@ -379,12 +411,14 @@ namespace Game.Inputs
         private IGlobalActions m_GlobalActionsCallbackInterface;
         private readonly InputAction m_Global_Pause;
         private readonly InputAction m_Global_Cancel;
+        private readonly InputAction m_Global_Confirm;
         public struct GlobalActions
         {
             private @GameControls m_Wrapper;
             public GlobalActions(@GameControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Pause => m_Wrapper.m_Global_Pause;
             public InputAction @Cancel => m_Wrapper.m_Global_Cancel;
+            public InputAction @Confirm => m_Wrapper.m_Global_Confirm;
             public InputActionMap Get() { return m_Wrapper.m_Global; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -400,6 +434,9 @@ namespace Game.Inputs
                     @Cancel.started -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
                     @Cancel.performed -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
                     @Cancel.canceled -= m_Wrapper.m_GlobalActionsCallbackInterface.OnCancel;
+                    @Confirm.started -= m_Wrapper.m_GlobalActionsCallbackInterface.OnConfirm;
+                    @Confirm.performed -= m_Wrapper.m_GlobalActionsCallbackInterface.OnConfirm;
+                    @Confirm.canceled -= m_Wrapper.m_GlobalActionsCallbackInterface.OnConfirm;
                 }
                 m_Wrapper.m_GlobalActionsCallbackInterface = instance;
                 if (instance != null)
@@ -410,6 +447,9 @@ namespace Game.Inputs
                     @Cancel.started += instance.OnCancel;
                     @Cancel.performed += instance.OnCancel;
                     @Cancel.canceled += instance.OnCancel;
+                    @Confirm.started += instance.OnConfirm;
+                    @Confirm.performed += instance.OnConfirm;
+                    @Confirm.canceled += instance.OnConfirm;
                 }
             }
         }
@@ -467,6 +507,7 @@ namespace Game.Inputs
         {
             void OnPause(InputAction.CallbackContext context);
             void OnCancel(InputAction.CallbackContext context);
+            void OnConfirm(InputAction.CallbackContext context);
         }
         public interface IGameplayActions
         {
