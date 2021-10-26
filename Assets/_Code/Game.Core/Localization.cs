@@ -25,4 +25,5 @@ namespace Game.Core
 			textVariant.LocalizedString.SetReference(TableReference, key);
 		}
 	}
+
 }
