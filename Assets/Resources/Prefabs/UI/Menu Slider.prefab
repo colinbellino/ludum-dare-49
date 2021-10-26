@@ -446,7 +446,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: A LONG BUTTON
+  m_text: Slider
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9796fda73f6416646b862d50b5cce8e3, type: 2}
   m_sharedMaterial: {fileID: 9068388157713230954, guid: 9796fda73f6416646b862d50b5cce8e3, type: 2}
@@ -479,7 +479,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11029667897344
-    m_Localized: Volume son
+    m_Localized: Volume sonore
     m_Metadata:
       m_Items: []
   - m_Id: 11142968631296
@@ -47,11 +47,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11198580908032
-    m_Localized: Plein ecran
+    m_Localized: "Plein \xE9cran"
     m_Metadata:
       m_Items: []
   - m_Id: 11244969910272
-    m_Localized: Resolution
+    m_Localized: "R\xE9solution"
     m_Metadata:
       m_Items: []
   - m_Id: 11524637712384
@@ -59,15 +59,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11582233894912
-    m_Localized: Selection niveau
+    m_Localized: "S\xE9lection niveau"
     m_Metadata:
       m_Items: []
   - m_Id: 18580157489152
-    m_Localized: Merci d'avoir joue!
+    m_Localized: "Merci d'avoir jou\xE9!"
     m_Metadata:
       m_Items: []
   - m_Id: 17687823507456
-    m_Localized: Un jeu par
+    m_Localized: "Cr\xE9\xE9 par"
     m_Metadata:
       m_Items: []
   - m_Id: 22199124615168
