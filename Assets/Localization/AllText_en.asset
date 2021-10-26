@@ -70,5 +70,9 @@ MonoBehaviour:
     m_Localized: A game by
     m_Metadata:
       m_Items: []
+  - m_Id: 22199124615168
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

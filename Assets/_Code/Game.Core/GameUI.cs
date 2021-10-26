@@ -8,6 +8,9 @@ using DG.Tweening.Plugins.Options;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.PropertyVariants;
+using UnityEngine.Localization.PropertyVariants.TrackedObjects;
+using UnityEngine.Localization.PropertyVariants.TrackedProperties;
 using UnityEngine.UI;
 
 namespace Game.Core
@@ -87,10 +90,8 @@ namespace Game.Core
 			_angerMeterCache.sizeDelta = cacheSize;
 		}
 
-		public async UniTask ShowTitle(string startButtonText, CancellationToken cancellationToken, float duration = 0.5f)
+		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
 		{
-			StartButton.GetComponentInChildren<TMP_Text>().text = startButtonText;
-
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
 			EventSystem.current.SetSelectedGameObject(StartButton.gameObject);

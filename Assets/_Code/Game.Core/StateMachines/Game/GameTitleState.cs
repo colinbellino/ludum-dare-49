@@ -33,10 +33,12 @@ namespace Game.Core.StateMachines.Game
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
 
-			var startText = Localization.GetLocalizedString("UI/Start");
 			if (_state.PlayerSaveData.ClearedLevels.Count > 0)
-				startText = Localization.GetLocalizedString("UI/Start");
-			await _ui.ShowTitle(startText, _cancellationSource.Token);
+				Localization.SetTMPTextKey(_ui.StartButton.gameObject, "UI/Continue");
+			else
+				Localization.SetTMPTextKey(_ui.StartButton.gameObject, "UI/Start");
+
+			await _ui.ShowTitle(_cancellationSource.Token);
 
 			if (Utils.IsDevBuild())
 			{
