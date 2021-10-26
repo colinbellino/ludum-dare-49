@@ -77,7 +77,7 @@ namespace Game.Core
 
 			EventSystem.current.SetSelectedGameObject(null);
 			await UniTask.NextFrame();
-			EventSystem.current.SetSelectedGameObject(_gameVolumeSlider.gameObject);
+			EventSystem.current.SetSelectedGameObject(_languagesDropdown.gameObject);
 		}
 
 		public UniTask Hide(float duration = 0.5f)
