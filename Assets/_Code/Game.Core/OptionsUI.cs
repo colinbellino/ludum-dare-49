@@ -121,7 +121,9 @@ namespace Game.Core
 
 		private void OnLanguageChanged(int index)
 		{
-			LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+			var location = LocalizationSettings.AvailableLocales.Locales[index];
+			_game.State.PlayerSettings.LocaleCode = location.Identifier.Code;
+			LocalizationSettings.SelectedLocale = location;
 		}
 	}
 }

@@ -38,6 +38,8 @@ namespace Game.Core
 	[Serializable]
 	public struct PlayerSettings
 	{
+		public string LocaleCode;
+
 		public float GameVolume;
 		public float SoundVolume;
 		public float MusicVolume;
