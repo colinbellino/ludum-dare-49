@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization;
 
 namespace Game.Core.StateMachines.Game
 {
@@ -31,7 +32,11 @@ namespace Game.Core.StateMachines.Game
 			await UniTask.Delay(2000, cancellationToken: _cancellationSource.Token);
 			_ = _ui.FadeOut(2f);
 			await UniTask.Delay(1200, cancellationToken: _cancellationSource.Token);
-			await _ui.ShowTitle(_state.PlayerSaveData.ClearedLevels.Count == 0 ? "Start" : "Continue", _cancellationSource.Token);
+
+			var startText = Localization.GetLocalizedString("UI/Start");
+			if (_state.PlayerSaveData.ClearedLevels.Count > 0)
+				startText = Localization.GetLocalizedString("UI/Start");
+			await _ui.ShowTitle(startText, _cancellationSource.Token);
 
 			if (Utils.IsDevBuild())
 			{

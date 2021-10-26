@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: AllText Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: AllText
+  m_TableCollectionNameGuidString: b290e49b81a464c3dac81c3936fc860c
+  m_Entries:
+  - m_Id: 1021542653952
+    m_Key: UI/Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1157962391552
+    m_Key: UI/Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1205978783744
+    m_Key: UI/Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1918024802304
+    m_Key: UI/Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10775698595840
+    m_Key: UI/MainVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11029667897344
+    m_Key: UI/SoundVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11142968631296
+    m_Key: UI/MusicVolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11198580908032
+    m_Key: UI/Fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11244969910272
+    m_Key: UI/Resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11524637712384
+    m_Key: UI/Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11582233894912
+    m_Key: UI/LevelSelection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17687823507456
+    m_Key: UI/CreatedBy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18580157489152
+    m_Key: UI/ThanksForPlaying
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1635256370522
