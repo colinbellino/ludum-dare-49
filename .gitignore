@@ -63,3 +63,6 @@ fmod_editor.log
 /FMOD/.cache
 /FMOD/.user
 /FMOD/.unsaved
+
+# Addressables
+addressables_content_state.bin

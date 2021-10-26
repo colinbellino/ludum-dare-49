@@ -32,7 +32,7 @@ MonoBehaviour:
     00000000:
       type: {class: CommandLineLocaleSelector, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
       data:
-        m_CommandLineArgument: -language =
+        m_CommandLineArgument: -language=
     00000001:
       type: {class: SystemLocaleSelector, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
     00000002:
