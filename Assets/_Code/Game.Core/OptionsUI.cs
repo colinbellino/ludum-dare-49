@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 namespace Game.Core
@@ -16,6 +17,7 @@ namespace Game.Core
 		[SerializeField] private Slider _musicVolumeSlider;
 		[SerializeField] private Toggle _fullscreenToggle;
 		[SerializeField] private TMP_Dropdown _resolutionsDropdown;
+		[SerializeField] private TMP_Dropdown _languagesDropdown;
 
 		private GameSingleton _game;
 		private List<Resolution> _resolutions;
@@ -25,17 +27,43 @@ namespace Game.Core
 		public async UniTask Init(GameSingleton game)
 		{
 			_game = game;
+			{
+				_resolutions = Screen.resolutions.ToList();
 
-			await Hide(0);
-
-			_resolutions = Screen.resolutions/* .Where(r => r.refreshRate == 60) */.ToList();
-			_resolutionsDropdown.options = _resolutions.Select(r => new TMP_Dropdown.OptionData($"{r.width}x{r.height} {r.refreshRate}Hz")).ToList();
-			_resolutionsDropdown.template.gameObject.SetActive(false);
-			_resolutionsDropdown.onValueChanged.AddListener(OnResolutionChanged);
+				var options = new List<TMP_Dropdown.OptionData>();
+				int selected = 0;
+				for (int i = 0; i < _resolutions.Count; ++i)
+				{
+					var resolution = _resolutions[i];
+					if (Screen.currentResolution.width == resolution.height && Screen.currentResolution.height == resolution.width && Screen.currentResolution.refreshRate == resolution.refreshRate)
+						selected = i;
+					options.Add(new TMP_Dropdown.OptionData($"{resolution.width}x{resolution.height} {resolution.refreshRate}Hz"));
+				}
+				_resolutionsDropdown.options = options;
+				_resolutionsDropdown.value = selected;
+				_resolutionsDropdown.template.gameObject.SetActive(false);
+				_resolutionsDropdown.onValueChanged.AddListener(OnResolutionChanged);
+			}
 			_gameVolumeSlider.onValueChanged.AddListener(SetGameVolume);
 			_soundVolumeSlider.onValueChanged.AddListener(SetSoundVolume);
 			_musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
 			_fullscreenToggle.onValueChanged.AddListener(ToggleFullscreen);
+			{
+				var options = new List<TMP_Dropdown.OptionData>();
+				int selected = 0;
+				for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+				{
+					var locale = LocalizationSettings.AvailableLocales.Locales[i];
+					if (LocalizationSettings.SelectedLocale == locale)
+						selected = i;
+					options.Add(new TMP_Dropdown.OptionData(locale.LocaleName));
+				}
+				_languagesDropdown.options = options;
+				_languagesDropdown.value = selected;
+				_languagesDropdown.template.gameObject.SetActive(false);
+				_languagesDropdown.onValueChanged.AddListener(OnLanguageChanged);
+			}
+			await Hide(0);
 		}
 
 		public async UniTask Show(float duration = 0.5f)
@@ -89,6 +117,11 @@ namespace Game.Core
 			_game.State.PlayerSettings.ResolutionHeight = resolution.height;
 			_game.State.PlayerSettings.ResolutionRefreshRate = resolution.refreshRate;
 			Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreenMode, resolution.refreshRate);
+		}
+
+		private void OnLanguageChanged(int index)
+		{
+			LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
 		}
 	}
 }

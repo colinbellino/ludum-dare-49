@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using static Game.Core.Utils;
 
 namespace Game.Core.StateMachines.Game
@@ -32,6 +33,8 @@ namespace Game.Core.StateMachines.Game
 			_game.LevelWalls.SetActive(false);
 
 			_controls.Global.Enable();
+
+			await LocalizationSettings.InitializationOperation;
 
 			await _game.UI.Init(_game);
 			await _game.PauseUI.Init(_game);
