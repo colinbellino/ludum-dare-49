@@ -67,6 +67,10 @@ MonoBehaviour:
     m_Key: UI/ThanksForPlaying
     m_Metadata:
       m_Items: []
+  - m_Id: 22199124615168
+    m_Key: UI/Language
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
