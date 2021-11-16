@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="ParameterPreset" id="{8fca7739-2524-4916-828a-1fae9f10f504}">
 		<property name="name">
-			<value>Player Anger State</value>
+			<value>Player State</value>
 		</property>
 		<relationship name="folder">
 			<destination>{a418e0de-c7d0-05c9-280a-b529dc02e12e}</destination>
@@ -13,6 +13,9 @@
 	</object>
 	<object class="GameParameter" id="{ee114dc2-10be-4691-b3e4-5e952b76f684}">
 		<property name="isGlobal">
+			<value>true</value>
+		</property>
+		<property name="isHeld">
 			<value>true</value>
 		</property>
 		<property name="initialValue">

@@ -14,6 +14,9 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
+		private static string PLAYER_STATE_PARAM = "Player State";
+		private static string PLAYER_ANGRY_PARAM = "Player Angry";
+		private static string PLAYER_CALM_PARAM = "Player Calm";
 
 		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
 		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
@@ -29,6 +32,7 @@ namespace Game.Core.StateMachines.Game
 			foreach (var entity in _state.Entities)
 			{
 				entity.transform.position = entity.GridPosition + CellOffset;
+				entity.AngerProgress = entity.AngerMax = _state.Level.AngerMax;
 
 				if (entity.CanBeActivated)
 				{
@@ -59,9 +63,9 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? Player.AngerProgress : 2);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? Player.AngerProgress : 2);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, Player.AngerState == AngerStates.Calm ? 0 : 1);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, Player.AngerState == AngerStates.Angry ? Player.AngerProgress : Player.AngerMax);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, Player.AngerState == AngerStates.Calm ? Player.AngerProgress : Player.AngerMax);
 
 			_state.Running = true;
 
@@ -168,8 +172,8 @@ namespace Game.Core.StateMachines.Game
 
 			if (Utils.IsDevBuild())
 			{
-				FMODUnity.RuntimeManager.StudioSystem.getParameterByName("Player Anger Progress (Angry)", out var angryProgress);
-				FMODUnity.RuntimeManager.StudioSystem.getParameterByName("Player Anger Progress (Calm)", out var calmProgress);
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_ANGRY_PARAM, out var angryProgress);
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_CALM_PARAM, out var calmProgress);
 				_ui.SetDebugText($@"
 - F1: load next level
 - F2: trigger end
@@ -301,9 +305,9 @@ AngerProgress(angry): {angryProgress}
 			await _game.PauseUI.Hide(0);
 			await _game.OptionsUI.Hide(0);
 
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", 0);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", 0);
-			FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", 0);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 0);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, 0);
+			FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, 0);
 
 			_game.LevelWalls.SetActive(false);
 
@@ -356,25 +360,27 @@ AngerProgress(angry): {angryProgress}
 					{
 						if (_state.Running && entity.AffectedByAnger)
 						{
-							entity.AngerProgress += 1;
+							entity.AngerProgress -= 1;
 
 							if (entity == Player)
 							{
-								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? Player.AngerProgress : 2);
-								FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? Player.AngerProgress : 2);
+								var isCalm = Player.AngerState == AngerStates.Calm;
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, isCalm ? Player.AngerMax : Player.AngerProgress);
+								FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, isCalm ? Player.AngerProgress : Player.AngerMax);
 							}
 
-							if (entity.AngerProgress > entity.AngerMax)
+							if (entity.AngerProgress < 1)
 							{
-								entity.AngerProgress = 0;
-								entity.AngerState = (entity.AngerState == AngerStates.Calm) ? AngerStates.Angry : AngerStates.Calm;
-								entity.Animator.SetFloat("AngerState", (entity.AngerState == AngerStates.Calm) ? 0 : 1);
+								entity.AngerProgress = entity.AngerMax;
+								entity.AngerState = entity.AngerState == AngerStates.Calm ? AngerStates.Angry : AngerStates.Calm;
+								var isCalm = entity.AngerState == AngerStates.Calm;
+								entity.Animator.SetFloat("AngerState", isCalm ? 0 : 1);
 
 								if (entity == Player)
 								{
-									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger State", Player.AngerState == AngerStates.Calm ? 0 : 1);
-									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Angry)", Player.AngerState == AngerStates.Angry ? Player.AngerProgress : 2);
-									FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Player Anger Progress (Calm)", Player.AngerState == AngerStates.Calm ? Player.AngerProgress : 2);
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, isCalm ? 0 : 1);
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, isCalm ? Player.AngerMax : Player.AngerProgress);
+									FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, isCalm ? Player.AngerProgress : Player.AngerMax);
 								}
 
 								entity.Direction = Vector3Int.down;
