@@ -129,12 +129,11 @@ namespace Game.Core
 
 				if (levelIndex < _game.State.AllLevels.Length)
 				{
-					if (levelIndex == 0 || _game.State.PlayerSaveData.ClearedLevels.Contains(levelIndex - 1))
+					if (_game.Config.DebugLevels || levelIndex == 0 || _game.State.PlayerSaveData.ClearedLevels.Contains(levelIndex - 1))
 					{
 						var level = _game.State.AllLevels[levelIndex];
 						button.Button.interactable = true;
-						// button.Text.text = $"Level {Utils.GetLevelIndex(levelIndex)}";
-						button.Text.text = level.Title;
+						button.Text.text = string.IsNullOrEmpty(level.Title) ? level.name : level.Title;
 						button.Thumbnail.gameObject.SetActive(true);
 						button.Thumbnail.texture = level.Screenshot;
 					}
