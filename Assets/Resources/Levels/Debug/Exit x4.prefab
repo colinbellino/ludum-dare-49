@@ -58,9 +58,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1faa14fd6b7374a97a6d711c56979e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Title: Humble first steps
+  Title: 
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  AngerMax: 3
   Screenshot: {fileID: 0}
 --- !u!1 &6933097008426074110
 GameObject:
