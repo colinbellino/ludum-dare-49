@@ -17,6 +17,62 @@ MonoBehaviour:
   m_SharedData: {fileID: 11400000, guid: b290e49b81a464c3dac81c3936fc860c, type: 2}
   m_Metadata:
     m_Items: []
-  m_TableData: []
+  m_TableData:
+  - m_Id: 1021542653952
+    m_Localized: Beenden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1157962391552
+    m_Localized: Optionen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1205978783744
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1918024802304
+    m_Localized: Laden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10775698595840
+    m_Localized: Hauptvolume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11142968631296
+    m_Localized: Musik Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11029667897344
+    m_Localized: Effekt Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11198580908032
+    m_Localized: Vollbild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11244969910272
+    m_Localized: "Aufl\xF6sung"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11524637712384
+    m_Localized: Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11582233894912
+    m_Localized: Levelauswahl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17687823507456
+    m_Localized: 'ein Spiel von:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18580157489152
+    m_Localized: "Danke f\xFCrs Spielen!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22199124615168
+    m_Localized: Sprache
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
