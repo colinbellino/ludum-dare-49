@@ -38,6 +38,8 @@ namespace Game.Core.StateMachines.Game
 				SpawnEntitiesFromTilemap(_state.Level.Entities);
 			}
 
+			await UniTask.NextFrame();
+
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}
 
