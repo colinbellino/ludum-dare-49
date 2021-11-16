@@ -8,9 +8,6 @@ using DG.Tweening.Plugins.Options;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Localization.PropertyVariants;
-using UnityEngine.Localization.PropertyVariants.TrackedObjects;
-using UnityEngine.Localization.PropertyVariants.TrackedProperties;
 using UnityEngine.UI;
 
 namespace Game.Core
@@ -81,9 +78,10 @@ namespace Game.Core
 
 			switch (value)
 			{
-				case 2: { cacheSize.x = 19; } break;
-				case 1: { cacheSize.x = 10; } break;
-				case 0: { cacheSize.x = 0; } break;
+				case 0: { cacheSize.x = 19; } break;
+				case 1: { cacheSize.x = 19; } break;
+				case 2: { cacheSize.x = 10; } break;
+				case 3: { cacheSize.x = 0; } break;
 				default: break;
 			}
 

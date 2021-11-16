@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="ParameterPreset" id="{ad705fba-c8e7-49df-b776-348d2dcb459b}">
 		<property name="name">
-			<value>Player Anger Progress (Calm)</value>
+			<value>Player Calm</value>
 		</property>
 		<relationship name="folder">
 			<destination>{a418e0de-c7d0-05c9-280a-b529dc02e12e}</destination>
@@ -12,14 +12,20 @@
 		</relationship>
 	</object>
 	<object class="GameParameter" id="{ce9a4480-9965-4db8-b28f-ba7e1757791a}">
+		<property name="minimum">
+			<value>1</value>
+		</property>
 		<property name="maximum">
-			<value>2</value>
+			<value>5</value>
 		</property>
 		<property name="isGlobal">
 			<value>true</value>
 		</property>
+		<property name="isHeld">
+			<value>true</value>
+		</property>
 		<property name="initialValue">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<property name="isExposedRecursively">
 			<value>false</value>
