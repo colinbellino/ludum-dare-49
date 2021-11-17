@@ -70,7 +70,7 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Move.performed += OnMovePerformed;
 
-			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerState);
+			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerMax, Player.AngerState);
 			_ui.ShowGameplay();
 
 			_game.LevelWalls.SetActive(true);
@@ -410,7 +410,7 @@ AngerProgress(angry): {angryProgress}
 								}
 							}
 
-							_ui.SetAngerMeter(entity.AngerProgress, entity.AngerState);
+							_ui.SetAngerMeter(entity.AngerProgress, entity.AngerMax, entity.AngerState);
 						}
 					}
 				}
