@@ -67,12 +67,12 @@ namespace Game.Core
 		public void ShowGameplay() { _gameplayRoot.SetActive(true); }
 		public void HideGameplay() { _gameplayRoot.SetActive(false); }
 
-		public void SetAngerMeter(int current, int max, AngerStates angerState)
+		public void SetAngerMeter(int current, int max, Moods angerState)
 		{
 
 			if (_angerMeterAnimator.isActiveAndEnabled)
 			{
-				_angerMeterAnimator.SetFloat("AngerState", (angerState == AngerStates.Calm) ? 0 : 1);
+				_angerMeterAnimator.SetFloat("AngerState", (angerState == Moods.Calm) ? 0 : 1);
 			}
 			var cellSize = 10;
 			_angerMeterAnimator.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, max * cellSize);

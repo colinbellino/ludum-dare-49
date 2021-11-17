@@ -56,6 +56,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 1cc9030ce9a834b999a0982104902d41, type: 2}
     - {fileID: 11400000, guid: ac394bf2ad0c64208bbdd98d293afb48, type: 2}
     - {fileID: 11400000, guid: 2179c10ebe45c45d3ab4de1e76cda885, type: 2}
+    - {fileID: 11400000, guid: 9ee98c5cd499b4fdeb5ec1a18ba243c2, type: 2}
     m_values:
     - {fileID: 3510502540373367279, guid: 59510419692fd415dbc2e3cab5c9b79e, type: 3}
     - {fileID: 3510502540373367279, guid: ebc742d7727cc6f49ab5e4cac30ed175, type: 3}
@@ -78,6 +79,7 @@ MonoBehaviour:
     - {fileID: 3329524165835136575, guid: b0fa32b0953544a66926db1631fb1f8f, type: 3}
     - {fileID: 3510502540373367279, guid: c4564851f74ab4bd689d7d7a34e2ae06, type: 3}
     - {fileID: 3510502540373367279, guid: 514c6fcbf56134ff2af2ecba28c1b6ca, type: 3}
+    - {fileID: 3510502540373367279, guid: 70dabbe7479914918977fdb629801d3d, type: 3}
   SnapshotPause:
     Guid:
       Data1: -1278127128
