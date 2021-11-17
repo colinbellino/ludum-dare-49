@@ -14,5 +14,10 @@ namespace Game.Core
 		{
 			EventSystem.current.SetSelectedGameObject(gameObject);
 		}
+
+		public void Log()
+		{
+			UnityEngine.Debug.Log("Hello");
+		}
 	}
 }
