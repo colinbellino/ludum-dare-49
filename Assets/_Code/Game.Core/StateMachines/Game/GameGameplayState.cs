@@ -652,7 +652,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.IncreaseMood:
 						{
-							entity.MoodCurrent = Mathf.Min(entity.MoodCurrent + entity.IncreaseMood, entity.MoodMax);
+							entity.MoodCurrent = Mathf.Clamp(entity.MoodCurrent + entityAtDestination.IncreaseMood, 0, entity.MoodMax);
 							AudioHelpers.PlayOneShot(entityAtDestination.SoundIncreaseMood, entityAtDestination.GridPosition);
 						}
 						break;
