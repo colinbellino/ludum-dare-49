@@ -32,7 +32,7 @@ namespace Game.Core.StateMachines.Game
 			foreach (var entity in _state.Entities)
 			{
 				entity.transform.position = entity.GridPosition + CellOffset;
-				entity.AngerProgress = entity.AngerMax = _state.Level.AngerMax;
+				entity.MoodCurrent = entity.MoodMax = _state.Level.AngerMax;
 
 				if (entity.CanBeActivated)
 				{
@@ -40,7 +40,7 @@ namespace Game.Core.StateMachines.Game
 					{
 						if (
 								(entity.ActivatesInSpecificAngerState && entity.TriggerState == Player.AngerState) ||
-								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
+								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == Moods.None)
 							)
 						{
 							entity.Activated = true;
@@ -53,7 +53,7 @@ namespace Game.Core.StateMachines.Game
 						{
 							if (
 								(entity.ActivatesInSpecificAngerState && entity.TriggerState == Player.AngerState) ||
-								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == AngerStates.None)
+								(entity.ActivatesInSpecificAngerState == false && entity.TriggerState == Moods.None)
 							)
 							{
 								entity.Activated = true;
@@ -70,7 +70,7 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Move.performed += OnMovePerformed;
 
-			_ui.SetAngerMeter(Player.AngerProgress, Player.AngerMax, Player.AngerState);
+			_ui.SetAngerMeter(Player.MoodCurrent, Player.MoodMax, Player.AngerState);
 			_ui.ShowGameplay();
 
 			_game.LevelWalls.SetActive(true);
@@ -162,8 +162,8 @@ namespace Game.Core.StateMachines.Game
 - K: toggle replay
 - R: restart level
 
-AngerState: {(Player.AngerState == AngerStates.Calm ? 0 : 1)}
-AngerProgress(raw): {Player.AngerProgress}
+AngerState: {(Player.AngerState == Moods.Calm ? 0 : 1)}
+AngerProgress(raw): {Player.MoodCurrent}
 AngerProgress(calm): {calmProgress}
 AngerProgress(angry): {angryProgress}
 ");
@@ -306,18 +306,18 @@ AngerProgress(angry): {angryProgress}
 
 		private static void UpdatePlayerFMODParams(Entity player)
 		{
-			var isCalm = player.AngerState == AngerStates.Calm;
+			var isCalm = player.AngerState == Moods.Calm;
 			if (isCalm)
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 0);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.AngerMax - player.AngerProgress);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.AngerProgress);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.MoodMax - player.MoodCurrent);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.MoodCurrent);
 			}
 			else
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 1);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.AngerProgress);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.AngerMax - player.AngerProgress);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.MoodCurrent);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.MoodMax - player.MoodCurrent);
 			}
 		}
 
@@ -375,18 +375,18 @@ AngerProgress(angry): {angryProgress}
 					{
 						if (_state.Running && entity.AffectedByAnger)
 						{
-							entity.AngerProgress -= 1;
+							entity.MoodCurrent -= 1;
 
 							if (entity == Player)
 							{
 								UpdatePlayerFMODParams(Player);
 							}
 
-							if (entity.AngerProgress < 1)
+							if (entity.MoodCurrent < 1)
 							{
-								entity.AngerProgress = entity.AngerMax;
-								entity.AngerState = entity.AngerState == AngerStates.Calm ? AngerStates.Angry : AngerStates.Calm;
-								var isCalm = entity.AngerState == AngerStates.Calm;
+								entity.MoodCurrent = entity.MoodMax;
+								entity.AngerState = entity.AngerState == Moods.Calm ? Moods.Angry : Moods.Calm;
+								var isCalm = entity.AngerState == Moods.Calm;
 								entity.Animator.SetFloat("AngerState", isCalm ? 0 : 1);
 
 								if (entity == Player)
@@ -410,7 +410,7 @@ AngerProgress(angry): {angryProgress}
 								}
 							}
 
-							_ui.SetAngerMeter(entity.AngerProgress, entity.AngerMax, entity.AngerState);
+							_ui.SetAngerMeter(entity.MoodCurrent, entity.MoodMax, entity.AngerState);
 						}
 					}
 				}
@@ -481,44 +481,47 @@ AngerProgress(angry): {angryProgress}
 
 			var destinationTile = _state.Level.Ground.GetTile(destination) as Tile;
 			var entitiesAtDestination = _state.Entities.FindAll(e => e.GridPosition == destination);
-			if (entitiesAtDestination.Count > 1)
-				UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
+			// if (entitiesAtDestination.Count > 1)
+			// 	UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
 
-			var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
-
-			if (entityAtDestination)
+			foreach (var entityAtDestination in entitiesAtDestination)
 			{
-				if (entityAtDestination.Trigger == false)
+				// var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
+
+				if (entityAtDestination)
 				{
-					UnityEngine.Debug.Log($"Can't move to {destination.ToString()} (occupied).");
-					return false;
+					if (entityAtDestination.Trigger == false)
+					{
+						UnityEngine.Debug.Log($"Can't move to {destination.ToString()} (occupied).");
+						return false;
+					}
 				}
+
+				if (entity.AngerState == Moods.Angry)
+					AudioHelpers.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
+				else
+					AudioHelpers.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
+
+				entity.GridPosition = destination;
+				entity.Animator.Play("Walk");
+				await DOTween.To(
+					() => entity.transform.position,
+					x => entity.transform.position = x,
+					entity.GridPosition + CellOffset,
+					1 / entity.MoveSpeed / _state.TimeScaleCurrent
+				);
+				entity.Animator.Play("Idle");
+
+				if (
+					(destinationTile == null && entityAtDestination == null) ||
+					(destinationTile != null && IsTileWalkable(destinationTile) == false)
+				)
+				{
+					await Fall(entity);
+				}
+
+				await CheckTrigger(entity, entityAtDestination);
 			}
-
-			if (entity.AngerState == AngerStates.Angry)
-				AudioHelpers.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
-			else
-				AudioHelpers.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
-
-			entity.GridPosition = destination;
-			entity.Animator.Play("Walk");
-			await DOTween.To(
-				() => entity.transform.position,
-				x => entity.transform.position = x,
-				entity.GridPosition + CellOffset,
-				1 / entity.MoveSpeed / _state.TimeScaleCurrent
-			);
-			entity.Animator.Play("Idle");
-
-			if (
-				(destinationTile == null && entityAtDestination == null) ||
-				(destinationTile != null && IsTileWalkable(destinationTile) == false)
-			)
-			{
-				await Fall(entity);
-			}
-
-			await CheckTrigger(entity, entityAtDestination);
 
 			return true;
 		}
@@ -553,7 +556,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.Break:
 						{
-							if (entity.AngerState != AngerStates.Angry)
+							if (entity.AngerState != Moods.Angry)
 							{
 								break;
 							}
@@ -596,7 +599,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.Fall:
 						{
-							if (entity.AngerState != AngerStates.Angry)
+							if (entity.AngerState != Moods.Angry)
 							{
 								break;
 							}
@@ -607,7 +610,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.Burn:
 						{
-							if (entity.AngerState != AngerStates.Calm)
+							if (entity.AngerState != Moods.Calm)
 							{
 								break;
 							}
@@ -618,7 +621,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.ActivateBurn:
 						{
-							if (entity.AngerState != AngerStates.Angry)
+							if (entity.AngerState != Moods.Angry)
 							{
 								break;
 							}
@@ -647,6 +650,13 @@ AngerProgress(angry): {angryProgress}
 						}
 						break;
 
+					case TriggerActions.IncreaseMood:
+						{
+							entity.MoodCurrent = Mathf.Min(entity.MoodCurrent + entity.IncreaseMood, entity.MoodMax);
+							AudioHelpers.PlayOneShot(entityAtDestination.SoundIncreaseMood, entityAtDestination.GridPosition);
+						}
+						break;
+
 					default: break;
 				}
 			}
@@ -656,7 +666,7 @@ AngerProgress(angry): {angryProgress}
 		{
 			entity.Dead = true;
 
-			if (entity.AngerState == AngerStates.Angry)
+			if (entity.AngerState == Moods.Angry)
 			{
 				AudioHelpers.PlayOneShot(entity.SoundFall, entity.GridPosition);
 				await UniTask.Delay(400); // This delay adds a cartoon effect where the entity floats in the air before falling.

@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using FMODUnity;
+using UnityEngine;
 
 namespace Game.Core
 {
@@ -25,14 +25,15 @@ namespace Game.Core
 
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;
-		[HideInInspector] public int AngerProgress;
-		[SerializeField] public int AngerMax = 2;
-		[SerializeField] public AngerStates AngerState;
+		[HideInInspector] public int MoodCurrent;
+		[SerializeField] public int MoodMax = 2;
+		[SerializeField] public Moods AngerState;
 
 		[Header("Triggers")]
 		[SerializeField] public bool Trigger;
-		[SerializeField] public AngerStates TriggerState;
+		[SerializeField] public Moods TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
+		[SerializeField] public int IncreaseMood = 2;
 
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;
@@ -59,6 +60,7 @@ namespace Game.Core
 		public EventReference SoundBreaking;
 		public EventReference SoundWalkCalm;
 		public EventReference SoundWalkAngry;
+		public EventReference SoundIncreaseMood;
 
 		[HideInInspector] public bool Dead;
 		[HideInInspector] public ClipLength AnimationClipLength;
@@ -67,7 +69,7 @@ namespace Game.Core
 	[Serializable]
 	public class ClipLength : SerializableDictionary<string, float> { }
 
-	public enum AngerStates { None, Calm, Angry }
+	public enum Moods { None, Calm, Angry }
 
-	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn, Push }
+	public enum TriggerActions { None, Exit, Break, Key, Fall, Burn, ActivateBurn, Push, IncreaseMood }
 }
