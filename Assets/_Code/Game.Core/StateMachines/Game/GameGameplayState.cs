@@ -37,6 +37,14 @@ namespace Game.Core.StateMachines.Game
 				if (entity == Player)
 					entity.Mood = _state.Level.DefaultPlayerMood;
 
+				if (entity.Animator)
+				{
+					entity.Direction = Vector3Int.down;
+					entity.Animator.SetFloat("DirectionX", entity.Direction.x);
+					entity.Animator.SetFloat("DirectionY", entity.Direction.y);
+					entity.Animator.SetFloat("AngerState", entity.Mood == Moods.Calm ? 0 : 1);
+				}
+
 				if (entity.CanBeActivated)
 				{
 					if (entity.ActivatesWhenLevelStart)
