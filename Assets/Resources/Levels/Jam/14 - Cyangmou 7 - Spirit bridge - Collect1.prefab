@@ -61,6 +61,8 @@ MonoBehaviour:
   Title: Spirit bridge
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  MoodMax: 3
+  DefaultPlayerMood: 1
   Screenshot: {fileID: 2800000, guid: 7184d8e7303c04a569e52332d1c994bc, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:

@@ -156,11 +156,14 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4
   AffectedByAnger: 1
-  AngerProgress: 0
-  AngerState: 1
+  MoodValue: 0
+  MoodMax: 2
+  Mood: 1
   Trigger: 0
   TriggerState: 0
   TriggerAction: 0
+  IncreaseMood: 2
+  PreventMoodChangeThisFrame: 0
   BreaksAt: 1
   BreakParticle: {fileID: 5772124654905513637, guid: efbfe69234eb75140b4a28d61435c84c, type: 3}
   BreakParticleOffset: {x: 0, y: -0.3, z: 0}
@@ -235,6 +238,13 @@ MonoBehaviour:
       Data4: 835244995
     Path: event:/SFX/Player Move Calm
   SoundWalkAngry:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundIncreaseMood:
     Guid:
       Data1: 0
       Data2: 0

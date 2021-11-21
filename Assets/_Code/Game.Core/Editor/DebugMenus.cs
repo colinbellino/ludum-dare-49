@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,6 +40,17 @@ namespace Game.Core.Editor
 		static bool ValidateAssociateScreenshots()
 		{
 			return Application.isPlaying == false;
+		}
+
+		[MenuItem("Alteration/Force reserialize levels")]
+		static void ForceReserializeLevels()
+		{
+			// var paths = AssetDatabase.FindAssets("t:prefab", new string[] { "Assets/Resources/Levels" });
+			var paths = AssetDatabase.GetAllAssetPaths().Where(p => p.StartsWith("Assets/Resources/Levels") && p.EndsWith(".prefab"));
+			foreach (var item in paths)
+				UnityEngine.Debug.Log(item);
+
+			AssetDatabase.ForceReserializeAssets(paths);
 		}
 	}
 }
