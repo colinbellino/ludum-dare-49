@@ -334,25 +334,20 @@ AngerProgress(angry): {angryProgress}
 			}
 
 			_turnInProgress = true;
-			await Loop(context.ReadValue<Vector2>());
+			await PlayerTurn(context.ReadValue<Vector2>());
 			_turnInProgress = false;
 		}
 
-		private async UniTask Loop(Vector2 moveInput)
+		private async UniTask PlayerTurn(Vector2 moveInput)
 		{
 			if (moveInput.magnitude == 0)
-			{
 				return;
-			}
 
 			if (Player.Dead)
-			{
 				return;
-			}
 
-			var destination = Player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
-
-			var playerDidMove = await Turn(Player, destination);
+			var playerDestination = Player.GridPosition + new Vector3Int((int)moveInput.x, (int)moveInput.y, 0);
+			var playerDidMove = await Turn(Player, playerDestination);
 			if (playerDidMove)
 			{
 				foreach (var entity in _state.Entities)
@@ -481,22 +476,18 @@ AngerProgress(angry): {angryProgress}
 
 			var destinationTile = _state.Level.Ground.GetTile(destination) as Tile;
 			var entitiesAtDestination = _state.Entities.FindAll(e => e.GridPosition == destination);
-			// if (entitiesAtDestination.Count > 1)
-			// 	UnityEngine.Debug.LogError("We don't handle multiple entities in the same position right now. See Resources/Levels/README.md for more informations.");
 
 			foreach (var entityAtDestination in entitiesAtDestination)
 			{
-				// var entityAtDestination = entitiesAtDestination.Count > 0 ? entitiesAtDestination[0] : null;
-
-				if (entityAtDestination)
+				if (entityAtDestination.Trigger == false)
 				{
-					if (entityAtDestination.Trigger == false)
-					{
-						UnityEngine.Debug.Log($"Can't move to {destination.ToString()} (occupied).");
-						return false;
-					}
+					UnityEngine.Debug.Log($"Can't move to {destination.ToString()} (occupied).");
+					return false;
 				}
+			}
 
+			// Move
+			{
 				if (entity.AngerState == Moods.Angry)
 					AudioHelpers.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
 				else
@@ -513,15 +504,16 @@ AngerProgress(angry): {angryProgress}
 				entity.Animator.Play("Idle");
 
 				if (
-					(destinationTile == null && entityAtDestination == null) ||
+					(destinationTile == null && entitiesAtDestination.Count == 0) ||
 					(destinationTile != null && IsTileWalkable(destinationTile) == false)
 				)
 				{
 					await Fall(entity);
 				}
-
-				await CheckTrigger(entity, entityAtDestination);
 			}
+
+			foreach (var entityAtDestination in entitiesAtDestination)
+				await CheckTrigger(entity, entityAtDestination);
 
 			return true;
 		}
