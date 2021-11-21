@@ -370,12 +370,13 @@ AngerProgress(angry): {angryProgress}
 					{
 						if (_state.Running && entity.AffectedByAnger)
 						{
-							entity.MoodCurrent -= 1;
+							if (entity.PreventMoodChangeThisFrame == false)
+								entity.MoodCurrent -= 1;
+
+							entity.PreventMoodChangeThisFrame = false;
 
 							if (entity == Player)
-							{
 								UpdatePlayerFMODParams(Player);
-							}
 
 							if (entity.MoodCurrent < 1)
 							{
@@ -644,6 +645,7 @@ AngerProgress(angry): {angryProgress}
 
 					case TriggerActions.IncreaseMood:
 						{
+							entity.PreventMoodChangeThisFrame = true;
 							entity.MoodCurrent = Mathf.Clamp(entity.MoodCurrent + entityAtDestination.IncreaseMood, 0, entity.MoodMax);
 							AudioHelpers.PlayOneShot(entityAtDestination.SoundIncreaseMood, entityAtDestination.GridPosition);
 						}

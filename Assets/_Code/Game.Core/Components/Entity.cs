@@ -34,6 +34,7 @@ namespace Game.Core
 		[SerializeField] public Moods TriggerState;
 		[SerializeField] public TriggerActions TriggerAction;
 		[SerializeField] public int IncreaseMood = 2;
+		[HideInInspector] public bool PreventMoodChangeThisFrame;
 
 		[Header("Break")]
 		[SerializeField] public int BreaksAt = 1;
