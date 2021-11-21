@@ -7,13 +7,16 @@ namespace Game.Core
 	{
 		public static void PlayOneShot(EventReference eventReference, Vector3 position = new Vector3())
 		{
+			if (eventReference.IsNull)
+				return;
+
 			try
 			{
 				PlayOneShot(eventReference.Guid, position);
 			}
 			catch (EventNotFoundException)
 			{
-				RuntimeUtils.DebugLogWarning("[FMOD] Event not found: " + eventReference);
+				// RuntimeUtils.DebugLogWarning("[FMOD] Event not found: " + eventReference);
 			}
 		}
 
@@ -25,7 +28,7 @@ namespace Game.Core
 			}
 			catch (EventNotFoundException)
 			{
-				RuntimeUtils.DebugLogWarning("[FMOD] Event not found: " + path);
+				// RuntimeUtils.DebugLogWarning("[FMOD] Event not found: " + path);
 			}
 		}
 
