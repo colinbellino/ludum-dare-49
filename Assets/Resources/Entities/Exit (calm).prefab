@@ -156,11 +156,14 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4
   AffectedByAnger: 0
-  AngerProgress: 0
-  AngerState: 0
+  MoodValue: 0
+  MoodMax: 2
+  Mood: 0
   Trigger: 1
   TriggerState: 1
   TriggerAction: 1
+  IncreaseMood: 2
+  PreventMoodChangeThisFrame: 0
   BreaksAt: 1
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
@@ -235,6 +238,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   SoundWalkAngry:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundIncreaseMood:
     Guid:
       Data1: 0
       Data2: 0

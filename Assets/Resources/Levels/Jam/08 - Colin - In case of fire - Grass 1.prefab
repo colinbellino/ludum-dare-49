@@ -61,6 +61,8 @@ MonoBehaviour:
   Title: In case of fire...
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  MoodMax: 3
+  DefaultPlayerMood: 1
   Screenshot: {fileID: 2800000, guid: 3a3f8f843f0414d888c87b1f2cb1dd18, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:

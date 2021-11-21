@@ -25,9 +25,11 @@ namespace Game.Core
 
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;
-		[HideInInspector] public int MoodCurrent;
+		[UnityEngine.Serialization.FormerlySerializedAs("MoodCurrent")]
+		[HideInInspector] public int MoodValue;
 		[SerializeField] public int MoodMax = 2;
-		[SerializeField] public Moods AngerState;
+		[UnityEngine.Serialization.FormerlySerializedAs("AngerState")]
+		[SerializeField] public Moods Mood;
 
 		[Header("Triggers")]
 		[SerializeField] public bool Trigger;

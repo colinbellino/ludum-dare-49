@@ -239,11 +239,14 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4
   AffectedByAnger: 0
-  AngerProgress: 0
-  AngerState: 0
+  MoodValue: 0
+  MoodMax: 2
+  Mood: 0
   Trigger: 1
   TriggerState: 0
   TriggerAction: 6
+  IncreaseMood: 2
+  PreventMoodChangeThisFrame: 0
   BreaksAt: 2
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
@@ -254,16 +257,83 @@ MonoBehaviour:
   ActivatesWhenKeyInLevel: 0
   ActivatesWhenLevelStart: 0
   Activated: 0
-  CantMoveAudioClip: {fileID: 0}
-  BurnAudioClip: {fileID: 0}
-  FallAudioClip: {fileID: 0}
-  BreakGroundAudioClips: []
-  TransformationAudioClip: {fileID: 0}
-  KeyAudioClip: {fileID: 0}
-  ExitAudioClip: {fileID: 0}
-  BreakingAudioClip: {fileID: 8300000, guid: 3cffe1a6daa36c64b9192c5671d2cb9e, type: 3}
-  WalkCalmAudioClips: []
-  WalkAngryAudioClips: []
+  SoundCantMoveAudio:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBurn:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundFall:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBreakGround:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundTransformation:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundKey:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundExit:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundBreaking:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundWalkCalm:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundWalkAngry:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SoundIncreaseMood:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   Dead: 0
   AnimationClipLength:
     m_keys: []
