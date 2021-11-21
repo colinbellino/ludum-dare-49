@@ -156,9 +156,9 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4
   AffectedByAnger: 0
-  MoodCurrent: 0
+  MoodValue: 0
   MoodMax: 3
-  AngerState: 0
+  Mood: 0
   Trigger: 1
   TriggerState: 0
   TriggerAction: 8
