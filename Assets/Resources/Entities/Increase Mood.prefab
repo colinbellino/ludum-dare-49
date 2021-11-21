@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 614d48b1955ef476ab4da3359a88c78f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4aa798c5e3a49437abb30e186aa83044, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -163,6 +163,7 @@ MonoBehaviour:
   TriggerState: 0
   TriggerAction: 8
   IncreaseMood: 99
+  PreventMoodChangeThisFrame: 0
   BreaksAt: 1
   BreakParticle: {fileID: 0}
   BreakParticleOffset: {x: 0, y: 0, z: 0}
