@@ -93,7 +93,7 @@ namespace Game.Core.StateMachines.Game
 			{
 				_state.TimeScaleCurrent = 10f;
 
-				if (_config.TakeScreenshots)
+				if (_state.TakeScreenshots)
 				{
 					await UniTask.Delay(2000);
 
