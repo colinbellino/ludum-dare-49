@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Game Config
   m_EditorClassIdentifier: 
   DebugFSM: 0
-  DebugLevels: 1
+  DebugLevels: 0
   LockFPS: 60
   TakeScreenshots: 0
   Levels:
@@ -33,6 +33,9 @@ MonoBehaviour:
   - {fileID: 7894139527700584289, guid: 0687c2b7731af4e4bae801a8d948bf05, type: 3}
   - {fileID: 7894139527700584289, guid: 82bbe99a97d91384fa1296bf4071ae66, type: 3}
   - {fileID: 7894139527700584289, guid: 66457433eb8e1774c99a436d1595bcfe, type: 3}
+  - {fileID: 7894139527700584289, guid: 99c9f26cc5399f74e9aafdf090290a51, type: 3}
+  - {fileID: 7894139527700584289, guid: 538e24aee8ada4a7182d51994a3a46da, type: 3}
+  - {fileID: 7894139527700584289, guid: 3f597c00717774f259e2083899dc29d1, type: 3}
   TileToEntity:
     m_keys:
     - {fileID: 11400000, guid: 4676f8cda5c552641b04efbd924842ef, type: 2}

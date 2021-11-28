@@ -84,6 +84,12 @@ namespace Game.Core.StateMachines.Game
 
 				if (Keyboard.current.kKey.wasReleasedThisFrame)
 				{
+					if (Keyboard.current.leftShiftKey.isPressed)
+					{
+						_state.TakeScreenshots = true;
+						UnityEngine.Debug.Log("Taking screenshots!");
+					}
+
 					UnityEngine.Debug.Log("Starting in replay mode.");
 					_state.IsReplaying = true;
 					LoadLevel(0);
