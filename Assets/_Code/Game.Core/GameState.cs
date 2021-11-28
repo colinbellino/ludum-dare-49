@@ -16,6 +16,7 @@ namespace Game.Core
 		public bool IsReplaying;
 		public Level[] DebugLevels;
 		public Level[] AllLevels;
+		public bool TakeScreenshots;
 
 		public Bus GameBus;
 		public Bus MusicBus;
