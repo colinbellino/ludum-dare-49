@@ -109,7 +109,7 @@ namespace Game.Core.StateMachines.Game
 
 					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
 					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
-					var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.png");
+					var screenshotPath = levelPath.Replace("prefab", "png");
 					ScreenCapture.CaptureScreenshot(screenshotPath);
 					await UniTask.NextFrame();
 				}
@@ -118,7 +118,7 @@ namespace Game.Core.StateMachines.Game
 				{
 					var levelAsset = _config.Levels[_state.CurrentLevelIndex];
 					var levelPath = UnityEditor.AssetDatabase.GetAssetPath(levelAsset);
-					var replayPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(_state.CurrentLevelIndex)}.inputtrace");
+					var replayPath = levelPath.Replace("prefab", "inputtrace");
 					UnityEngine.Debug.Log("Loading input trace from: " + replayPath);
 					if (File.Exists(replayPath))
 					{

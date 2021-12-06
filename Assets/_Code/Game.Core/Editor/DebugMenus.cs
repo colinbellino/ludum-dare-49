@@ -22,7 +22,7 @@ namespace Game.Core.Editor
 				var levelAsset = config.Levels[i];
 				var levelPath = AssetDatabase.GetAssetPath(levelAsset);
 
-				var screenshotPath = levelPath.Replace($"{levelAsset.name}.prefab", $"{Utils.GetLevelIndex(i)}.png");
+				var screenshotPath = levelPath.Replace("prefab", "png");
 				var originalScreenshot = AssetDatabase.LoadAssetAtPath<Texture2D>(screenshotPath);
 				if (originalScreenshot)
 				{
@@ -51,6 +51,12 @@ namespace Game.Core.Editor
 				UnityEngine.Debug.Log(item);
 
 			AssetDatabase.ForceReserializeAssets(paths);
+		}
+
+		[MenuItem("Alteration/Force reserialize levels", true)]
+		static bool ValidateForceReserializeLevels()
+		{
+			return Application.isPlaying == false;
 		}
 	}
 }
