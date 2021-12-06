@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using ICSharpCode.NRefactory.Ast;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -66,8 +67,16 @@ namespace Game.Core
 		public void ShowGameplay() { _gameplayRoot.SetActive(true); }
 		public void HideGameplay() { _gameplayRoot.SetActive(false); }
 
-		public void SetAngerMeter(int current, int max, Moods angerState)
+		public void SetAngerMeter(int current, int max, Moods angerState, bool canMoodChange)
 		{
+			if (canMoodChange == false)
+			{
+				for (int i = 0; i < _moodCells.Length; i++)
+					_moodCells[i].gameObject.SetActive(false);
+
+				return;
+			}
+
 			for (int i = 0; i < _moodCells.Length; i++)
 			{
 				var image = _moodCells[i].GetChild(0).GetComponent<Image>();

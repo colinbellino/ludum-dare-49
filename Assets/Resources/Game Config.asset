@@ -16,7 +16,8 @@ MonoBehaviour:
   DebugLevels: 1
   LockFPS: 60
   Levels:
-  - {fileID: 7894139527700584289, guid: cf0d7ca8068489747a93cd71fc616e15, type: 3}
+  - {fileID: 7894139527700584289, guid: a19c033337d594e97a8b8d59a7cc283d, type: 3}
+  - {fileID: 7894139527700584289, guid: b8b0c2031615d4ee0a19cef7ce0fd831, type: 3}
   - {fileID: 7894139527700584289, guid: 79f8674885d50644087fbd579aad7809, type: 3}
   - {fileID: 7894139527700584289, guid: e7da43fb74dd4544c83b43287673aa55, type: 3}
   - {fileID: 7894139527700584289, guid: 07cdcdb971c33304d92698526b7bc945, type: 3}

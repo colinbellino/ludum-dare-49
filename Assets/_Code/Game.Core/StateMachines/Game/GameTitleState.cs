@@ -46,6 +46,7 @@ namespace Game.Core.StateMachines.Game
 - F1-F12: load levels
 - L: load last level
 - K: start replay
+- LShift + K: start replay (with screenshots)
 - Tab: level selection
 ");
 			}
