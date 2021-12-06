@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using FMOD.Studio;
 using NesScripts.Controls.PathFind;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -17,6 +18,7 @@ namespace Game.Core.StateMachines.Game
 		private static string PLAYER_STATE_PARAM = "Player State";
 		private static string PLAYER_ANGRY_PARAM = "Player Angry";
 		private static string PLAYER_CALM_PARAM = "Player Calm";
+		private static int FMOD_MAX_MOOD = 3;
 
 		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
 		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
@@ -321,14 +323,14 @@ AngerProgress(angry): {angryProgress}
 			if (isCalm)
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 0);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.MoodMax - player.MoodValue);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.MoodValue);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodMax - player.MoodValue));
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
 			}
 			else
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 1);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, player.MoodValue);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, player.MoodMax - player.MoodValue);
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodMax - player.MoodValue));
 			}
 		}
 
