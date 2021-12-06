@@ -8,6 +8,7 @@ namespace Game.Core
 		public string Title;
 		public Tilemap Ground;
 		public Tilemap Entities;
+		public bool MoodChanges = true;
 		[UnityEngine.Serialization.FormerlySerializedAs("AngerMax")]
 		[Range(3, 10)]
 		public int MoodMax = 3;

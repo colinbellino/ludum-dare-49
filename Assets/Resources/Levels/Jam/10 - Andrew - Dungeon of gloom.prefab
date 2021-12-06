@@ -61,9 +61,10 @@ MonoBehaviour:
   Title: Dungeon of gloom
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  MoodChanges: 1
   MoodMax: 3
   DefaultPlayerMood: 1
-  Screenshot: {fileID: 2800000, guid: bfd53ab075ef74d8e8f2d07f394b57f2, type: 3}
+  Screenshot: {fileID: 2800000, guid: 0b7ddf260b46c49bbaa47b8a30c85085, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:
   m_ObjectHideFlags: 0

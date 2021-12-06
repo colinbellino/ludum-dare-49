@@ -61,6 +61,7 @@ MonoBehaviour:
   Title: 
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  MoodChanges: 1
   MoodMax: 4
   DefaultPlayerMood: 1
   Screenshot: {fileID: 0}

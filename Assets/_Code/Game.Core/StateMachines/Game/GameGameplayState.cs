@@ -83,7 +83,7 @@ namespace Game.Core.StateMachines.Game
 			_controls.Gameplay.Enable();
 			_controls.Gameplay.Move.performed += OnMovePerformed;
 
-			_ui.SetAngerMeter(Player.MoodValue, Player.MoodMax, Player.Mood);
+			_ui.SetAngerMeter(Player.MoodValue, Player.MoodMax, Player.Mood, _state.Level.MoodChanges);
 			_ui.ShowGameplay();
 
 			_game.LevelWalls.SetActive(true);
@@ -383,7 +383,7 @@ AngerProgress(angry): {angryProgress}
 					{
 						if (_state.Running && entity.AffectedByAnger)
 						{
-							if (entity.PreventMoodChangeThisFrame == false)
+							if (_state.Level.MoodChanges && entity.PreventMoodChangeThisFrame == false)
 								entity.MoodValue -= 1;
 
 							entity.PreventMoodChangeThisFrame = false;
@@ -419,7 +419,7 @@ AngerProgress(angry): {angryProgress}
 								}
 							}
 
-							_ui.SetAngerMeter(entity.MoodValue, entity.MoodMax, entity.Mood);
+							_ui.SetAngerMeter(entity.MoodValue, entity.MoodMax, entity.Mood, _state.Level.MoodChanges);
 						}
 					}
 				}

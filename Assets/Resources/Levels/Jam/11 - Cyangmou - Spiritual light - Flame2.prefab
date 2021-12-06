@@ -61,9 +61,10 @@ MonoBehaviour:
   Title: Spiritual light
   Ground: {fileID: 7338579200721977276}
   Entities: {fileID: 898102791606836484}
+  MoodChanges: 1
   MoodMax: 3
   DefaultPlayerMood: 1
-  Screenshot: {fileID: 2800000, guid: 0b7ddf260b46c49bbaa47b8a30c85085, type: 3}
+  Screenshot: {fileID: 2800000, guid: 3588f1e3a4c8a4e8ca7b4e28cabde34f, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:
   m_ObjectHideFlags: 0
