@@ -19,8 +19,7 @@ namespace Game.Core
 		[SerializeField] private TMP_Text _debugText;
 		[Header("Gameplay")]
 		[SerializeField] private GameObject _gameplayRoot;
-		[SerializeField] private Animator _angerMeterAnimator;
-		[SerializeField] private RectTransform _angerMeterCache;
+		[SerializeField] private RectTransform[] _moodCells;
 		[Header("Title")]
 		[SerializeField] private GameObject _titleRoot;
 		[SerializeField] private RectTransform _titleWrapper;
@@ -69,18 +68,16 @@ namespace Game.Core
 
 		public void SetAngerMeter(int current, int max, Moods angerState)
 		{
-
-			if (_angerMeterAnimator.isActiveAndEnabled)
+			for (int i = 0; i < _moodCells.Length; i++)
 			{
-				_angerMeterAnimator.SetFloat("AngerState", (angerState == Moods.Calm) ? 0 : 1);
+				var image = _moodCells[i].GetChild(0).GetComponent<Image>();
+				var animator = _moodCells[i].GetComponentInChildren<Animator>();
+				if (animator.isActiveAndEnabled)
+					animator.SetFloat("AngerState", (angerState == Moods.Calm) ? 0 : 1);
+
+				image.enabled = current == max || i < current;
+				_moodCells[i].gameObject.SetActive(i == (_moodCells.Length - 1) || i < max - 1);
 			}
-			var cellSize = 10;
-			_angerMeterAnimator.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, max * cellSize);
-
-			var cacheSize = _angerMeterCache.sizeDelta;
-			cacheSize.x = (float)(max - current) * cellSize;
-
-			_angerMeterCache.sizeDelta = cacheSize;
 		}
 
 		public async UniTask ShowTitle(CancellationToken cancellationToken, float duration = 0.5f)
