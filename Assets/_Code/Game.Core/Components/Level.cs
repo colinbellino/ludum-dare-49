@@ -9,6 +9,7 @@ namespace Game.Core
 		public Tilemap Ground;
 		public Tilemap Entities;
 		[UnityEngine.Serialization.FormerlySerializedAs("AngerMax")]
+		[Range(3, 10)]
 		public int MoodMax = 3;
 		public Moods DefaultPlayerMood = Moods.Calm;
 
