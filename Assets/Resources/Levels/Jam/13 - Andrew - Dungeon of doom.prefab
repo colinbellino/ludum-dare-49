@@ -64,7 +64,7 @@ MonoBehaviour:
   MoodChanges: 1
   MoodMax: 3
   DefaultPlayerMood: 1
-  Screenshot: {fileID: 2800000, guid: 7184d8e7303c04a569e52332d1c994bc, type: 3}
+  Screenshot: {fileID: 2800000, guid: 16003886ba7aa4690b287dc4e03682e0, type: 3}
 --- !u!1 &6933097008426074110
 GameObject:
   m_ObjectHideFlags: 0
