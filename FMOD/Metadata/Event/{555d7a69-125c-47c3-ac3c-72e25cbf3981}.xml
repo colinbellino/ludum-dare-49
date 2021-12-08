@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{555d7a69-125c-47c3-ac3c-72e25cbf3981}">
 		<property name="name">
-			<value>Player move angry 1</value>
+			<value>Player Move Angry 1</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
@@ -34,6 +34,9 @@
 		<relationship name="parameters">
 			<destination>{ac35210d-a41f-4541-887b-a990ad15e541}</destination>
 			<destination>{cc305bad-e2c3-4ae9-a1a6-1de58fac95eb}</destination>
+		</relationship>
+		<relationship name="banks">
+			<destination>{561cd480-bd2b-4c2e-b919-d775f9c4f409}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixer" id="{93011a1a-1257-43d6-895f-232cfce54c3d}">
