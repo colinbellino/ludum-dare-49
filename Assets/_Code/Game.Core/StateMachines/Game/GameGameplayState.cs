@@ -185,7 +185,6 @@ FMOD Player Angry: {angryProgress}
 			}
 
 			{
-
 				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_CALM_PARAM, out var calmProgress);
 				if (calmProgress != _calmProgressTarget)
 					FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, Mathf.MoveTowards(calmProgress, _calmProgressTarget, Time.deltaTime * 3));
@@ -517,9 +516,9 @@ FMOD Player Angry: {angryProgress}
 			// Move
 			{
 				if (entity.Mood == Moods.Angry)
-					AudioHelpers.PlayOneShot(entity.SoundWalkAngry, entity.GridPosition);
+					AudioHelpers.PlayOneShotRandom(entity.SoundWalkAngry, entity.GridPosition);
 				else
-					AudioHelpers.PlayOneShot(entity.SoundWalkCalm, entity.GridPosition);
+					AudioHelpers.PlayOneShotRandom(entity.SoundWalkCalm, entity.GridPosition);
 
 				entity.GridPosition = destination;
 				entity.Animator.Play("Walk");

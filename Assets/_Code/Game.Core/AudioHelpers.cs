@@ -1,10 +1,18 @@
+using System;
 using FMODUnity;
 using UnityEngine;
+using Unity.Mathematics;
 
 namespace Game.Core
 {
 	public static class AudioHelpers
 	{
+		public static void PlayOneShotRandom(EventReference[] eventReferences, Vector3 position = new Vector3())
+		{
+			var eventReference = eventReferences[UnityEngine.Random.Range(0, eventReferences.Length)];
+			PlayOneShot(eventReference, position);
+		}
+
 		public static void PlayOneShot(EventReference eventReference, Vector3 position = new Vector3())
 		{
 			if (eventReference.IsNull)
