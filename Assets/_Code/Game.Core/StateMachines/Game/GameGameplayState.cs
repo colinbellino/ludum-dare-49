@@ -175,10 +175,11 @@ namespace Game.Core.StateMachines.Game
 - K: toggle replay
 - R: restart level
 
-AngerState: {(Player.Mood == Moods.Calm ? 0 : 1)}
 AngerProgress(raw): {Player.MoodValue}
-AngerProgress(calm): {calmProgress}
-AngerProgress(angry): {angryProgress}
+
+FMOD Player State: {(Player.Mood == Moods.Calm ? 0 : 1)}
+FMOD Player Calm: {calmProgress}
+FMOD Player Angry: {angryProgress}
 ");
 			}
 
@@ -319,18 +320,17 @@ AngerProgress(angry): {angryProgress}
 
 		private static void UpdatePlayerFMODParams(Entity player)
 		{
-			var isCalm = player.Mood == Moods.Calm;
-			if (isCalm)
+			if (player.Mood == Moods.Calm)
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 0);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodMax - player.MoodValue));
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, 1);
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
 			}
 			else
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 1);
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodMax - player.MoodValue));
+				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, 1);
 			}
 		}
 
