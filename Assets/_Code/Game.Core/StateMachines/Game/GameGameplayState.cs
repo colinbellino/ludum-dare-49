@@ -19,7 +19,8 @@ namespace Game.Core.StateMachines.Game
 		private static string PLAYER_ANGRY_PARAM = "Player Angry";
 		private static string PLAYER_CALM_PARAM = "Player Calm";
 		private static int FMOD_MAX_MOOD = 3;
-
+		private static int _calmProgressTarget;
+		private static int _angryProgressTarget;
 		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
 		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
@@ -183,6 +184,17 @@ FMOD Player Angry: {angryProgress}
 ");
 			}
 
+			{
+
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_CALM_PARAM, out var calmProgress);
+				if (calmProgress != _calmProgressTarget)
+					FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, Mathf.MoveTowards(calmProgress, _calmProgressTarget, Time.deltaTime * 3));
+
+				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_ANGRY_PARAM, out var angryProgress);
+				if (angryProgress != _angryProgressTarget)
+					FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, Mathf.MoveTowards(angryProgress, _angryProgressTarget, Time.deltaTime * 3));
+			}
+
 			if (_state.Running)
 			{
 				if (_controls.Global.Pause.WasPerformedThisFrame())
@@ -324,13 +336,15 @@ FMOD Player Angry: {angryProgress}
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 0);
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, 1);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
+				// FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
+				_calmProgressTarget = math.min(FMOD_MAX_MOOD, player.MoodValue);
 			}
 			else
 			{
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_STATE_PARAM, 1);
-				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
+				// FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_ANGRY_PARAM, math.min(FMOD_MAX_MOOD, player.MoodValue));
 				FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, 1);
+				_angryProgressTarget = math.min(FMOD_MAX_MOOD, player.MoodValue);
 			}
 		}
 
