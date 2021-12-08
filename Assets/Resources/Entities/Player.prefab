@@ -231,19 +231,31 @@ MonoBehaviour:
       Data4: 0
     Path: 
   SoundWalkCalm:
-    Guid:
+  - Guid:
       Data1: 1489173505
       Data2: 1205120184
       Data3: -289901410
       Data4: 835244995
     Path: event:/SFX/Player Move Calm
   SoundWalkAngry:
-    Guid:
+  - Guid:
       Data1: 1432189545
       Data2: 1203966556
       Data3: -495829844
       Data4: -2126921892
     Path: event:/SFX/Player Move Angry 1
+  - Guid:
+      Data1: 684856771
+      Data2: 1111756839
+      Data3: 1088463235
+      Data4: 545565499
+    Path: event:/SFX/Player Move Angry 2
+  - Guid:
+      Data1: 987966697
+      Data2: 1097769994
+      Data3: -310756728
+      Data4: -555401863
+    Path: event:/SFX/Player Move Angry 3
   SoundIncreaseMood:
     Guid:
       Data1: 0

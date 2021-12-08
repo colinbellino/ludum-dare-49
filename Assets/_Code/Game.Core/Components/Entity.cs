@@ -61,8 +61,8 @@ namespace Game.Core
 		public EventReference SoundKey;
 		public EventReference SoundExit;
 		public EventReference SoundBreaking;
-		public EventReference SoundWalkCalm;
-		public EventReference SoundWalkAngry;
+		public EventReference[] SoundWalkCalm;
+		public EventReference[] SoundWalkAngry;
 		public EventReference SoundIncreaseMood;
 
 		[HideInInspector] public bool Dead;
