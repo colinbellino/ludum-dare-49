@@ -25,6 +25,7 @@ namespace Game.Core
 
 		[Header("Anger")]
 		[SerializeField] public bool AffectedByAnger;
+		[SerializeField] public bool SyncToPlayerAnger;
 		[UnityEngine.Serialization.FormerlySerializedAs("MoodCurrent")]
 		[HideInInspector] public int MoodValue;
 		[SerializeField] public int MoodMax = 2;
