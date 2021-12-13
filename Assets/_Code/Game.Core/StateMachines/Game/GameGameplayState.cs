@@ -77,6 +77,16 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
+			foreach (var entity in _state.Entities)
+			{
+				if (entity.SyncToPlayerAnger)
+				{
+					entity.MoodValue = Player.MoodValue;
+					entity.Mood = Player.Mood;
+					entity.Animator.SetFloat("AngerState", entity.Mood == Moods.Calm ? 0 : 1);
+				}
+			}
+
 			UpdatePlayerFMODParams(Player);
 
 			_state.Running = true;
@@ -458,6 +468,13 @@ FMOD Player Angry: {angryProgress}
 								entity.Activated = false;
 							}
 						}
+					}
+
+					if (entity.SyncToPlayerAnger)
+					{
+						entity.MoodValue = Player.MoodValue;
+						entity.Mood = Player.Mood;
+						entity.Animator.SetFloat("AngerState", entity.Mood == Moods.Calm ? 0 : 1);
 					}
 				}
 			}

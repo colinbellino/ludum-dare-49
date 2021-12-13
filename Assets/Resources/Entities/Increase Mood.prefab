@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6662242043406632512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6662242044832962000}
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4aa798c5e3a49437abb30e186aa83044, type: 3}
+  m_Sprite: {fileID: 7762155620236009472, guid: 78b950d4deffa4486939c2cca746fbb9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,9 +91,9 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6662242043406632512}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7764ae8a33293384bb795a5c99d272d1, type: 2}
+  m_Controller: {fileID: 9100000, guid: 154832e39480c4e658930e6e92cd70e9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -156,6 +156,7 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   MoveSpeed: 4
   AffectedByAnger: 0
+  SyncToPlayerAnger: 1
   MoodValue: 0
   MoodMax: 3
   Mood: 0
@@ -231,14 +232,26 @@ MonoBehaviour:
       Data4: 0
     Path: 
   SoundWalkCalm:
-    Guid:
+  - Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  - Guid:
       Data1: 0
       Data2: 0
       Data3: 0
       Data4: 0
     Path: 
   SoundWalkAngry:
-    Guid:
+  - Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  - Guid:
       Data1: 0
       Data2: 0
       Data3: 0
