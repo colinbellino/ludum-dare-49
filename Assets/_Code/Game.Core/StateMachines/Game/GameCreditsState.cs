@@ -18,7 +18,7 @@ namespace Game.Core.StateMachines.Game
 			await _ui.FadeOut();
 		}
 
-		public override async void Tick()
+		public override void Tick()
 		{
 			if (_controls.Global.Cancel.WasPerformedThisFrame() || _controls.Global.Confirm.WasPerformedThisFrame())
 			{
