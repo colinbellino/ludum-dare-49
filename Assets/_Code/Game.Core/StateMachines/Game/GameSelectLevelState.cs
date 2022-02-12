@@ -27,8 +27,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			if (_controls.Global.Cancel.WasPerformedThisFrame())
 			{
-				_fsm.Fire(GameFSM.Triggers.Quit);
 				_state.LevelMusic.stop(STOP_MODE.ALLOWFADEOUT);
+				_fsm.Fire(GameFSM.Triggers.Quit);
 			}
 		}
 
