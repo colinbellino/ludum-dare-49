@@ -1,4 +1,5 @@
 using System;
+using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
 
@@ -54,17 +55,17 @@ namespace Game.Core
 		[HideInInspector] public bool Activated;
 
 		[Header("Audio")]
-		public EventReference SoundCantMoveAudio;
-		public EventReference SoundBurn;
-		public EventReference SoundFall;
-		public EventReference SoundBreakGround;
-		public EventReference SoundTransformation;
-		public EventReference SoundKey;
-		public EventReference SoundExit;
-		public EventReference SoundBreaking;
-		public EventReference[] SoundWalkCalm;
-		public EventReference[] SoundWalkAngry;
-		public EventReference SoundIncreaseMood;
+		[SerializeField] public EventReference SoundCantMoveAudio;
+		[SerializeField] public EventReference SoundBurn;
+		[SerializeField] public EventReference SoundFall;
+		[SerializeField] public EventReference SoundBreakGround;
+		[SerializeField] public EventReference SoundTransformation;
+		[SerializeField] public EventReference SoundKey;
+		[SerializeField] public EventReference SoundExit;
+		[SerializeField] public EventReference SoundBreaking;
+		[SerializeField] public EventReference[] SoundWalkCalm;
+		[SerializeField] public EventReference[] SoundWalkAngry;
+		[SerializeField] public EventReference SoundIncreaseMood;
 
 		[HideInInspector] public bool Dead;
 		[HideInInspector] public ClipLength AnimationClipLength;
