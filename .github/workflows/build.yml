@@ -26,7 +26,7 @@ jobs:
           - StandaloneOSX
           - StandaloneWindows64
           - StandaloneLinux64
-          - WebGL
+          # - WebGL
     steps:
       - uses: actions/checkout@v2
         with:
@@ -116,13 +116,13 @@ jobs:
           PACKAGE: build/StandaloneLinux64
           VERSION: ${{ env.RELEASE_VERSION }}
 
-      - name: Deploy (WebGL)
-        if: contains(env.RELEASE_VERSION, '.') && matrix.targetPlatform == 'WebGL'
-        uses: josephbmanley/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ env.BUTLER_CREDENTIALS }}
-          CHANNEL: webgl
-          ITCH_USER: ${{ secrets.BUTLER_USER }}
-          ITCH_GAME: ${{ secrets.BUTLER_GAME }}
-          PACKAGE: build/WebGL
-          VERSION: ${{ env.RELEASE_VERSION }}
+      # - name: Deploy (WebGL)
+      #   if: contains(env.RELEASE_VERSION, '.') && matrix.targetPlatform == 'WebGL'
+      #   uses: josephbmanley/butler-publish-itchio-action@master
+      #   env:
+      #     BUTLER_CREDENTIALS: ${{ env.BUTLER_CREDENTIALS }}
+      #     CHANNEL: webgl
+      #     ITCH_USER: ${{ secrets.BUTLER_USER }}
+      #     ITCH_GAME: ${{ secrets.BUTLER_GAME }}
+      #     PACKAGE: build/WebGL
+      #     VERSION: ${{ env.RELEASE_VERSION }}
