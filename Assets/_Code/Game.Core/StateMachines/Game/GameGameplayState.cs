@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using FMOD.Studio;
@@ -15,14 +16,15 @@ namespace Game.Core.StateMachines.Game
 	{
 		private bool _turnInProgress;
 		private InputEventTrace.ReplayController _controller;
+		private int _calmProgressTarget;
+		private int _angryProgressTarget;
+		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
+
 		private static string PLAYER_STATE_PARAM = "Player State";
 		private static string PLAYER_ANGRY_PARAM = "Player Angry";
 		private static string PLAYER_CALM_PARAM = "Player Calm";
 		private static int FMOD_MAX_MOOD = 3;
-		private static int _calmProgressTarget;
-		private static int _angryProgressTarget;
 		private static readonly Vector3 CellOffset = new Vector3(0.5f, 0.5f);
-		private Entity Player => _state.Entities.Find((entity) => entity.ControlledByPlayer);
 
 		public GameGameplayState(GameFSM fsm, GameSingleton game) : base(fsm, game) { }
 
@@ -87,7 +89,7 @@ namespace Game.Core.StateMachines.Game
 				}
 			}
 
-			UpdatePlayerFMODParams(Player);
+			// UpdatePlayerFMODParams(Player);
 
 			_state.Running = true;
 
@@ -163,8 +165,10 @@ namespace Game.Core.StateMachines.Game
 			}
 #endif
 
+			UpdatePlayerFMODParams(Player);
+
 			_state.LevelMusic.getPlaybackState(out var state);
-			if (state != PLAYBACK_STATE.PLAYING)
+			if (state == PLAYBACK_STATE.STOPPED || state == PLAYBACK_STATE.STOPPING)
 			{
 				_state.LevelMusic.start();
 			}
@@ -188,13 +192,15 @@ namespace Game.Core.StateMachines.Game
 
 AngerProgress(raw): {Player.MoodValue}
 
-FMOD Player State: {(Player.Mood == Moods.Calm ? 0 : 1)}
 FMOD Player Calm: {calmProgress}
 FMOD Player Angry: {angryProgress}
 ");
 			}
 
+			if (_state.Level.MoodChanges)
 			{
+				UpdatePlayerFMODParams(Player);
+
 				FMODUnity.RuntimeManager.StudioSystem.getParameterByName(PLAYER_CALM_PARAM, out var calmProgress);
 				if (calmProgress != _calmProgressTarget)
 					FMODUnity.RuntimeManager.StudioSystem.setParameterByName(PLAYER_CALM_PARAM, Mathf.MoveTowards(calmProgress, _calmProgressTarget, Time.deltaTime * 3));
@@ -334,12 +340,12 @@ FMOD Player Angry: {angryProgress}
 			if (_state.Level)
 			{
 				_state.Level.gameObject.SetActive(false);
-				Object.Destroy(_state.Level.gameObject);
+				UnityEngine.Object.Destroy(_state.Level.gameObject);
 				_state.Level = null;
 			}
 		}
 
-		private static void UpdatePlayerFMODParams(Entity player)
+		private void UpdatePlayerFMODParams(Entity player)
 		{
 			if (player.Mood == Moods.Calm)
 			{
@@ -411,8 +417,8 @@ FMOD Player Angry: {angryProgress}
 
 							entity.PreventMoodChangeThisFrame = false;
 
-							if (entity == Player)
-								UpdatePlayerFMODParams(Player);
+							// if (entity == Player)
+							// 	UpdatePlayerFMODParams(Player);
 
 							if (entity.MoodValue < 1)
 							{
@@ -421,10 +427,10 @@ FMOD Player Angry: {angryProgress}
 								var isCalm = entity.Mood == Moods.Calm;
 								entity.Animator.SetFloat("AngerState", isCalm ? 0 : 1);
 
-								if (entity == Player)
-								{
-									UpdatePlayerFMODParams(Player);
-								}
+								// if (entity == Player)
+								// {
+								// 	UpdatePlayerFMODParams(Player);
+								// }
 
 								entity.Direction = Vector3Int.down;
 								entity.Animator.SetFloat("DirectionX", entity.Direction.x);
@@ -508,7 +514,7 @@ FMOD Player Angry: {angryProgress}
 		private void Victory()
 		{
 			UnityEngine.Debug.Log("End of the game reached.");
-			_state.LevelMusic.start();
+			_state.LevelMusic.stop(STOP_MODE.ALLOWFADEOUT);
 			_fsm.Fire(GameFSM.Triggers.Won);
 		}
 
@@ -586,7 +592,13 @@ FMOD Player Angry: {angryProgress}
 							}
 
 							AudioHelpers.PlayOneShot(entityAtDestination.SoundExit, entityAtDestination.GridPosition);
+
+							var description = FMODUnity.RuntimeManager.GetEventDescription(entityAtDestination.SoundExit);
+							description.getLength(out int lengthInMilliseconds);
+							UnityEngine.Debug.Log("lengthInMilliseconds: " + lengthInMilliseconds);
+							await UniTask.Delay(TimeSpan.FromMilliseconds(lengthInMilliseconds * 0.75f));
 							NextLevel();
+							await UniTask.Delay(TimeSpan.FromMilliseconds(lengthInMilliseconds * 0.25f));
 						}
 						break;
 
@@ -601,7 +613,7 @@ FMOD Player Angry: {angryProgress}
 
 							if (entity.BreakParticle)
 							{
-								Object.Instantiate(entity.BreakParticle, entity.GridPosition + CellOffset + entity.BreakParticleOffset, Quaternion.identity);
+								UnityEngine.Object.Instantiate(entity.BreakParticle, entity.GridPosition + CellOffset + entity.BreakParticleOffset, Quaternion.identity);
 							}
 
 							if (entityAtDestination.BreakableProgress >= entityAtDestination.BreaksAt)
