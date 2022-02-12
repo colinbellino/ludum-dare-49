@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using ICSharpCode.NRefactory.Ast;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
