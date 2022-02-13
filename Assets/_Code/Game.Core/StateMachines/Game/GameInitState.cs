@@ -13,6 +13,8 @@ namespace Game.Core.StateMachines.Game
 		{
 			await base.Enter();
 
+			_ = _ui.FadeIn(Color.black, 0);
+
 			FMODUnity.RuntimeManager.LoadBank("SFX", loadSamples: true);
 
 			_state.GameBus = FMODUnity.RuntimeManager.GetBus("bus:/Game");
@@ -34,11 +36,11 @@ namespace Game.Core.StateMachines.Game
 
 			_controls.Global.Enable();
 
-			await LocalizationSettings.InitializationOperation;
-
 			await _game.UI.Init(_game);
 			await _game.PauseUI.Init(_game);
 			await _game.OptionsUI.Init(_game);
+
+			await LocalizationSettings.InitializationOperation;
 
 			if (IsDevBuild())
 			{
@@ -64,8 +66,6 @@ namespace Game.Core.StateMachines.Game
 					QualitySettings.vSyncCount = 0;
 				}
 			}
-
-			await _ui.FadeIn(Color.black, 0);
 
 			_fsm.Fire(GameFSM.Triggers.Done);
 		}
