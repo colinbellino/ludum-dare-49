@@ -28,9 +28,24 @@ jobs:
           - StandaloneLinux64
           # - WebGL
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v2
+        id: lfs-cache
         with:
-          lfs: true
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
 
       - name: Set RELEASE_VERSION
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -46,27 +61,14 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}
-          restore-keys: Library-
-
-      # - name: Activate Unity
-      #   uses: webbertakken/unity-activate@v1.3
-
-      # - uses: webbertakken/unity-test-runner@v2
-      #   id: testRunner
-      #   with:
-      #     projectPath: ${{ matrix.projectPath }}
-      #     unityVersion: ${{ matrix.unityVersion }}
-
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Test results (all modes)
-      #     path: ${{ steps.testRunner.outputs.artifactsPath }}
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
       - name: Free disk space
         run: chmod +x ${{ matrix.projectPath }}Scripts/free-disk-space.sh && ${{ matrix.projectPath }}Scripts/free-disk-space.sh
 
-      - uses: webbertakken/unity-builder@v2.0.0-alpha-14
+      - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
