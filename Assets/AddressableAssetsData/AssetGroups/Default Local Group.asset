@@ -16,7 +16,39 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 55235cab6d6e248a38045122095d66f1
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: e19a4dd6ade9a45c0bf144ed3a44e5af
+    m_Address: Assets/Localization/English (en).asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 93c6a7eaa687e47118cfa9c865c57972
+    m_Address: Assets/Localization/German (de).asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bd29a3aa3dc0f4cf88942927a291d07c
+    m_Address: Assets/Localization/Localization Settings.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 666e6b42872d74dc18879faeab38ada1
+    m_Address: Assets/Localization/French (fr).asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0e4ca9a48257445f682c220315b80b73
+    m_Address: Assets/Localization/AllText_fr.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d683b309f4d914fc89754de97a662ffa
+    m_Address: Assets/Localization/AllText_en.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2454a60fc80bd4a04a265652f0183f57
+    m_Address: Assets/Localization/AllText_de.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b290e49b81a464c3dac81c3936fc860c
+    m_Address: Assets/Localization/AllText Shared Data.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0d6766255d6584141a6ade05e5e90688, type: 2}
   m_SchemaSet:
