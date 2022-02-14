@@ -76,7 +76,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: ${{ env.BUILD_NAME }}
-          # buildMethod: UnityBuilderAction.Builder.BuildProject
+          buildMethod: CustomUnityBuilderAction.Builder.BuildProject
           versioning: Custom
           version: ${{ env.RELEASE_VERSION }}
 
