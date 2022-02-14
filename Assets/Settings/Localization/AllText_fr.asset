@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: AllText_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: b290e49b81a464c3dac81c3936fc860c, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 182295977984
+    m_Localized: Quitter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560896
+    m_Localized: Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560897
+    m_Localized: Commencer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560898
+    m_Localized: Continuer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560899
+    m_Localized: Volume principal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560900
+    m_Localized: Volume sonore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560901
+    m_Localized: Volume musique
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560902
+    m_Localized: "Plein \xE9cran"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182308560903
+    m_Localized: "R\xE9solution"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182312755200
+    m_Localized: Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182312755201
+    m_Localized: "S\xE9lection niveau"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182312755202
+    m_Localized: "Cr\xE9\xE9 par"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182312755203
+    m_Localized: "Merci d'avoir jou\xE9!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182312755204
+    m_Localized: Langue
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

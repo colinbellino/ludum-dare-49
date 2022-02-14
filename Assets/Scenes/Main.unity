@@ -1057,6 +1057,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
@@ -3680,6 +3681,10 @@ PrefabInstance:
     - target: {fileID: 2108429254509908559, guid: 3c49a6280c19e46ff8a8124c73020ef0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682580730976929644, guid: 3c49a6280c19e46ff8a8124c73020ef0, type: 3}
+      propertyPath: m_TrackedObjects.Array.data[0].m_TrackedProperties.items.Array.data[0].m_Localized.m_TableEntryReference.m_KeyId
+      value: 182312755201
       objectReference: {fileID: 0}
     - target: {fileID: 4753316370207222514, guid: 3c49a6280c19e46ff8a8124c73020ef0, type: 3}
       propertyPath: m_AnchorMax.y

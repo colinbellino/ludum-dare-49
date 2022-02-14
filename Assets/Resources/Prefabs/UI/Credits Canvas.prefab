@@ -247,7 +247,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:b290e49b81a464c3dac81c3936fc860c
           m_TableEntryReference:
-            m_KeyId: 17687823507456
+            m_KeyId: 182312755202
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &861950460941496438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -542,7 +542,7 @@ MonoBehaviour:
           m_TableReference:
             m_TableCollectionName: GUID:b290e49b81a464c3dac81c3936fc860c
           m_TableEntryReference:
-            m_KeyId: 18580157489152
+            m_KeyId: 182312755203
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -885,16 +885,4 @@ MonoBehaviour:
       data:
         m_Target: {fileID: 861950462358569830}
         m_TrackedProperties:
-          items:
-          - id: 1
-    00000001:
-      type: {class: FloatTrackedProperty, ns: UnityEngine.Localization.PropertyVariants.TrackedProperties, asm: Unity.Localization}
-      data:
-        m_PropertyPath: m_SizeDelta.y
-        m_VariantData:
-        - localeIdentifier:
-            m_Code: en
-          value: 50
-        - localeIdentifier:
-            m_Code: fr
-          value: 60
+          items: []

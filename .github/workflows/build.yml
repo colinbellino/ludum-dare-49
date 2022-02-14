@@ -65,9 +65,6 @@ jobs:
           restore-keys: |
             Library-
 
-      - name: Free disk space
-        run: chmod +x ${{ matrix.projectPath }}Scripts/free-disk-space.sh && ${{ matrix.projectPath }}Scripts/free-disk-space.sh
-
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
