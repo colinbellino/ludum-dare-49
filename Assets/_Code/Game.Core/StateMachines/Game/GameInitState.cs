@@ -36,11 +36,14 @@ namespace Game.Core.StateMachines.Game
 
 			_controls.Global.Enable();
 
+			UnityEngine.Debug.Log("loading");
+			while (LocalizationSettings.InitializationOperation.IsDone == false)
+				await UniTask.NextFrame();
+			UnityEngine.Debug.Log("loaded");
+
 			await _game.UI.Init(_game);
 			await _game.PauseUI.Init(_game);
 			await _game.OptionsUI.Init(_game);
-
-			await LocalizationSettings.InitializationOperation;
 
 			if (IsDevBuild())
 			{
